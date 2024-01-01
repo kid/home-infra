@@ -1,0 +1,15 @@
+[Unit]
+Description=cupsd
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker rm --force cupsd
+ExecStart=/usr/bin/docker run --name cupsd --device /dev/bus/usb -e TZ="Europe/Brussels" -v /etc/cups/printers.conf:/etc/cups/printers.conf:ro -p 631:631 ghcr.io/anujdatar/cups
+ExecStop=/usr/bin/docker stop cupsd
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

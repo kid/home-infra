@@ -1,0 +1,10 @@
+keys:
+  - &kid-nixos age1dghfu7sxwlkf4626eywmgr63y2g7m4x8zs8a6xt2zay3x7dclpnsw776dd
+
+defaults: &defaults
+  key_groups:
+    - age:
+        - *kid-nixos
+
+creation_rules:
+  - <<: *defaults
