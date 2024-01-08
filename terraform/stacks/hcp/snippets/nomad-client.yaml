@@ -1,0 +1,45 @@
+variant: fcos
+version: 1.5.0
+
+systemd:
+  units:
+    - name: podman.socket
+      enabled: true
+
+storage:
+  files:
+    - path: /etc/nomad.d/podman.hcl
+      mode: 0600
+      contents:
+        inline: |
+          plugin "nomad-driver-podman" {
+            config {
+              volumes {
+                enabled = true
+              }
+            }
+          }
+    - path: /etc/nomad.d/client.hcl
+      mode: 0600
+      contents:
+        inline: |
+          advertise {
+            http  = "${node_ip}"
+            rpc   = "${node_ip}"
+            serf  = "${node_ip}"
+          }
+
+          server {
+            enabled = false
+          }
+
+          client {
+            enabled = true
+            options = {
+              "driver.denylist" = "docker"
+            }
+          }
+
+          telemetry {
+            collection_interval = "60s"
+          }

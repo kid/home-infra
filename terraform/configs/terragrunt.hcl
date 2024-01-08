@@ -1,6 +1,7 @@
 locals {
   bootstrap_inputs = jsondecode(file("./bootstrap/terraform.tfvars.json"))
   proxmox_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml"))
+  routeros_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml"))
 }
 
 remote_state {
@@ -21,6 +22,7 @@ remote_state {
 
 inputs = merge(
   local.proxmox_secrets,
+  local.routeros_secrets,
   {
     location = local.bootstrap_inputs.location
   }

@@ -1,0 +1,33 @@
+variant: fcos
+version: 1.5.0
+
+passwd:
+  users:
+    - name: nomad
+      system: true
+      home_dir: /etc/nomad.d
+      no_create_home: true
+      shell: /bin/false
+
+storage:
+  files:
+    - path: /etc/nomad.d/server.hcl
+      mode: 0600
+      user:
+        name: ${nomad_user}
+      group:
+        name: ${nomad_group}
+      contents:
+        inline: |
+          server {
+            enabled = true
+            bootstrap_expect = 3
+          }
+
+          ui {
+            enabled = true
+          }
+
+          telemetry {
+            collection_interval = "60s"
+          }

@@ -1,0 +1,102 @@
+variant: fcos
+version: 1.5.0
+
+passwd:
+  users:
+    - name: consul
+      system: true
+      home_dir: /etc/consul.d
+      no_create_home: true
+      shell: /bin/false
+
+storage:
+  directories:
+    - path: /etc/consul.d
+      mode: 0700
+      user:
+        name: ${consul_user}
+      group:
+        name: ${consul_group}
+    - path: /etc/consul.certs
+      mode: 0700
+      user:
+        name: ${consul_user}
+      group:
+        name: ${consul_group}
+    - path: /usr/local/lib/consul
+      mode: 0711
+      user:
+        name: ${consul_user}
+      group:
+        name: ${consul_group}
+  files:
+    - path: /root/consul.zip
+      contents:
+        source: https://releases.hashicorp.com/consul/${consul_version}/consul_${consul_version}_linux_amd64.zip
+        verification:
+          hash: ${consul_checksum}
+    - path: /etc/consul.d/common.hcl
+      mode: 0600
+      contents:
+        inline: |
+          datacenter = "home"
+          data_dir = "/usr/local/lib/consul"
+          encrypt = "${consul_token}"
+
+          retry_join = [
+            %{ for ip in consul_servers }
+            "${ip}",
+            %{ endfor }
+          ]
+      user:
+        name: ${consul_user}
+      group:
+        name: ${consul_group}
+    # - path: /etc/consul.certs/consul-ca.pem
+    #   contents:
+    #     local: tls/consul-ca.pem
+    #   mode: 0600
+systemd:
+  units:
+    - name: consul-binaries.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Install consul & podman driver binaries
+        After=network-online.target
+        Wants=network-online.target
+        ConditionPathExists=/usr/bin/unzip
+        ConditionPathExists=!/usr/local/bin/consul
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/unzip /root/consul.zip -d /usr/local/bin/
+        ExecStart=/usr/bin/rm /root/consul.zip
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: consul-agent.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description="HashiCorp Consul - A service mesh solution"
+        Documentation=https://www.consul.io/
+        Requires=network-online.target
+        After=network-online.target consul-binaries.service
+        ConditionPathExists=/usr/local/bin/consul
+        #ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+        [Service]
+        User=consul
+        Group=consul
+        ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+        ExecReload=/bin/kill --signal HUP $MAINPID
+        KillMode=process
+        KillSignal=SIGTERM
+        Restart=on-failure
+        LimitNOFILE=65536
+
+        [Install]
+        WantedBy=multi-user.target
