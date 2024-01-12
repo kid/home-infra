@@ -13,6 +13,17 @@ terraform {
   }
 }
 
+variable "use_oidc" {
+  type    = bool
+  default = false
+}
+
 provider "azurerm" {
   features {}
+
+  use_oidc = var.use_oidc
+}
+
+provider "azuread" {
+  use_oidc = var.use_oidc
 }

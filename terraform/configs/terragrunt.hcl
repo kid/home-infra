@@ -1,7 +1,7 @@
 locals {
   bootstrap_inputs = jsondecode(file("./bootstrap/terraform.tfvars.json"))
-  proxmox_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml"))
-  routeros_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml"))
+  # proxmox_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml"))
+  # routeros_secrets = yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml"))
 }
 
 remote_state {
@@ -12,6 +12,7 @@ remote_state {
     storage_account_name = local.bootstrap_inputs.storage_account_name
     container_name = local.bootstrap_inputs.container_name
     key = "${path_relative_to_include()}/terraform.tfstate"
+    use_oidc = true
   }
 
   generate = {
@@ -21,8 +22,8 @@ remote_state {
 }
 
 inputs = merge(
-  local.proxmox_secrets,
-  local.routeros_secrets,
+  # local.proxmox_secrets,
+  # local.routeros_secrets,
   {
     location = local.bootstrap_inputs.location
   }
