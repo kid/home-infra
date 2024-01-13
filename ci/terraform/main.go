@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	REPO         = "github.com/kid/home-infra"
 	OUT_DIR      = "/out"
 	PLAN_FILE    = "apply.tfplan"
 	TFLINT_IMAGE = "ghcr.io/terraform-linters/tflint:v0.50.0"
@@ -183,7 +184,24 @@ func EnvVariables(envs map[string]Optional[string]) WithContainerFunc {
 	}
 }
 
-// func (m *Terraform) OnPR(ctx context.Context, chdir string) (string, error) {
-// 	m.InitBackend = true
-//
-// }
+func (m *Terraform) CiRemote(
+	ctx context.Context,
+	chdir string,
+	commit string,
+	armClientId Optional[string],
+	armSubscriptionId Optional[string],
+	armTenantId Optional[string],
+	actionsIdTokenRequestUrl Optional[string],
+	actionsIdTokenRequestToken Optional[string],
+) (string, error) {
+	m.Source = dag.Git(fmt.Sprintf("https://%s", REPO)).Commit(commit).Tree()
+	return m.Pipeline(
+		ctx,
+		chdir,
+		armClientId,
+		armSubscriptionId,
+		armTenantId,
+		actionsIdTokenRequestUrl,
+		actionsIdTokenRequestToken,
+	)
+}
