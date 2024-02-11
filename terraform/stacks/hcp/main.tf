@@ -17,6 +17,7 @@ module "hcp" {
 
   cpu_cores        = 4
   memory_dedicated = 2048
+  memory_floating  = 1024
 
   ignition_enabled  = true
   ignition_rendered = data.ct_config.server[count.index].rendered
@@ -37,6 +38,7 @@ module "client" {
 
   cpu_cores        = 4
   memory_dedicated = 2048
+  memory_floating  = 1024
 }
 
 locals {
@@ -47,6 +49,8 @@ locals {
     consul_token           = var.consul_token
     consul_user            = "consul"
     consul_group           = "consul"
+    vault_user             = "vault"
+    vault_group            = "vault"
     nomad_version          = var.nomad_version
     nomad_checksum         = var.nomad_checksum
     podman_driver_version  = "0.5.1"
@@ -75,6 +79,7 @@ data "ct_config" "server" {
 
   snippets = [for path in [
     "./snippets/users.yaml",
+    "./snippets/swap.yaml",
     "./snippets/consul-common.yaml",
     "./snippets/consul-server.yaml",
     "./snippets/nomad-common.yaml",
@@ -90,6 +95,7 @@ data "ct_config" "client" {
 
   snippets = [for path in [
     "./snippets/users.yaml",
+    "./snippets/swap.yaml",
     "./snippets/consul-common.yaml",
     "./snippets/consul-client.yaml",
     "./snippets/nomad-common.yaml",
