@@ -21,6 +21,9 @@ storage:
 
 systemd:
   units:
+    - name: zincati.service
+      enabled: false
+
     - name: rpm-ostree-countme.timer
       enabled: false
       mask: true
