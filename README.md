@@ -21,3 +21,4 @@ Ansible will be used to provision and manage bare metal hosts, as well as part o
 https://onedr0p.github.io/home-ops/introduction.html
 https://github.com/kencx/homelab
 https://cosmonic.com/blog/engineering/netreap-a-practical-guide-to-running-cilium-in-nomad
+https://devnonsense.com/posts/k3s-on-fedora-coreos-bare-metal/

@@ -25,5 +25,5 @@ jobs:
           ARM_TENANT_ID: ${{secrets.ARM_TENANT_ID}}
         with:
           verb: call
-          module: ci/terraform
-          args: --source . ci-remote --commit "${GITHUB_SHA}" --chdir terraform/configs/bootstrap --armClientId "${ARM_CLIENT_ID}" --armSubscriptionId "${ARM_SUBSCRIPTION_ID}" --armTenantId "${ARM_TENANT_ID}" --actionsIdTokenRequestUrl "${ACTIONS_ID_TOKEN_REQUEST_URL}" --actionsIdTokenRequestToken "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+          module: ./ci/terraform
+          args: ci-remote --commit "${GITHUB_SHA}" --chdir terraform/configs/bootstrap --armClientId "${ARM_CLIENT_ID}" --armSubscriptionId "${ARM_SUBSCRIPTION_ID}" --armTenantId "${ARM_TENANT_ID}" --actionsIdTokenRequestUrl "${ACTIONS_ID_TOKEN_REQUEST_URL}" --actionsIdTokenRequestToken "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
