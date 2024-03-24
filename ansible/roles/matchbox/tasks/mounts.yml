@@ -1,0 +1,20 @@
+---
+# vim:ft=yaml.ansible
+
+# FIXME: handle updates
+
+- name: Query existing mounts
+  delegate_to: localhost
+  community.routeros.api:
+    path: container mounts
+  register: _existing_mounts
+
+- name: Create missing mounts
+  delegate_to: localhost
+  community.routeros.api:
+    path: container mounts
+    add: "name={{ item.name }} src={{ item.src }} dst={{ item.dst }}"
+  when: not _existing_mounts.msg | list | selectattr('name', 'match', item.name) | list
+  with_list: "{{ matchbox_container_mounts }}"
+  notify:
+    - Restart matchbox

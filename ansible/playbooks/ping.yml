@@ -1,0 +1,9 @@
+---
+# vim:ft=yaml.ansible
+
+- name: Ping all hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ping hosts
+      ansible.builtin.ping:

@@ -67,7 +67,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   disk {
     datastore_id = "local-zfs"
     interface    = "virtio0"
-    size         = 10
+    size         = 16
     file_id      = var.root_file_id
     file_format  = "raw"
   }

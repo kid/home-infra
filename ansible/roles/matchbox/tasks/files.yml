@@ -1,0 +1,55 @@
+---
+# vim:ft=yaml.ansible
+
+- name: Query existing filesystem
+  delegate_to: localhost
+  community.routeros.api:
+    path: file
+  register: _existing_files
+
+- name: Create missing folders
+  delegate_to: localhost
+  community.routeros.api:
+    path: file
+    add: "name={{ item }} type=directory"
+  when: not _existing_files.msg | list | selectattr('name', 'match', item) | list
+  with_list: "{{ matchbox_host_directories }}"
+
+- name: Add missing certificates
+  delegate_to: localhost
+  community.routeros.api:
+    path: file
+    add: "name={{ item.path }} contents={{ item.contents | community.routeros.quote_argument_value }}"
+  with_list:
+    - path: usb1/matchbox/etc/ca.crt
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/ca.crt.sops') }}"
+    - path: usb1/matchbox/etc/server.key
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/matchbox-server.key.sops') }}"
+    - path: usb1/matchbox/etc/server.crt
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/matchbox-server.crt.sops') }}"
+  vars:
+    pki_dir: ../../../secrets/pki
+  when: not _existing_files.msg | list | selectattr('name', 'match', item.path) | list
+  no_log: true
+
+- name: Update certificates
+  delegate_to: localhost
+  community.routeros.api_find_and_modify:
+    path: file
+    find:
+      name: "{{ item.path }}"
+    values:
+      contents: "{{ item.contents }}"
+  with_list:
+    - path: usb1/matchbox/etc/ca.crt
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/ca.crt.sops') }}"
+    - path: usb1/matchbox/etc/server.key
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/matchbox-server.key.sops') }}"
+    - path: usb1/matchbox/etc/server.crt
+      contents: "{{ lookup('community.sops.sops', pki_dir + '/matchbox-server.crt.sops') }}"
+  vars:
+    pki_dir: ../../../secrets/pki
+  when: _existing_files.msg | list | selectattr('name', 'match', item.path) | list
+  no_log: true
+  notify:
+    - Restart matchbox

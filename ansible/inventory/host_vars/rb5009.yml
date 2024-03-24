@@ -1,0 +1,14 @@
+directories:
+  - usb1/tftp
+  - usb1/matchbox
+  - usb1/matchbox/data
+  - usb1/matchbox/data/assets
+  - usb1/matchbox/data/groups
+  - usb1/matchbox/data/profiles
+
+containers:
+  - name: matchbox
+    mounts:
+      - name: data
+        src: usb1/matchbox/data
+        dst: /var/lib/matchbox

@@ -1,0 +1,158 @@
+---
+# vim:ft=yaml.ansible
+
+# TODO: make this a role
+
+- name: Create PKI
+  hosts: localhost
+  gather_facts: false
+  vars:
+    secrets_path: "../../secrets/pki"
+    secrets_file: "../../secrets/pki.sops.yaml"
+    type: ECC
+    ecc_curve: secp384r1
+  tasks:
+    - name: Create PKI folder if needed
+      ansible.builtin.file:
+        path: "{{ secrets_path }}"
+        state: directory
+
+    - name: Generate or update CA private key
+      community.crypto.openssl_privatekey_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/ca.key.sops', empty_on_not_exist=true) }}"
+        type: "{{ type }}"
+        curve: "{{ ecc_curve }}"
+      register: ca_key
+      no_log: true
+
+    - name: Encrypt CA private key
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/ca.key.sops"
+        content_text: "{{ ca_key.privatekey }}"
+      when: ca_key is changed
+
+    - name: Create CA signing request
+      community.crypto.openssl_csr_pipe:
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.key.sops') }}"
+        common_name: kidiBox.net CA
+        basic_constraints:
+          - "CA:TRUE"
+        basic_constraints_critical: true
+        key_usage:
+          - keyCertSign
+        key_usage_critical: true
+      no_log: true
+      register: ca_csr
+
+    - name: Create CA certificate
+      community.crypto.x509_certificate_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/ca.crt.sops', empty_on_not_exist=true) }}"
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.key.sops') }}"
+        # csr_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.csr.sops') }}"
+        csr_content: "{{ ca_csr.csr }}"
+        provider: selfsigned
+      no_log: true
+      register: ca_crt
+
+    - name: Encrypt CA certificate
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/ca.crt.sops"
+        content_text: "{{ ca_crt.certificate }}"
+      when: ca_crt is changed
+
+    - name: Generate or update matchbox server private key
+      community.crypto.openssl_privatekey_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-server.key.sops', empty_on_not_exist=true) }}"
+        type: "{{ type }}"
+        curve: "{{ ecc_curve }}"
+      register: matchbox_server_key
+      no_log: true
+
+    - name: Encrypt matchbox server private key
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/matchbox-server.key.sops"
+        content_text: "{{ matchbox_server_key.privatekey }}"
+      when: matchbox_server_key is changed
+
+    - name: Create matchbox server signing request
+      community.crypto.openssl_csr_pipe:
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-server.key.sops') }}"
+        subject_alt_name:
+          - DNS:matchbox.kidibox.net
+          - IP:10.0.5.2
+        key_usage:
+          - digitalSignature
+          - keyEncipherment
+        key_usage_critical: true
+        extended_key_usage:
+          - serverAuth
+        extended_key_usage_critical: true
+      no_log: true
+      register: matchbox_server_csr
+
+    - name: Create matchbox server certificate
+      community.crypto.x509_certificate_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-server.crt.sops', empty_on_not_exist=true) }}"
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-server.key.sops') }}"
+        # csr_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.csr.sops') }}"
+        csr_content: "{{ matchbox_server_csr.csr }}"
+        provider: ownca
+        ownca_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.crt.sops') }}"
+        ownca_privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.key.sops') }}"
+      no_log: true
+      register: matchbox_server_crt
+
+    - name: Encrypt matchbox server certificate
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/matchbox-server.crt.sops"
+        content_text: "{{ matchbox_server_crt.certificate }}"
+      when: matchbox_server_crt is changed
+
+    - name: Generate or update matchbox client private key
+      community.crypto.openssl_privatekey_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-client.key.sops', empty_on_not_exist=true) }}"
+        type: "{{ type }}"
+        curve: "{{ ecc_curve }}"
+      register: matchbox_client_key
+      no_log: true
+
+    - name: Encrypt matchbox client private key
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/matchbox-client.key.sops"
+        content_text: "{{ matchbox_client_key.privatekey }}"
+      when: matchbox_client_key is changed
+
+    - name: Create matchbox client signing request
+      community.crypto.openssl_csr_pipe:
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-client.key.sops') }}"
+        subject_alt_name:
+          - DNS:matchbox.kidibox.net
+          - IP:10.0.5.2
+        key_usage:
+          - nonRepudiation
+          - digitalSignature
+          - keyEncipherment
+        key_usage_critical: true
+        extended_key_usage:
+          - clientAuth
+        extended_key_usage_critical: true
+      no_log: true
+      register: matchbox_client_csr
+
+    - name: Create matchbox client certificate
+      community.crypto.x509_certificate_pipe:
+        content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-client.crt.sops', empty_on_not_exist=true) }}"
+        privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/matchbox-client.key.sops') }}"
+        # csr_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.csr.sops') }}"
+        csr_content: "{{ matchbox_client_csr.csr }}"
+        provider: ownca
+        ownca_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.crt.sops') }}"
+        ownca_privatekey_content: "{{ lookup('community.sops.sops', secrets_path + '/ca.key.sops') }}"
+      no_log: true
+      register: matchbox_client_crt
+
+    - name: Encrypt matchbox client certificate
+      community.sops.sops_encrypt:
+        path: "{{ secrets_path }}/matchbox-client.crt.sops"
+        content_text: "{{ matchbox_client_crt.certificate }}"
+      when: matchbox_client_crt is changed

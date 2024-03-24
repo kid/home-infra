@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.6.6"
+  required_version = ">= 1.6.6"
 
   required_providers {
     routeros = {
@@ -8,7 +8,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.43.0"
+      version = "0.46.3"
     }
   }
 }
