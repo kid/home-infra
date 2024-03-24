@@ -1,0 +1,40 @@
+---
+# vim:ft=yaml.ansible
+
+- name: Query existing envs
+  delegate_to: localhost
+  community.routeros.api:
+    path: container envs
+    extended_query:
+      attributes:
+        - name
+        - key
+        - value
+      where:
+        - attribute: name
+          is: "=="
+          value: matchbox
+  register: _existing_envs
+
+- name: Create missing envs
+  delegate_to: localhost
+  community.routeros.api:
+    path: container envs
+    add: "name=matchbox key={{ item.key }} value={{ item.value }}"
+  when: not _existing_envs.msg | list | selectattr('key', 'match', item.key) | list
+  loop: "{{ matchbox_envs }}"
+  notify:
+    - Restart matchbox
+
+- name: Update envs
+  delegate_to: localhost
+  community.routeros.api_find_and_modify:
+    path: container envs
+    find:
+      name: matchbox
+      key: "{{ item.key }}"
+    values:
+      value: "{{ item.value }}"
+  loop: "{{ matchbox_envs }}"
+  notify:
+    - Restart matchbox

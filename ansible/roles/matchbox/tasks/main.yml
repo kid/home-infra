@@ -1,0 +1,11 @@
+---
+# vim:ft=yaml.ansible
+
+- name: Import files tasks
+  ansible.builtin.import_tasks: ./files.yml
+- name: Import mounts tasks
+  ansible.builtin.import_tasks: ./mounts.yml
+- name: Import envs tasks
+  ansible.builtin.import_tasks: ./envs.yml
+- name: Import container tasks
+  ansible.builtin.import_tasks: ./containers.yml

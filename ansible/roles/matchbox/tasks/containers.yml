@@ -1,0 +1,114 @@
+---
+# vim:ft=yaml.ansible
+
+# FIXME: handle version changes
+# FIXME: handle container values change
+
+- name: Query existing files
+  delegate_to: localhost
+  community.routeros.api:
+    path: file
+  register: _existing_files
+
+- name: Query existing containers
+  delegate_to: localhost
+  community.routeros.api:
+    path: container
+  register: _existing_containers
+
+- name: Clean old containers
+  vars:
+    containers_to_clean: |
+      {{
+        _existing_containers.msg
+        | selectattr('comment', 'match', 'matchbox')
+        | rejectattr('tag', 'match', matchbox_container_tag)
+        | list
+      }}
+  block:
+    - name: "Stopping container with tag {{ item.tag }}"
+      loop: "{{ containers_to_clean }}"
+      community.routeros.api:
+        path: container
+        cmd: "stop .id={{ item['.id'] }}"
+    - name: Give the container some time to stop
+      ansible.builtin.pause:
+        seconds: 3
+    - name: "Removing container with tag {{ item.tag }}"
+      loop: "{{ containers_to_clean }}"
+      community.routeros.api:
+        path: container
+        cmd: "remove .id={{ item['.id'] }}"
+
+- name: Pull image and push to device
+  when:
+    - not _existing_containers.msg | list | selectattr('tag', 'match', matchbox_container_tag) | list
+  block:
+    - name: Create temp file
+      delegate_to: localhost
+      ansible.builtin.tempfile:
+      register: archive_file
+
+    - name: Pull matchbox image
+      delegate_to: localhost
+      community.docker.docker_image:
+        state: present
+        archive_path: "{{ archive_file.path }}"
+        name: "{{ matchbox_image }}:{{ matchbox_tag }}"
+        force_source: true
+        source: pull
+        pull:
+          platform: linux/arm64
+      register: docker_image
+
+    - name: Push matchbox image to host
+      # delegate_to: localhost
+      ansible.netcommon.net_put:
+        src: "{{ archive_file.path }}"
+        dest: "usb1/{{ matchbox_image_file }}"
+  # notify:
+  #   - Delete image file
+
+- name: Create container on host
+  community.routeros.command:
+    commands:
+      - |
+        /container/add
+          file="usb1/{{ matchbox_image_file }}"
+          root-dir=usb1/matchbox/root
+          interface=veth1
+          logging=yes
+          envlist=matchbox
+          mounts="matchbox-etc,matchbox-data"
+          start-on-boot=yes
+          comment=matchbox
+
+      # - /container/start [find comment=matchbox]
+  # community.routeros.api:
+  #   path: container
+  #   add: "file=usb1/matchbox.tar root-dir=usb1/matchbox/root interface=veth1 comment=matchbox"
+  when: not _existing_containers.msg | list | selectattr('tag', 'match', matchbox_container_tag) | list
+  notify:
+    - Start matchbox
+# - name: Modify container
+#   community.routeros.api_find_and_modify:
+#     path: container
+#     find:
+#       comment: matchbox
+#     values:
+#       start-on-boot: "yes"
+#       mounts: "{{ matchbox_container_mounts | map(attribute='name') | join(',') }}"
+#       cmd: -address\ 0.0.0.0:80\ -rpc-address\ 0.0.0.0:443
+#
+# vars:
+#   options:
+#     - comment=matchbox
+#     - file=usb1/matchbox.tar
+#     - root-dir=usb1/matchbox/root
+#     - mounts={{ matchbox_container_mounts | map(attribute='name') | join(',') }}
+#     # - "cmd=-address 0.0.0.0:80"
+#     - interface=veth1
+#     - start-on-boot=yes
+
+# - debug:
+#     var: docker_image

@@ -2,7 +2,7 @@
 
 ### My Home Infrastructure Repository :octocat:
 
-_...implementing GitOps using Ansible, Terraform, Nomad and GitHub Actions and Dagger_
+_...implementing GitOps using Ansible, Terraform, Talos and GitHub Actions and Dagger_
 
 </div>
 

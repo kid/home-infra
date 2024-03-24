@@ -1,0 +1,33 @@
+---
+# vim:ft=yaml.ansible
+
+matchbox_host_directories:
+  - usb1/matchbox
+  - usb1/matchbox/root
+  - usb1/matchbox/etc
+  - usb1/matchbox/data
+  - usb1/matchbox/data/assets
+  - usb1/matchbox/data/groups
+  - usb1/matchbox/data/profiles
+
+matchbox_container_mounts:
+  - name: matchbox-etc
+    src: /usb1/matchbox/etc
+    dst: /etc/matchbox
+  - name: matchbox-data
+    src: /usb1/matchbox/data
+    dst: /var/lib/matchbox
+
+matchbox_envs:
+  - key: MATCHBOX_LOG_LEVEL
+    value: debug
+  - key: MATCHBOX_ADDRESS
+    value: 0.0.0.0:80
+  - key: MATCHBOX_RPC_ADDRESS
+    value: 0.0.0.0:443
+
+matchbox_image: quay.io/poseidon/matchbox
+matchbox_tag: v0.11.0-arm64
+
+matchbox_image_file: "matchbox-{{ matchbox_tag }}.tar"
+matchbox_container_tag: "{{ matchbox_image }}:{{ matchbox_tag }}"

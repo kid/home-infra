@@ -1,0 +1,13 @@
+---
+# vim:ft=yaml.ansible
+
+- name: Start matchbox
+  community.routeros.command:
+    commands:
+      - /container/start [find comment=matchbox]
+
+- name: Restart matchbox
+  community.routeros.command:
+    commands:
+      - /container/stop [find comment=matchbox status=running]
+      - /container/start [find comment=matchbox]
