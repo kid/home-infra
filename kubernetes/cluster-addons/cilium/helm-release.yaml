@@ -1,13 +1,3 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: cilium
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://helm.cilium.io/
----
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -55,4 +45,4 @@ spec:
         enabled: false
       hostRoot: /sys/fs/cgroup
     k8sServiceHost: localhost
-    k8sServicePort: 7445
+    k8sServicePort: 7445apiVersion: source.toolkit.fluxcd.io/v1beta2

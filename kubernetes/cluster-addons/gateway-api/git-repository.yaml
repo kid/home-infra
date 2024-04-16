@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: api-gateway
+  namespace: flux-system
+spec:
+  internal: 1d
+  url: https://github.com/kubernetes-sigs/gateway-api
+  ref:
+    tag: v1.0.0
