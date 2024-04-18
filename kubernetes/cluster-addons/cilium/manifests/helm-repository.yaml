@@ -1,3 +1,4 @@
+---
 kind: HelmRepository
 metadata:
   name: cilium
