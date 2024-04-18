@@ -12,7 +12,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: "*"
+      version: 1.15.3
       sourceRef:
         kind: HelmRepository
         name: cilium
@@ -23,6 +23,8 @@ spec:
       mode: kubernetes
     operator:
       replicas: 1
+    gatewayAPI:
+      enabled: true
     securityContext:
       capabilities:
         ciliumAgent:
