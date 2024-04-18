@@ -5,7 +5,7 @@ metadata:
   name: gateway-api
   namespace: flux-system
 spec:
-  path: ./config/crd/standard
+  path: ./config/crd/experimental
   prune: true
   sourceRef:
     kind: GitRepository
