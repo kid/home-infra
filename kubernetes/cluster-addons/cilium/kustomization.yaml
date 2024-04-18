@@ -4,8 +4,8 @@ metadata:
   name: cilium
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: gateway-api
+  # dependsOn:
+  #   - name: gateway-api
   path: ./kubernetes/cluster-addons/cilium/manifests
   prune: true
   sourceRef:
