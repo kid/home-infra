@@ -10,7 +10,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: gateway-api
-  interval: 1d
+  interval: 24h
   retryInterval: 1m
   timeout: 5m
   wait: true
