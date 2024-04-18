@@ -11,7 +11,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: cluster-addons
-  interval: 1d
+  interval: 24h
   retryInterval: 1m
   timeout: 5m
   wait: true
