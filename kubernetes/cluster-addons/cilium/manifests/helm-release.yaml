@@ -18,12 +18,16 @@ spec:
         name: cilium
       interval: 12h
   values:
+    k8sServiceHost: localhost
+    k8sServicePort: 7445
     kubeProxyReplacement: true
     ipam:
       mode: kubernetes
     operator:
       replicas: 1
     gatewayAPI:
+      enabled: true
+    bgpControlPlane:
       enabled: true
     securityContext:
       capabilities:
@@ -47,5 +51,3 @@ spec:
       autoMount:
         enabled: false
       hostRoot: /sys/fs/cgroup
-    k8sServiceHost: localhost
-    k8sServicePort: 7445
