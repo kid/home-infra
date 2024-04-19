@@ -27,6 +27,7 @@ spec:
       replicas: 1
     gatewayAPI:
       enabled: true
+    k8s-require-ipv4-pod-cidr: true
     bpf:
       masquerade: true
       hostLegacyRouting: true
