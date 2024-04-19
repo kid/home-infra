@@ -27,6 +27,9 @@ spec:
       replicas: 1
     gatewayAPI:
       enabled: true
+    bpf:
+      masquerade: true
+      hostLegacyRouting: true
     bgpControlPlane:
       enabled: true
     securityContext:
