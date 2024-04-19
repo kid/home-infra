@@ -32,6 +32,9 @@ spec:
       hostLegacyRouting: true
     bgpControlPlane:
       enabled: true
+    hubble:
+      relay:
+        enabled: true
     securityContext:
       capabilities:
         ciliumAgent:
