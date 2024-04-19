@@ -36,6 +36,7 @@ spec:
       hostLegacyRouting: true
     bgpControlPlane:
       enabled: true
+    auto-direct-node-routes: true
     hubble:
       ui:
         enabled: true
