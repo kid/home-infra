@@ -39,8 +39,10 @@ spec:
     bgpControlPlane:
       enabled: true
     # auto-direct-node-routes: true
+
     routingMode: native
-    # ipv4NativeRoutingCIDR: 10.42.0.0/16
+    ipv4NativeRoutingCIDR: 10.42.0.0/16
+
     localRedirectPolicy: true
     hubble:
       ui:
