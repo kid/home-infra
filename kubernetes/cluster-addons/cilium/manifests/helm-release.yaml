@@ -48,8 +48,10 @@ spec:
     hubble:
       ui:
         enabled: true
+        rollOutPods: true
       relay:
         enabled: true
+        rollOutPods: true
     securityContext:
       capabilities:
         ciliumAgent:
