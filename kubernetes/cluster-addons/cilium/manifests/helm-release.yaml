@@ -22,7 +22,8 @@ spec:
     k8sServicePort: 7445
     kubeProxyReplacement: strict
     ipam:
-      mode: kubernetes
+      # mode: kubernetes
+      mode: cluster-pool
       # operator:
       clusterPoolIPv4PodCIDRList:
         - 10.42.0.0/16
