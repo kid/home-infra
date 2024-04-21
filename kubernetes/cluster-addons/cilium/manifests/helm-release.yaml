@@ -24,8 +24,8 @@ spec:
     ipam:
       mode: kubernetes
       # operator:
-      #   clusterPoolIPv4PodCIDRList:
-      #     - 10.42.0.0/16
+      # clusterPoolIPv4PodCIDRList:
+      #   - 10.42.0.0/16
     operator:
       replicas: 1
       rollOutPods: true
@@ -39,9 +39,9 @@ spec:
     bgpControlPlane:
       enabled: true
 
-    routingMode: native
-    ipv4NativeRoutingCIDR: 10.42.0.0/16
-    auto-direct-node-routes: true
+    # routingMode: native
+    # ipv4NativeRoutingCIDR: 10.42.0.0/16
+    # auto-direct-node-routes: true
 
     # localRedirectPolicy: true
     hubble:
