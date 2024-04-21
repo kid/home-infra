@@ -20,7 +20,7 @@ spec:
   values:
     k8sServiceHost: localhost
     k8sServicePort: 7445
-    # kubeProxyReplacement: true
+    kubeProxyReplacement: strict
     ipam:
       mode: kubernetes
       # operator:
@@ -37,7 +37,7 @@ spec:
     bgpControlPlane:
       enabled: true
     # auto-direct-node-routes: true
-    # routingMode: native
+    routingMode: native
     # ipv4NativeRoutingCIDR: 10.42.0.0/16
     hubble:
       ui:
