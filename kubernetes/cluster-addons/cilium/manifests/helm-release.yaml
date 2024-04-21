@@ -28,6 +28,8 @@ spec:
       #     - 10.42.0.0/16
     operator:
       replicas: 1
+      rollOutPods: true
+    rollOutCiliumPods: true
     gatewayAPI:
       enabled: true
     # k8s-require-ipv4-pod-cidr: true
