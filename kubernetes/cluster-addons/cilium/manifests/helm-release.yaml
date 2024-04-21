@@ -38,12 +38,12 @@ spec:
       # hostLegacyRouting: true
     bgpControlPlane:
       enabled: true
-    # auto-direct-node-routes: true
 
     routingMode: native
     ipv4NativeRoutingCIDR: 10.42.0.0/16
+    auto-direct-node-routes: true
 
-    localRedirectPolicy: true
+    # localRedirectPolicy: true
     hubble:
       ui:
         enabled: true
