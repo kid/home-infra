@@ -24,8 +24,8 @@ spec:
     ipam:
       mode: kubernetes
       # operator:
-      # clusterPoolIPv4PodCIDRList:
-      #   - 10.42.0.0/16
+      clusterPoolIPv4PodCIDRList:
+        - 10.42.0.0/16
     operator:
       replicas: 1
       rollOutPods: true
