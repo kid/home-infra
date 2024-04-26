@@ -1,0 +1,42 @@
+#cloud-config
+
+strict: true
+
+hostname: ${hostname}
+users:
+  - name: kairos
+    shell: /usr/bin/bash
+    groups:
+      - admin
+    ssh_authorized_keys:
+      - github:kid
+
+p2p:
+  network_id: k3s
+  network_token: b3RwOgogIGRodDoKICAgIGludGVydmFsOiA5MjIzMzcyMDM2ODU0Nzc1ODA3CiAgICBrZXk6IHJSWXJuU1pzZGpoZUpUM21RaXNUcVFleXBnZlRTVnRsR1M3VVZ4YVg4Y2sKICAgIGxlbmd0aDogNDMKICBjcnlwdG86CiAgICBpbnRlcnZhbDogOTIyMzM3MjAzNjg1NDc3NTgwNwogICAga2V5OiB2T1hqWmdMRlhvWUJlYUozWnRQelgzZDNTOWdKcGpvOWtDNEpzUDE1VXY0CiAgICBsZW5ndGg6IDQzCnJvb206IGFrOGdzaFpDZzVpRjFPc3ZZaFBzeHJ0ZlI1RUZsT1lDYnhQRkZUR2oyT0UKcmVuZGV6dm91czogTmo2U1JUR0JXY2VZTkZzWFZzTjBMekFpclI2OVowdFp4dkt4cmQwRGo3ZQptZG5zOiBWbXZjOU5UU1JqeXpNWHhYUHYwcWR2QjVuUWZOQlZ3dTA1clBPT2FGRVlCCm1heF9tZXNzYWdlX3NpemU6IDIwOTcxNTIwCg==
+  disable_dht: true
+  dns: false
+  vpn:
+    create: false
+    use: false
+  auto:
+    enable: true
+    ha:
+      enable: true
+      master_nodes: 2
+
+k3s:
+  args:
+    - --flannel-backend=none
+    - --disable=traefik,servicelb
+    - --disable-network-policy
+    # - --disable-kube-proxy
+
+kubevip:
+  # enabled: true
+  eip: 10.0.30.39
+  # static_pod: true
+
+install:
+  auto: true
+  reboot: true
