@@ -42,7 +42,7 @@ spec:
 
     routingMode: native
     ipv4NativeRoutingCIDR: 10.42.0.0/16
-    # auto-direct-node-routes: true
+    autoDirectNodeRoutes: true
 
     # localRedirectPolicy: true
     hubble:
