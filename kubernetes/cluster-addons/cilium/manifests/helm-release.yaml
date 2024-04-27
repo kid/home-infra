@@ -42,6 +42,13 @@ spec:
 
     externalIPs:
       enabled: true
+    hostServices:
+      enabled: true
+    nodePort:
+      enabled: true
+    hostPort:
+      enabled: true
+
     bpf:
       masquerade: true
       hostLegacyRouting: false
