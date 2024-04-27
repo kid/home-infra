@@ -40,6 +40,8 @@ spec:
     bgpControlPlane:
       enabled: true
 
+    externalIPs:
+      enabled: true
     bpf:
       masquerade: true
       hostLegacyRouting: false
