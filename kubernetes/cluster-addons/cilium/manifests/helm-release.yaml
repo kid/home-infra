@@ -41,6 +41,8 @@ spec:
       enabled: true
 
     bpf:
+      masquerade: true
+      hostLegacyRouting: false
       lbExternalClusterIP: true
     routingMode: native
     ipv4NativeRoutingCIDR: 10.42.0.0/16
