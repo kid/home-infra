@@ -24,9 +24,15 @@ variable "worker_ip_offset" {
   default = 40
 }
 
+variable "k3s_token" {
+  type      = string
+  default   = "K10f29d6a6ce07173bf790d01d20aa6e1fcd27763caa6ab113f828c6adf775e0b91::server:c58b8ddbcefcd740b9a8edf64df5172b"
+  sensitive = true
+}
+
 locals {
   cidr                    = var.vlan_cidrs[var.vlan_id]
-  controlplane_node_count = 3
+  controlplane_node_count = 1
   controlplane_node_names = [for _, idx in range(local.controlplane_node_count) : "kairos-cp-${idx}"]
   controlplane_node_infos = {
     for _, idx in range(local.controlplane_node_count) : local.controlplane_node_names[idx] => {
@@ -37,7 +43,7 @@ locals {
   }
   cluster_endpoint = local.controlplane_node_infos[local.controlplane_node_names[0]].ip
 
-  worker_node_count = 2
+  worker_node_count = length(var.k3s_token) > 0 ? 2 : 0
   worker_node_names = [for _, idx in range(local.worker_node_count) : "kairos-${idx}"]
   worker_node_infos = {
     for _, idx in range(local.worker_node_count) : local.worker_node_names[idx] => {
@@ -46,6 +52,18 @@ locals {
       node_name = "pve1"
     }
   }
+
+  ros_addr_list = "local_network"
+  ros_allowed_cidrs = [
+    "10.42.0.0/16",
+    "192.168.42.0/24",
+  ]
+}
+
+resource "routeros_ip_firewall_addr_list" "local_network" {
+  for_each = toset(local.ros_allowed_cidrs)
+  list     = local.ros_addr_list
+  address  = each.value
 }
 
 resource "proxmox_virtual_environment_download_file" "iso" {
@@ -247,8 +265,8 @@ resource "proxmox_virtual_environment_file" "cloud_config_cp" {
 
   source_raw {
     data = templatefile("${path.module}/cloud-init.yaml", {
-      hostname = each.key,
-      role     = "master",
+      hostname  = each.key,
+      k3s_token = "w92pic.uhwuqre42pa5c7bf"
     })
     file_name = "${each.key}-cloud-config.yaml"
   }
@@ -262,11 +280,11 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
   node_name    = "pve1"
 
   source_raw {
-    data = templatefile("${path.module}/cloud-init.yaml", {
-      hostname = each.key,
-      role     = "worker",
+    data = templatefile("${path.module}/cloud-init-worker.yaml", {
+      hostname  = each.key,
+      k3s_token = var.k3s_token
     })
-    file_name = "${each.key}-cloud-config.yaml"
+    file_name = "${each.key}-cloud-config-worker.yaml"
   }
 }
 
@@ -278,7 +296,7 @@ resource "routeros_routing_bgp_connection" "controlplane" {
   address_families = "ip"
 
   local {
-    role = "ibgp"
+    role = "ebgp"
   }
 
   remote {
@@ -298,7 +316,7 @@ resource "routeros_routing_bgp_connection" "worker" {
   address_families = "ip"
 
   local {
-    role = "ibgp"
+    role = "ebgp"
   }
 
   remote {

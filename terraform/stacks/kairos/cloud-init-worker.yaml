@@ -25,14 +25,13 @@ users:
 #     #   enable: true
 #     #   master_nodes: 2
 
-
-k3s:
+k3s-agent:
   enabled: true
+  env:
+    K3S_TOKEN: ${k3s_token}
+    K3S_URL: https://10.0.30.30:6443
   args:
-    - --flannel-backend=none
-    - --disable=traefik,servicelb
-    - --disable-network-policy
-    # - --disable-kube-proxy
+    - --with-node-id
 
 # kubevip:
 #   eip: 10.0.30.39
