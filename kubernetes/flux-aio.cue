@@ -27,14 +27,19 @@ bundle: {
 				path: "./kubernetes/cluster-addons"
 			}
 		}
-		// "apps": {
-		// 	module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
-		// 	namespace: "flux-system"
-		// 	values: git: {
-		// 		url:  "https://github.com/kid/home-infra"
-		// 		ref:  "refs/heads/feat/talos"
-		// 		path: "./kubernetes/apps"
-		// 	}
-		// }
+		"apps": {
+			module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
+			namespace: "flux-system"
+			values: {
+				dependsOn: [
+					{name: "cluster-addons"},
+				]
+				git: {
+					url:  "https://github.com/kid/home-infra"
+					ref:  "refs/heads/feat/talos"
+					path: "./kubernetes/apps"
+				}
+			}
+		}
 	}
 }
