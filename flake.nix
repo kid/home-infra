@@ -7,6 +7,8 @@
     devenv.url = "github:cachix/devenv";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    dagger.url = "github:dagger/nix";
+    dagger.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -46,15 +48,9 @@
           };
 
           devenv.shells.default = {
-            # languages.ansible.enable = true;
             packages = with pkgs; [
               config.treefmt.build.wrapper
               azure-cli
-              (ansible.overrideAttrs (oldAttrs: {
-                propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ [ pkgs.python311Packages.librouteros ];
-              }))
-              ansible-lint
-              ansible-language-server
               sops
               terragrunt
               terraform
@@ -66,14 +62,9 @@
               cilium-cli
               hubble
               kubernetes-helm
+              earthly
+              inputs'.dagger.packages.dagger
             ];
-
-            scripts = {
-              ansible-deploy.exec = ''
-                cd "$DEVENV_ROOT/ansible"
-                ansible-playbook -i inventory/hosts.ini site.yml --diff "$@"
-              '';
-            };
           };
 
           treefmt = {
