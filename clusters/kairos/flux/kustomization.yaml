@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - ./repositories/git/
   - ./repositories/helm/
+  - ./ks-addons.yaml
