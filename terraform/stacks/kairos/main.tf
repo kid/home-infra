@@ -48,6 +48,11 @@ variable "kairos_p2p_token" {
   sensitive = true
 }
 
+variable "flux_sops_key" {
+  type      = string
+  sensitive = true
+}
+
 locals {
   cidr                    = var.vlan_cidrs[var.vlan_id]
   controlplane_node_count = 1
@@ -283,6 +288,7 @@ resource "proxmox_virtual_environment_file" "cloud_config_cp" {
       hostname         = each.key,
       kairos_p2p_token = var.kairos_p2p_token,
       kubevip_eip      = local.kubevip_eip
+      flux_sops_key    = var.flux_sops_key
     })
     file_name = "${each.key}-cloud-config.yaml"
   }
@@ -295,7 +301,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
   node_name    = "pve1"
 
   source_raw {
-    data = templatefile("${path.module}/cloud-init.yaml", {
+    data = templatefile("${path.module}/cloud-init-agent.yaml", {
       role             = "worker"
       hostname         = each.key,
       kairos_p2p_token = var.kairos_p2p_token,
