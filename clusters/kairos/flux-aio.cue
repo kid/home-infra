@@ -25,7 +25,7 @@ bundle: {
 			values: git: {
 				url:  "https://github.com/kid/home-infra"
 				ref:  "refs/heads/feat/flux-aio-values"
-				path: "clusters/kairos/addons/flux"
+				path: "clusters/kairos/flux"
 			}
 		}
 	}
