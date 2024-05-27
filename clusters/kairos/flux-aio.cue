@@ -19,13 +19,13 @@ bundle: {
 			}
 		}
 
-		"apps": {
+		"addons": {
 			module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
 			namespace: "flux-system"
 			values: git: {
 				url:  "https://github.com/kid/home-infra"
 				ref:  "refs/heads/feat/flux-aio-values"
-				path: "clusters/kairos"
+				path: "clusters/kairos/addons"
 			}
 		}
 	}
