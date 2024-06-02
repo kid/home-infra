@@ -8,7 +8,7 @@ spec:
   dependsOn:
     - name: cilium
   interval: 1h0m0s
-  path: ./clusters/kairos/addons/cilium/configs/manifests
+  path: ./clusters/kairos/addons/cilium/configs
   prune: true
   sourceRef:
     kind: GitRepository
