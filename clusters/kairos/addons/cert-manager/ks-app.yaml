@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: gateway-api
+    - name: cilium
   interval: 1h0m0s
   path: ./clusters/kairos/addons/cert-manager/app
   prune: true
