@@ -20,3 +20,5 @@ spec:
     installCRDs: true
     prometheus:
       enabled: false
+    featureGates:
+      ExperimentalGatewayAPISupport: true
