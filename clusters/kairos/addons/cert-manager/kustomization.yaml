@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./app/ks.yaml
+  - ./configs/cloudflare-api-token.yaml
+  - ./configs/cluster-issuer.yaml
