@@ -16,3 +16,7 @@ spec:
         kind: HelmRepository
         name: jetstack
       interval: 12h
+  values:
+    installCRDs: true
+    prometheus:
+      enabled: false
