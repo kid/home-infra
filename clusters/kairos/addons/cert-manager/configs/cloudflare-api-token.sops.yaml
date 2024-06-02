@@ -1,0 +1,38 @@
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+    name: cloudflare-api-token
+    namespace: cert-manager
+type: Opaque
+stringData:
+    api-token: ENC[AES256_GCM,data:fyYwC1l6DrpYzYoiUqB4xkYaDd4YnW/c+ufaZAMomNyeMAuthuPB9g==,iv:SBUsUjnfnFFx32ZAcW0TpNGL0N42RNzNonL25jPbRho=,tag:bucLYBGlH4BUJNrXuDyRAQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1dghfu7sxwlkf4626eywmgr63y2g7m4x8zs8a6xt2zay3x7dclpnsw776dd
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXVlZTQ0FWaGdPUno0eFor
+            MEw0Rk42OE9tWnJmdUw2ZDN5YngzOFZqalhBCjVSSjVCb1lpQ0VsWWYzL3hvZms1
+            SzZEcU4ySnEwYWRFZ0dSSmU4bGtPaG8KLS0tIHJHY1A2OE9OblNKbHdIaWRYWisz
+            OVFyemZINWZnQUNxaVJpa2VKWjFyRDQKYJgwzMuK2UKr/kvbVb1qZQvcaRyouZ3o
+            JYh601as8GuKlLtGXfuEpDb7geL3FHEqaioGmT83cBrCb/x/ZcWfHw==
+            -----END AGE ENCRYPTED FILE-----
+        - recipient: age1xsklnts8wctdv7jekwqx5cveggzch5s0v9p7p4yredmghtgqryzqg8fay6
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBdlMxcW82K2thS09rSE1N
+            OTNLRmxPbTgxTVpEV0xGUytyc0U2OVFmRkNnCkQ1YmN4RDBtWnBmZWVPZHN4R2VY
+            c3Bobyt0VUE3VTFBdGVHZXg1djhaZWMKLS0tIE1yQnVnUHhUODIvQ0d3bkZidTNl
+            Qm5WTzI1bHJqd2pKY241eHk4anNDdTQKi4cPAJZ2KzyiWqppdCYKgslxOleAIxom
+            N5BfMuhbVeUbpiqklb+yfZlGC/2IbczZFSbZm4uxRoSDco5+CfUPkg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-06-02T08:04:00Z"
+    mac: ENC[AES256_GCM,data:atasQCKbT6hNa8bxrO4t5xOyO9NDxt3Wjyct0x4V8GWISMEFxcTr80EfJ/6mNEGEIvyc2gMAxoVJkzeCL2/tqG+VIjV3fbVVAcijGQovd96DtaV3vbyPzYG80mhPQdxC+LvJ4ySWA5WXzIL5GY6InRXNf3vzdArjXD+3/ePvD2Y=,iv:kot6vweaZaiXMIYl0Cz9DyGiJtOYnltPVz0m4PrllQ8=,tag:xXxvZiorfeTo1VYKSSHNEA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
