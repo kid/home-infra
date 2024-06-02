@@ -7,7 +7,6 @@ metadata:
 spec:
   releaseName: cilium
   targetNamespace: kube-system
-  storageNamespace: kube-system
   interval: 30m
   chart:
     spec:
