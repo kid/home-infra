@@ -14,4 +14,6 @@ RUN DOWNLOAD_FILE="/tmp/timoni_${VERSION}_linux_amd64.tar.gz" && \
 
 FROM scratch
 COPY --from=build timoni .
+COPY timoni-apply.service .
+COPY timoni-apply.sh .
 COPY run.sh .

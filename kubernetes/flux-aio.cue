@@ -18,28 +18,41 @@ bundle: {
 				// }
 			}
 		}
+
+		"flux-system": {
+			module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
+			namespace: "flux-systemy"
+			values: git: {
+				url:    "https://github.com/kid/home-infra"
+				ref:    "refs/heads/main"
+				path:   "kubernetes/flux-system"
+				ignore: "kubernetes/clusters/**/flux-system/"
+			}
+		}
+
 		"cluster-addons": {
 			module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
 			namespace: "flux-system"
 			values: git: {
 				url:  "https://github.com/kid/home-infra"
-				ref:  "refs/heads/feat/talos"
-				path: "./kubernetes/cluster-addons"
+				ref:  "refs/heads/main"
+				path: "kubernetes/cluster-addons"
+				dependsOn: [{name: "flux-system"}]
 			}
 		}
-		"apps": {
-			module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
-			namespace: "flux-system"
-			values: {
-				dependsOn: [
-					{name: "cluster-addons"},
-				]
-				git: {
-					url:  "https://github.com/kid/home-infra"
-					ref:  "refs/heads/feat/talos"
-					path: "./kubernetes/apps"
-				}
-			}
-		}
+		// "apps": {
+		// 	module: url: "oci://ghcr.io/stefanprodan/modules/flux-git-sync"
+		// 	namespace: "flux-system"
+		// 	values: {
+		// 		dependsOn: [
+		// 			{name: "cluster-addons"},
+		// 		]
+		// 		git: {
+		// 			url:  "https://github.com/kid/home-infra"
+		// 			ref:  "refs/heads/feat/talos"
+		// 			path: "./kubernetes/apps"
+		// 		}
+		// 	}
+		// }
 	}
 }
