@@ -1,0 +1,14 @@
+[Unit]
+Description=Apply Timoni bundles
+After=k3s.service
+
+[Service]
+Type=oneshot
+Restart=no
+ExecStart=/usr/local/bin/timoni-apply.sh
+User=root
+Group=root
+RemainAfterExit=yes
+
+[Install]
+WantedBy=k3s.service

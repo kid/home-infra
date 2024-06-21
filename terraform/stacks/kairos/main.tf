@@ -25,23 +25,19 @@ variable "worker_ip_offset" {
 }
 
 variable "kairos_os_variant" {
-  type    = string
-  default = "rockylinux-9"
+  type = string
 }
 
 variable "kairos_version" {
-  type    = string
-  default = "v3.0.8"
+  type = string
 }
 
 variable "kairos_k3s_version" {
-  type    = string
-  default = "v1.29.3"
+  type = string
 }
 
 variable "kairos_checksum" {
-  type    = string
-  default = "0e34caac4273c39c1ba641b3067b7b73eb420d3a8c40fafae81313d637c41ca5"
+  type = string
 }
 
 variable "kairos_p2p_token" {

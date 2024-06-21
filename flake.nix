@@ -51,9 +51,14 @@
             packages = with pkgs; [
               config.treefmt.build.wrapper
               azure-cli
+              (ansible.overrideAttrs (oldAttrs: {
+                propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ [ pkgs.python311Packages.librouteros ];
+              }))
+              ansible-lint
+              ansible-language-server
+              age
               sops
               terragrunt
-              terraform
               terraform-ls
               talosctl
               timoni
@@ -64,6 +69,8 @@
               kubernetes-helm
               earthly
               inputs'.dagger.packages.dagger
+              opentofu
+              k3s
             ];
           };
 

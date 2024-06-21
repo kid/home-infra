@@ -1,0 +1,23 @@
+VERSION 0.8
+
+# ARG --global container
+ARG --global version="latest"
+ARG --global IMAGE_REPOSITORY=ghcr.io/kid/home-infra
+
+build:
+	ARG --required container
+	FROM DOCKERFILE ${container}
+	SAVE IMAGE --push ${IMAGE_REPOSITORY}/${container}:${version}
+
+# build-all:
+# 	BUILD +build --container=dnsdist
+
+all:
+	LOCALLY
+	FOR container IN $(ls -d */)
+		BUILD \
+			--platform=linux/amd64 \
+			--platform=linux/arm64 \
+			+build \
+			--container="${container%/}"
+	END

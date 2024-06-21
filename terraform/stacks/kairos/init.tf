@@ -2,11 +2,11 @@ terraform {
   required_providers {
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.47.0"
+      version = "1.54.2"
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.55.0"
+      version = "0.60.0"
     }
   }
 }
