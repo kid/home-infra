@@ -67,5 +67,6 @@ write_files:
         name: cilium-values
         namespace: flux-system
       data:
-        k8sServiceHost: ${kubevip_eip}
-        k8sServicePort: 6443
+        values.yaml: |
+          k8sServiceHost: ${kubevip_eip}
+          k8sServicePort: 6443

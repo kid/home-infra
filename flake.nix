@@ -55,9 +55,9 @@
               }))
               ansible-lint
               ansible-language-server
+              age
               sops
               terragrunt
-              terraform
               terraform-ls
               talosctl
               timoni
@@ -66,6 +66,9 @@
               cilium-cli
               hubble
               kubernetes-helm
+              earthly
+              opentofu
+              k3s
             ];
 
             scripts = {

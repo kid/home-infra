@@ -1,5 +1,6 @@
 keys:
   - &kid-nixos age1dghfu7sxwlkf4626eywmgr63y2g7m4x8zs8a6xt2zay3x7dclpnsw776dd
+  - &kairos age1xsklnts8wctdv7jekwqx5cveggzch5s0v9p7p4yredmghtgqryzqg8fay6
 
 defaults: &defaults
   key_groups:
@@ -7,4 +8,10 @@ defaults: &defaults
         - *kid-nixos
 
 creation_rules:
+  - path_regex: clusters/kairos/.+\.sops\.ya?ml
+    encrypted_regex: ^(data|stringData)$
+    key_groups:
+      - age:
+          - *kid-nixos
+          - *kairos
   - <<: *defaults
