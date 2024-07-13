@@ -10,4 +10,4 @@ VOLUME ["/var/lib/dnsdist"]
 
 EXPOSE 53/tcp 53/udp 443/tcp 853/tcp 8083/tcp 8443/tcp 8443/udp
 
-CMD ["dnsdist", "--supervised", "--disable-syslog", "--uid", "dnsdist", "--gid", "dnsdist"]
+CMD ["dnsdist", "--supervised", "--disable-syslog", "--uid", "dnsdist", "--gid", "dnsdist", "-C", "/etc/dnsdist.d/dnsdist.conf"]

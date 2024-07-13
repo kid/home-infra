@@ -24,6 +24,42 @@ provider "registry.opentofu.org/bpg/proxmox" {
   ]
 }
 
+provider "registry.opentofu.org/hashicorp/dns" {
+  version     = "3.4.1"
+  constraints = "3.4.1"
+  hashes = [
+    "h1:6Tb2wZRxfKunvjLw47ihfkaoARWIQrJd+WCOXkx0hg4=",
+    "zh:53f46f16fc3b25d9bdce61d7cc9a67cea9c67ea5347fcde35833451d5011f1c4",
+    "zh:662669802c99c7e698ca52e7a32afc19acf66d97bbc05f5effacdf0fe471848f",
+    "zh:8289aee49df8a0cb2fcdfded575e68df1721fc3e6ce75555def499d31b7e910d",
+    "zh:90aa9b049d19137ed15ea3f88238824e1fde7d1a806378cb97520391e169a96d",
+    "zh:9e5795e10d65927ba689cfabc06b72085055543342d1db26ef5963ae5ab5d64a",
+    "zh:9f39b6e0ca35cf2405fe4e13af8a405cf9b0b0c34b6b06ad36f319631405a3aa",
+    "zh:c37a2c140c95b3eaa9d0aeb79496b220ba1a0456d01a77fcc68bd565bee7edd5",
+    "zh:cd40d356c5382f0b868df2d8539f95031e3cf0c210053674ec4c7cd20c73b82a",
+    "zh:fde59f09e4e62fc84012fff8493bc64eac287a0245e1c8abf29b0138d3018dfb",
+    "zh:ffee5b54936bd43247e9316de0ecc0dde36556a2cd50f090d7f6443a3f689b95",
+  ]
+}
+
+provider "registry.opentofu.org/hashicorp/time" {
+  version     = "0.11.2"
+  constraints = "0.11.2"
+  hashes = [
+    "h1:WVXqTGyMwPRVhT7R9DAMhTwdNaoAQeuGKqAncyS5yh8=",
+    "zh:534d56fac2daa5c15737fa1907b7afe2d91474197a0ec272d3f864d2a0a87743",
+    "zh:67c7765dc3b5ec19b6df32c29620de4b3e7846f5aa1a6b1b0e15394d87d0f875",
+    "zh:9502412f028d17051ea0550f5015d0515da78bc938f415191d9171742481330c",
+    "zh:982984971fe6cb87600f118fbf754e7f60f7ad343735a4f99d632bf148319cee",
+    "zh:9b0bedf8781be6c414f314989246a3b9a79302845db57dbe497d768cd56ee73e",
+    "zh:a35244d464dcad8940060c49b66a2f653d2dfc4e471c2dd59e2118a17a279427",
+    "zh:c8e3534b8cdff62f88a9882aed8c6dc4484639662bff2ea4e89499f1209b9ba9",
+    "zh:e78c88613bb6eab52d94bb7592d4df3a79bf69b9f1e50a86f9d9174db7e5251c",
+    "zh:fb28ffd2b641a449bd5526bef6e547894b4c5ddac0cef05ee03881a6c53eac39",
+    "zh:fcfcd35ff1178cbf11034e2eaf4254f9aadd8531f75d1b15b5e245715183d49b",
+  ]
+}
+
 provider "registry.opentofu.org/terraform-routeros/routeros" {
   version     = "1.54.2"
   constraints = "1.54.2"
