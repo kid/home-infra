@@ -10,7 +10,7 @@ inputs = merge(
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/kairos.sops.yaml")),
-  yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/bind.sops.yaml")),
+  yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/pdns.sops.yaml")),
   {
     cluster_name = "kairos.kidibox.net"
     kairos_os_variant = "debian-testing"

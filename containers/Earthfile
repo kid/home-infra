@@ -1,20 +1,10 @@
 VERSION 0.8
 
 FROM alpine:edge
-# RUN apk add --no-cache git
 
 ARG EARTHLY_GIT_SHORT_HASH
 ARG --global version=${EARTHLY_GIT_SHORT_HASH}
 ARG --global IMAGE_REPOSITORY=ghcr.io/kid/home-infra
-
-base-img:
-	FROM alpine:edge
-	ARG --required user
-	ARG packages
-	RUN addgroup -S -g 10001 ${user} && \
-    	adduser -S -D -u 10001 -G ${user} ${user} && \
-    	apk add --no-cache ${packages}
-
 
 build:
 	ARG --required container
@@ -22,20 +12,6 @@ build:
 	LABEL org.opencontainers.image.source = "https://github.com/kid/home-infra"
 	SAVE IMAGE --push ${IMAGE_REPOSITORY}/${container}:latest
 	SAVE IMAGE --push ${IMAGE_REPOSITORY}/${container}:${version}
-
-# build-all:
-# 	BUILD +build --container=dnsdist
-
-bind:
-	FROM +base-img --user=bind --packages="bind=9.18.27-r0"
-	SAVE IMAGE --push ${IMAGE_REPOSITORY}/bind:latest
-	SAVE IMAGE --push ${IMAGE_REPOSITORY}/bind:${version}
-
-bind-all-platforms:
-	BUILD \
-		--platform=linux/amd64 \
-		--platform=linux/arm64 \
-		+bind
 
 all:
 	LOCALLY

@@ -4,17 +4,17 @@ terraform {
       source  = "hashicorp/time"
       version = "0.11.2"
     }
-    dns = {
-      source  = "hashicorp/dns"
-      version = "3.4.1"
-    }
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.54.2"
+      version = "1.56.0"
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.60.0"
+      version = "0.61.1"
+    }
+    powerdns = {
+      source  = "pan-net/powerdns"
+      version = "1.5.0"
     }
   }
 }
@@ -94,14 +94,32 @@ locals {
   ]
 }
 
-resource "dns_a_record_set" "local" {
+provider "powerdns" {
+  server_url = var.pdns_api_url
+  api_key    = var.pdns_api_key
+}
+
+resource "powerdns_zone" "local" {
+  depends_on  = [routeros_container.pdns]
+  name        = "kidibox.net."
+  kind        = "Native"
+  nameservers = ["ns1.kidibox.net."]
+}
+
+resource "powerdns_record" "ns" {
+  zone    = powerdns_zone.local.name
+  name    = "ns1.kidibox.net."
+  type    = "A"
+  ttl     = 300
+  records = ["10.0.5.53"]
+}
+
+resource "powerdns_record" "local" {
+
   for_each = { for record in local.records : record.name => record }
-
-  zone      = "kidibox.net."
-  name      = each.value.name
-  addresses = [each.value.ip]
-
-  lifecycle {
-    ignore_changes = [ttl]
-  }
+  zone     = powerdns_zone.local.name
+  type     = "A"
+  ttl      = 300
+  name     = "${each.value.name}.${powerdns_zone.local.name}"
+  records  = [each.value.ip]
 }

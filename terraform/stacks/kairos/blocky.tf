@@ -76,8 +76,9 @@ resource "routeros_file" "blocky_config" {
       # https = 443,
     },
     conditional = {
+      fallbackUpstream = true,
       mapping = {
-        "kidibox.net" = "10.0.5.53",
+        "kidibox.net" = local.pdns_enabled ? trimsuffix(routeros_interface_veth.pdns[0].address, "/24") : "10.0.5.53",
       },
     },
     caching = {
