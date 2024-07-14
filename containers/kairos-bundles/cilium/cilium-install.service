@@ -1,0 +1,14 @@
+[Unit]
+Description=Install cilium
+After=k3s.service
+
+[Service]
+Type=oneshot
+Restart=no
+ExecStart=/usr/local/bin/cilium-install.sh
+User=root
+Group=root
+RemainAfterExit=yes
+
+[Install]
+WantedBy=k3s.service

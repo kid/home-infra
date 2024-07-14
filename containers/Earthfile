@@ -15,10 +15,10 @@ build:
 
 all:
 	LOCALLY
-	FOR container IN $(ls -d */)
+	FOR container IN $(find . -type d -exec test -e '{}/Dockerfile' ';' -print | sed 's|^./||')
 		BUILD \
 			--platform=linux/amd64 \
 			--platform=linux/arm64 \
 			+build \
-			--container="${container%/}"
+			--container="${container}"
 	END
