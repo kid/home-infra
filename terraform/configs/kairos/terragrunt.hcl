@@ -14,8 +14,8 @@ inputs = merge(
   {
     cluster_name = "kairos.kidibox.net"
     kairos_os_variant = "debian-testing"
-    kairos_version = "v3.0.11"
-    kairos_k3s_version = "v1.29.3"
-    kairos_checksum = "1b7d96bd48105c2eef70d3834860cb14b775123d2f4d488528abf2ff23f1e68d"
+    kairos_version = "v3.1.0"
+    kairos_k3s_version = "v1.30.2"
+    kairos_checksum = "8f2a1c0d3c704fdd2623430071a532f90d860f52f0cdb2d4964c5fe233bd24fa"
   }
 )
