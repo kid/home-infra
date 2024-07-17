@@ -20,7 +20,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/kairos.kidibox.net
+  path: ./clusters/talos.kidibox.net
   prune: true
   sourceRef:
     kind: GitRepository
