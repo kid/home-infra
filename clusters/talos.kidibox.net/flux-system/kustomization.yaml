@@ -12,6 +12,9 @@ patches:
     name: flux-system
   patch: |
     spec:
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      metadata:
+        name: flux-system
       decryption:
         provider: sops
         secretRef:
