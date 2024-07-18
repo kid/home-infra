@@ -15,3 +15,5 @@ patches:
       path: /spec/template/spec/tolerations
       value:
       - key: node.kubernetes.io/not-ready
+    - op: remove
+      path: /spec/template/spec/containers/0/ports
