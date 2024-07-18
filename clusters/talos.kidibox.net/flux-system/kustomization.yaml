@@ -29,3 +29,13 @@ patches:
       - key: node.kubernetes.io/not-ready
     - op: remove
       path: /spec/template/spec/containers/0/ports
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: KUBERNETES_SERVICE_HOST
+        value: "127.0.0.1"
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: KUBERNETES_SERVICE_PORT
+        value: "7445"
