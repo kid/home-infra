@@ -10,7 +10,7 @@ patches:
     name: flux-system
   patch: |-
     - op: add
-      path: /metadata/label/"pod-security.kubernetes.io\/enforce
+      path: /metadata/label/"pod-security.kubernetes.io~enforce
       value: privileged
 - target:
     kind: Deployment
