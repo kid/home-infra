@@ -19,6 +19,10 @@ patches:
     - op: replace
       path: /spec/template/spec/hostNetwork
       value: true
+    - op: remove
+      path: /spec/template/spec/containers/0/livenessProbe
+    - op: remove
+      path: /spec/template/spec/containers/0/readinessProbe
     - op: add
       path: /spec/template/spec/tolerations
       value:
