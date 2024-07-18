@@ -8,10 +8,10 @@ patches:
     kind: Deployment
     labelSelector: app.kubernetes.io/part-of=flux
   patch: |-
-      - op: replace
-        path: /spec/template/spec/hostNetwork
-        value: true
-      - op: add
-        path: /spec/template/spec/tolerations
-        value:
-          - key: node.kubernetes.io/not-ready
+    - op: replace
+      path: /spec/template/spec/hostNetwork
+      value: true
+    - op: add
+      path: /spec/template/spec/tolerations
+      value:
+      - key: node.kubernetes.io/not-ready
