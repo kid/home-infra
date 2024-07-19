@@ -6,4 +6,4 @@ resources:
   # - ./cluster-repo.yaml
   # - ../flux-system
   - ../../base/flux/repositories
-  - ./addons
+  # - ./addons
