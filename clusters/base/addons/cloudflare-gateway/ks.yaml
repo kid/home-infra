@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudflare-gateway
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: gateway-api
+  path: ./config/default
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: cloudflare-kubernetes-gateway
+  interval: 24h
+  retryInterval: 1m
+  timeout: 5m
+  wait: true

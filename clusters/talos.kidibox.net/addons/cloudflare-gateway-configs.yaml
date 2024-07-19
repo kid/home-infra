@@ -2,19 +2,24 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cert-manager-issuers
+  name: cloudflare-gateway-configs
   namespace: flux-system
 spec:
   dependsOn:
-    - name: cert-manager
+    - name: gateway-api
+    - name: cloudflare-gateway
   interval: 1h0m0s
-  path: ./clusters/base/addons/cert-manager-issuers
+  path: ./clusters/base/addons/cloudflare-gateway-configs
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-sync
+  retryInterval: 1m
+  timeout: 5m
+  wait: true
   postBuild:
     substituteFrom:
+      - kind: ConfigMap
+        name: cluster-values
       - kind: Secret
         name: cluster-secrets
-        optional: false

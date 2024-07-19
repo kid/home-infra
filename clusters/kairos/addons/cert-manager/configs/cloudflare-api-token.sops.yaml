@@ -7,6 +7,8 @@ metadata:
 type: Opaque
 stringData:
     api-token: ENC[AES256_GCM,data:fyYwC1l6DrpYzYoiUqB4xkYaDd4YnW/c+ufaZAMomNyeMAuthuPB9g==,iv:SBUsUjnfnFFx32ZAcW0TpNGL0N42RNzNonL25jPbRho=,tag:bucLYBGlH4BUJNrXuDyRAQ==,type:str]
+    cloudflare_api_token: ENC[AES256_GCM,data:4m4YFpOlUQZWkNKBs/x41IRkXsEqlnv7zjmLvaFl3YlDD2AHbCkO/g==,iv:vQO4uIkQ6TgbXDHpbuFUjjJcYT8Rc2jBzlm6k7okXps=,tag:jitdB7ZqwsFA9ExHe8+5Fw==,type:str]
+    cloudflare_account_id: ENC[AES256_GCM,data:+3tTLJ5jJ3VsX8Hf/KicyVOTpkp/mNJ4rw5UNP5v3lI=,iv:+5MRExmeWWI5dnJvNyDTH0GEsroM58udxo4NCKbiUFk=,tag:RC2TJmyZjwOMNlqoo8VYrg==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -31,8 +33,8 @@ sops:
             Qm5WTzI1bHJqd2pKY241eHk4anNDdTQKi4cPAJZ2KzyiWqppdCYKgslxOleAIxom
             N5BfMuhbVeUbpiqklb+yfZlGC/2IbczZFSbZm4uxRoSDco5+CfUPkg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-06-02T08:04:00Z"
-    mac: ENC[AES256_GCM,data:atasQCKbT6hNa8bxrO4t5xOyO9NDxt3Wjyct0x4V8GWISMEFxcTr80EfJ/6mNEGEIvyc2gMAxoVJkzeCL2/tqG+VIjV3fbVVAcijGQovd96DtaV3vbyPzYG80mhPQdxC+LvJ4ySWA5WXzIL5GY6InRXNf3vzdArjXD+3/ePvD2Y=,iv:kot6vweaZaiXMIYl0Cz9DyGiJtOYnltPVz0m4PrllQ8=,tag:xXxvZiorfeTo1VYKSSHNEA==,type:str]
+    lastmodified: "2024-07-19T13:54:28Z"
+    mac: ENC[AES256_GCM,data:Wpn6W0jQvog7NY/J5vJvGFYxFbQPip2xPJe2XguhUrLBJseeWMPZ1j6H5C6hDHoFk7Kmwuf08d5dNAVVabCt+GWMjcHMQo6Fx5w0AwAHffG6q2eEJKo1tyVWEgcQdyO9GDuj19RzHT5NLq5ANQWXC7OMvKrla6SbojpwBoVRkPI=,iv:F8ecSPI4ZvPr7entFHpArNECy6cKNJAyAPtdsVmMpjM=,tag:3fMIpVGFUvsoqHLXkWpdqQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
-    version: 3.8.1
+    version: 3.9.0
