@@ -16,5 +16,5 @@ stringData:
           region: ${proxmox_cluster_name}
 
     enabledControllers:
-      - cloud-node
+      # - cloud-node
       - cloud-node-lifecycle
