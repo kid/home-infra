@@ -11,5 +11,5 @@ spec:
   - flux-talos.kidibox.net
   rules:
   - backendRefs:
-    - name: notification-controller
+    - name: webhook-receiver
       port: 80
