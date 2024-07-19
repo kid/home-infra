@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: gateway-api
+  interval: 1h0m0s
+  path: ./clusters/base/addons/cert-manager
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-sync
