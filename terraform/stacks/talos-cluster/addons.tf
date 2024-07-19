@@ -187,7 +187,9 @@ resource "kubernetes_config_map" "cluster_values" {
   }
 
   data = {
-    cluster_name = var.cluster_name
+    cluster_name         = var.cluster_name
+    proxmox_api_endpoint = "${var.proxmox_endpoint}/api2/json"
+    proxmox_cluster_name = "pve"
   }
 }
 
@@ -201,6 +203,8 @@ resource "kubernetes_secret" "cluster_secrets" {
   data = {
     cloudflare_account_id = var.cloudflare_account_id
     cloudflare_api_token  = var.cloudflare_api_token
+    proxmox_token_id      = proxmox_virtual_environment_user_token.ccm.id
+    proxmox_token_secret  = trimprefix(proxmox_virtual_environment_user_token.ccm.value, "${proxmox_virtual_environment_user_token.ccm.id}=")
   }
 }
 

@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxmox-ccm-values
+  namespace: flux-system
+type: Opaque
+stringData:
+  values.yaml: |-
+    config:
+      clusters:
+        - url: ${proxmox_api_endpoint}
+          insecure: false
+          token_id: ${proxmox_token_id}
+          token_secret: ${proxmox_token_secret}
+          region: ${proxmox_cluster_name}
+
+    enabledControllers:
+      - cloud-node
+      - cloud-node-lifecycle

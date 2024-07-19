@@ -8,3 +8,4 @@ resources:
   - ./helm/cilium.yaml
   - ./helm/fluxcd-community.yaml
   - ./helm/jetstack.yaml
+  - ./helm/sergelogvinov.yaml

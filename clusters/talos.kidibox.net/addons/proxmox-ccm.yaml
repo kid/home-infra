@@ -2,13 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cert-manager-issuers
+  name: proxmox-ccm
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cert-manager
   interval: 1h0m0s
-  path: ./clusters/base/addons/cert-manager-issuers
+  path: ./clusters/base/addons/proxmox-ccm
   prune: true
   sourceRef:
     kind: GitRepository
