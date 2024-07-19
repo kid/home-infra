@@ -4,5 +4,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./cilium.yaml
+  - ./fluxcd-community.yaml
   - ./gateway-api.yaml
   - ./jetstack.yaml
