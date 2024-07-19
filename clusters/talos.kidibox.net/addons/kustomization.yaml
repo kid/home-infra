@@ -6,3 +6,4 @@ resources:
   - ../../base/addons/gateway-api
   - ./cilium.yaml
   - ./cert-manager.yaml
+  - ./cert-manager-issuers.yaml
