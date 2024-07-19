@@ -30,9 +30,15 @@ locals {
     }
   }
   flux_values = {
-    # notificationController = {
-    #   create = false
-    # }
+    watchAllNamespaces = false
+    notificationController = {
+      container = {
+        additionalArgs = ["--rate-limit-interval", "30s", "--feature-gates", "CacheSecretsAndConfigMaps=true"]
+      }
+    }
+    imageReflectionController = {
+      create = false
+    }
   }
 }
 
@@ -57,7 +63,7 @@ resource "kubernetes_namespace" "flux_system" {
   metadata {
     name = "flux-system"
     labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
+      # "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
 }
@@ -72,7 +78,7 @@ resource "helm_release" "flux_system" {
   version    = "2.13.0"
   namespace  = kubernetes_namespace.flux_system[0].metadata[0].name
   values = [
-    yamlencode(local.cilium_values)
+    yamlencode(local.flux_values)
   ]
 }
 
@@ -226,4 +232,8 @@ resource "github_repository_webhook" "flux" {
   active = true
 
   events = ["push"]
+
+  lifecycle {
+    ignore_changes = [configuration.0.url]
+  }
 }
