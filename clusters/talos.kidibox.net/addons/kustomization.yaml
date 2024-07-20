@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ../../base/addons/gateway-api/
   - ./cilium.yaml
+  - ./external-dns.yaml
   - ./cert-manager.yaml
   - ./cert-manager-issuers.yaml
   - ../../base/addons/cloudflare-gateway/
