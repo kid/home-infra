@@ -64,6 +64,6 @@ spec:
             - --domain-filter=${cluster_domain}
             - --log-level=info
             - --interval=5m
-      envFrom:
-        - secretRef:
-            name: powerdns
+          envFrom:
+            - secretRef:
+                name: powerdns
