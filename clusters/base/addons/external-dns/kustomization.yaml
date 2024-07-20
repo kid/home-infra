@@ -10,5 +10,5 @@ resources:
 secretGenerator:
   - name: powerdns
     literals:
-      - EXTERNAL_DNS_PDNS_SERVER=${pdns_api_url}
-      - EXTERNAL_DNS_PDNS_API_KEY=${pdns_api_key}
+      - EXTERNAL_DNS_PDNS_SERVER=${powerdns_api_url}
+      - EXTERNAL_DNS_PDNS_API_KEY=${powerdns_api_key}
