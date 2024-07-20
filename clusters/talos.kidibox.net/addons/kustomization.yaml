@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ../../base/addons/gateway-api/
   - ./cilium.yaml
+  - ./cilium-configs.yaml
   - ./external-dns.yaml
   - ./cert-manager.yaml
   - ./cert-manager-issuers.yaml
