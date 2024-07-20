@@ -15,6 +15,10 @@ stringData:
           token_secret: ${proxmox_csi_token_secret}
           region: ${proxmox_cluster_name}
 
+    node:
+      tolerations:
+        - operator: Exists
+
     # Deploy CSI controller only on control-plane nodes
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
