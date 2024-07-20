@@ -7,8 +7,10 @@ resources:
   - ./namespace.yaml
   - ./manifest.yaml
 
-secretGenerator:
-  - name: powerdns
-    literals:
-      - EXTERNAL_DNS_PDNS_SERVER=${powerdns_api_url}
-      - EXTERNAL_DNS_PDNS_API_KEY=${powerdns_api_key}
+# FIXME: does not get replaced by flux's kustomize :/
+# need kustomize to generate stringData
+# secretGenerator:
+#   - name: powerdns
+#     literals:
+#        - EXTERNAL_DNS_PDNS_SERVER=${powerdns_api_url}
+#        - EXTERNAL_DNS_PDNS_API_KEY=${powerdns_api_key}

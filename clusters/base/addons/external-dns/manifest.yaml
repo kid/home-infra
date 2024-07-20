@@ -65,3 +65,14 @@ spec:
           envFrom:
             - secretRef:
                 name: powerdns
+---
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: powerdns
+  namespace: default
+type: Opaque
+stringData:
+  EXTERNAL_DNS_PDNS_SERVER: ${powerdns_api_url}
+  EXTERNAL_DNS_PDNS_API_KEY: ${powerdns_api_key}
