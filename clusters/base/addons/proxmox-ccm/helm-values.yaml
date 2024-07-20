@@ -11,8 +11,8 @@ stringData:
       clusters:
         - url: ${proxmox_api_endpoint}
           insecure: false
-          token_id: ${proxmox_token_id}
-          token_secret: ${proxmox_token_secret}
+          token_id: ${proxmox_ccm_token_id}
+          token_secret: ${proxmox_ccm_token_secret}
           region: ${proxmox_cluster_name}
 
     enabledControllers:

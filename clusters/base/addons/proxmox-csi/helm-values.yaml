@@ -1,0 +1,36 @@
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxmox-csi-values
+  namespace: flux-system
+type: Opaque
+stringData:
+  values.yaml: |-
+    config:
+      clusters:
+        - url: ${proxmox_api_endpoint}
+          insecure: false
+          token_id: ${proxmox_csi_token_id}
+          token_secret: ${proxmox_csi_token_secret}
+          region: ${proxmox_cluster_name}
+
+    # Deploy CSI controller only on control-plane nodes
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+
+    # Define storage classes
+    # See https://pve.proxmox.com/wiki/Storage
+    storageClass:
+      - name: proxmox-local-zfs-xfs
+        storage: local-zfs
+        reclaimPolicy: Delete
+        fstype: xfs
+      - name: proxmox-local-zfs-ext4
+        storage: local-zfs
+        reclaimPolicy: Delete
+        fstype: ext4
+        cache: writethrough

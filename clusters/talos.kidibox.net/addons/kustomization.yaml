@@ -9,7 +9,8 @@ resources:
   - ./cert-manager-issuers.yaml
   - ../../base/addons/cloudflare-gateway/
   - ./cloudflare-gateway-configs.yaml
-  - ./proxmox-ccm.yaml
+  # - ./proxmox-ccm.yaml
+  - ./proxmox-csi.yaml
 patches:
   - target:
       group:  kustomize.toolkit.fluxcd.io
