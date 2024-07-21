@@ -31,15 +31,38 @@ locals {
   }
   flux_values = {
     watchAllNamespaces = false
+    sourceController = {
+      tolerations = local.tolerations
+    }
+    helmController = {
+      tolerations = local.tolerations
+    }
+    kustomizeController = {
+      tolerations = local.tolerations
+    }
     notificationController = {
+      tolerations = local.tolerations
       container = {
         additionalArgs = ["--rate-limit-interval", "30s", "--feature-gates", "CacheSecretsAndConfigMaps=true"]
       }
     }
+    imageAutomationController = {
+      create = false
+    }
     imageReflectionController = {
       create = false
     }
+    cli = {
+      tolerations = local.tolerations
+    }
   }
+
+  tolerations = [{
+    key      = "node.cloudprovider.kubernetes.io/uninitialized"
+    operator = "Equal"
+    value    = "true"
+    effect   = "NoSchedule"
+  }]
 }
 
 resource "helm_release" "cilium" {
@@ -95,8 +118,7 @@ resource "helm_release" "flux_sync" {
     yamlencode({
       gitRepository = {
         spec = {
-          # url = "ssh://git@github.com/${var.github_org}/${var.github_repository}.git"
-          url = "https://github.com/${var.github_org}/${var.github_repository}"
+          url = "ssh://git@github.com/${var.github_org}/${var.github_repository}.git"
           ref = {
             branch = "main"
           }
@@ -188,8 +210,11 @@ resource "kubernetes_config_map" "cluster_values" {
 
   data = {
     cluster_name         = var.cluster_name
+    cluster_domain       = "kidbox.net"
     proxmox_api_endpoint = "${var.proxmox_endpoint}/api2/json"
     proxmox_cluster_name = "pve"
+    router_ip            = cidrhost(var.vlan_cidrs[var.vlan_id], 1)
+    lb_cidr              = local.lb_cidr
   }
 }
 
@@ -201,10 +226,14 @@ resource "kubernetes_secret" "cluster_secrets" {
   }
 
   data = {
-    cloudflare_account_id = var.cloudflare_account_id
-    cloudflare_api_token  = var.cloudflare_api_token
-    proxmox_token_id      = proxmox_virtual_environment_user_token.ccm.id
-    proxmox_token_secret  = trimprefix(proxmox_virtual_environment_user_token.ccm.value, "${proxmox_virtual_environment_user_token.ccm.id}=")
+    cloudflare_account_id    = var.cloudflare_account_id
+    cloudflare_api_token     = var.cloudflare_api_token
+    proxmox_ccm_token_id     = proxmox_virtual_environment_user_token.ccm.id
+    proxmox_ccm_token_secret = trimprefix(proxmox_virtual_environment_user_token.ccm.value, "${proxmox_virtual_environment_user_token.ccm.id}=")
+    proxmox_csi_token_id     = proxmox_virtual_environment_user_token.csi.id
+    proxmox_csi_token_secret = trimprefix(proxmox_virtual_environment_user_token.csi.value, "${proxmox_virtual_environment_user_token.csi.id}=")
+    powerdns_api_url         = var.pdns_api_url
+    powerdns_api_key         = var.pdns_api_key
   }
 }
 

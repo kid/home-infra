@@ -24,6 +24,23 @@ resource "talos_machine_configuration_apply" "controlplane" {
         install = {
           disk = "/dev/vda"
         }
+        nodeLabels = {
+          "topology.kubernetes.io/region" = "pve"
+          "topology.kubernetes.io/zone"   = each.value.node_name
+        }
+        # kubelet = {
+        #   extraArgs = {
+        #     cloud-provider             = "external"
+        #     rotate-server-certificates = true
+        #   }
+        # }
+        # features = {
+        #   kubernetesTalosAPIAccess = {
+        #     enabled                     = true
+        #     allowedRoles                = ["os:reader"]
+        #     allowedKubernetesNamespaces = ["kube-system"]
+        #   }
+        # }
       }
       cluster = {
         allowSchedulingOnControlPlanes = true
@@ -35,9 +52,19 @@ resource "talos_machine_configuration_apply" "controlplane" {
         proxy = {
           disabled = true
         }
+        # externalCloudProvider = {
+        #   enabled = true
+        #   manifests = [
+        #     "https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml"
+        #   ]
+        # }
       }
     })
   ]
+
+  lifecycle {
+    replace_triggered_by = [proxmox_virtual_environment_vm.controlplane]
+  }
 }
 
 resource "talos_machine_bootstrap" "cluster" {
@@ -55,7 +82,7 @@ resource "talos_cluster_kubeconfig" "cluster" {
 }
 
 data "talos_cluster_health" "cluster" {
-  depends_on             = [proxmox_virtual_environment_vm.controlplane]
+  # depends_on             = [proxmox_virtual_environment_vm.controlplane]
   client_configuration   = talos_machine_secrets.cluster.client_configuration
   endpoints              = values({ for k, v in local.controlplane_node_infos : k => v.ip })
   control_plane_nodes    = values({ for k, v in local.controlplane_node_infos : k => v.ip })

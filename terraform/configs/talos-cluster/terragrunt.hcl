@@ -10,6 +10,7 @@ inputs = merge(
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/cloudflare.sops.yaml")),
+  yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/pdns.sops.yaml")),
   {
     cluster_name = "talos.kidibox.net"
     talos_version = "1.7.5"

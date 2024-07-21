@@ -4,6 +4,8 @@ kind: HelmRelease
 metadata:
   name: cilium
   namespace: flux-system
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: Disabled
 spec:
   releaseName: cilium
   targetNamespace: kube-system

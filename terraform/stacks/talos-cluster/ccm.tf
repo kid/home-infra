@@ -19,7 +19,8 @@ resource "proxmox_virtual_environment_user" "ccm" {
 }
 
 resource "proxmox_virtual_environment_user_token" "ccm" {
-  user_id    = proxmox_virtual_environment_user.ccm.user_id
-  token_name = "ccm"
-  comment    = "Managed by Terraform"
+  user_id               = proxmox_virtual_environment_user.ccm.user_id
+  token_name            = "ccm"
+  comment               = "Managed by Terraform"
+  privileges_separation = false
 }

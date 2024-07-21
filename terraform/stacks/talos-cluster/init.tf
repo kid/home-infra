@@ -126,3 +126,13 @@ variable "cloudflare_api_token" {
   type      = string
   sensitive = true
 }
+
+variable "pdns_api_url" {
+  type = string
+}
+
+variable "pdns_api_key" {
+  type      = string
+  sensitive = true
+}
+

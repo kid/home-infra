@@ -115,3 +115,40 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
     #   ]
   }
 }
+
+locals {
+  pod_cidr = "10.244.0.0/16" # Talos default, only needed for native routing
+  lb_cidr  = "10.0.42.0/24"
+
+  ros_addr_list = "local_network"
+  ros_allowed_cidrs = [
+    local.pod_cidr,
+    local.lb_cidr,
+  ]
+}
+
+resource "routeros_ip_firewall_addr_list" "local_network" {
+  for_each = toset(local.ros_allowed_cidrs)
+  list     = local.ros_addr_list
+  address  = each.value
+}
+
+resource "routeros_routing_bgp_connection" "bgp" {
+  for_each         = merge(local.controlplane_node_infos)
+  name             = each.key
+  as               = 64512
+  routing_table    = "main"
+  address_families = "ip"
+
+  local {
+    role = "ibgp"
+  }
+
+  remote {
+    address = each.value.ip
+  }
+
+  output {
+    default_originate = "always"
+  }
+}
