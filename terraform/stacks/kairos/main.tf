@@ -51,7 +51,7 @@ variable "flux_sops_key" {
 
 locals {
   cidr                    = var.vlan_cidrs[var.vlan_id]
-  controlplane_node_count = 1
+  controlplane_node_count = 0
   controlplane_node_names = [for _, idx in range(local.controlplane_node_count) : "kairos-cp-${idx + 1}"]
   controlplane_node_infos = {
     for _, idx in range(local.controlplane_node_count) : local.controlplane_node_names[idx] => {
@@ -61,7 +61,7 @@ locals {
     }
   }
 
-  worker_node_count = 1
+  worker_node_count = 0
   worker_node_names = [for _, idx in range(local.worker_node_count) : "kairos-${idx}"]
   worker_node_infos = {
     for _, idx in range(local.worker_node_count) : local.worker_node_names[idx] => {
