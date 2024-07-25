@@ -68,6 +68,12 @@ spec:
           envFrom:
             - secretRef:
                 name: powerdns
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
 ---
 # https://kubernetes.io/docs/concepts/configuration/secret/
 apiVersion: v1
