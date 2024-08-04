@@ -60,6 +60,7 @@
                 earthly
                 opentofu
                 pdns
+                containerlab
               ]);
           };
 
