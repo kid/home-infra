@@ -6,6 +6,7 @@ resources:
   - ./git/cloudflare-kubernetes-gateway.yaml
   - ./git/gateway-api.yaml
   - ./helm/cilium.yaml
+  - ./helm/cloudnative-pg.yaml
   - ./helm/democratic-csi.yaml
   - ./helm/fluxcd-community.yaml
   - ./helm/jetstack.yaml
