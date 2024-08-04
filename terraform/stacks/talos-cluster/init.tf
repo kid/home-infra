@@ -88,7 +88,7 @@ provider "routeros" {
 }
 
 provider "kubernetes" {
-  host                   = talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.host
+  host                   = "https://${local.controlplane_vip}:6443"
   client_certificate     = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.ca_certificate)
@@ -96,7 +96,7 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host                   = talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.host
+    host                   = "https://${local.controlplane_vip}:6443"
     client_certificate     = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.client_certificate)
     client_key             = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.client_key)
     cluster_ca_certificate = base64decode(talos_cluster_kubeconfig.cluster.kubernetes_client_configuration.ca_certificate)
@@ -135,4 +135,3 @@ variable "pdns_api_key" {
   type      = string
   sensitive = true
 }
-

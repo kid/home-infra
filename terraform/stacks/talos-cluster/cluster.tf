@@ -20,6 +20,13 @@ resource "talos_machine_configuration_apply" "controlplane" {
       machine = {
         network = {
           hostname = each.key
+          interfaces = [{
+            interface = "eth0"
+            dhcp      = true
+            vip = {
+              ip = local.controlplane_vip
+            }
+          }]
         }
         install = {
           disk = "/dev/vda"
@@ -44,6 +51,9 @@ resource "talos_machine_configuration_apply" "controlplane" {
       }
       cluster = {
         allowSchedulingOnControlPlanes = true
+        controlPlane = {
+          endpoint = "https://${local.controlplane_vip}:6443"
+        }
         network = {
           cni = {
             name = "none"
@@ -96,10 +106,16 @@ data "talos_client_configuration" "cluster" {
   endpoints            = values({ for k, v in local.controlplane_node_infos : k => v.ip })
 }
 
-output "talos_config" {
+output "talosconfig" {
   value     = data.talos_client_configuration.cluster.talos_config
   sensitive = true
 }
+
+output "kubeconfig" {
+  value     = talos_cluster_kubeconfig.cluster.kubeconfig_raw
+  sensitive = true
+}
+
 
 output "machine_configuration" {
   value     = { for k in local.controlplane_node_names : k => data.talos_machine_configuration.controlplane[k].machine_configuration }

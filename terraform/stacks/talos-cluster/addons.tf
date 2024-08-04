@@ -253,20 +253,20 @@ resource "kubernetes_secret" "flux_webhook_token" {
   }
 }
 
-resource "github_repository_webhook" "flux" {
-  repository = var.github_repository
-
-  configuration {
-    url          = "https://flux-${var.cluster_name}"
-    content_type = "json"
-    secret       = random_password.flux_webhook_token.result
-  }
-
-  active = true
-
-  events = ["push"]
-
-  lifecycle {
-    ignore_changes = [configuration.0.url]
-  }
-}
+# resource "github_repository_webhook" "flux" {
+#   repository = var.github_repository
+#
+#   configuration {
+#     url          = "https://flux-${var.cluster_name}"
+#     content_type = "json"
+#     secret       = random_password.flux_webhook_token.result
+#   }
+#
+#   active = true
+#
+#   events = ["push"]
+#
+#   lifecycle {
+#     ignore_changes = [configuration.0.url]
+#   }
+# }

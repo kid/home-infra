@@ -1,6 +1,7 @@
 
 locals {
   cidr                    = var.vlan_cidrs[var.vlan_id]
+  controlplane_vip        = cidrhost(local.cidr, var.controlplane_ip_offset)
   controlplane_node_count = 3
   controlplane_node_names = [for _, idx in range(local.controlplane_node_count) : "talos-cp-${idx + 1}"]
   controlplane_node_infos = {
@@ -13,9 +14,8 @@ locals {
 }
 
 resource "proxmox_virtual_environment_download_file" "image" {
-  url = "https://factory.talos.dev/image/${var.talos_schematic_id}/v${var.talos_version}/metal-amd64.raw.zst"
-  # TODO: open PR on proxmox provider
-  file_name               = "talos-${var.talos_version}.img"
+  url                     = "https://factory.talos.dev/image/${var.talos_schematic_id}/v${var.talos_version}/nocloud-amd64.raw.xz"
+  file_name               = "talos-${var.talos_version}-nocloud-amd64.img"
   decompression_algorithm = "zst"
   content_type            = "iso"
   node_name               = "pve1"
@@ -45,7 +45,7 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
   bios          = "ovmf"
   machine       = "q35"
   tablet_device = false
-  boot_order    = ["virtio0", "ide0", "net0"]
+  boot_order    = ["virtio0", "net0"]
   tags          = sort(["terraform", "talos", "controlplane"])
 
   cpu {
@@ -65,35 +65,17 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
     enabled = true
   }
 
-  # cdrom {
-  #   enabled   = true
-  #   file_id   = proxmox_virtual_environment_download_file.iso.id
-  #   interface = "ide0"
-  # }
-
   efi_disk {
     datastore_id = "local-zfs"
     file_format  = "raw"
     type         = "4m"
   }
 
-  # disk {
-  #   datastore_id = "local-zfs"
-  #   interface    = "virtio0"
-  #   size         = 20
-  #   file_format  = "raw"
-  # }
-
   disk {
     datastore_id = "local-zfs"
     interface    = "virtio0"
     file_id      = proxmox_virtual_environment_download_file.image.id
   }
-
-  # initialization {
-  #   user_data_file_id = proxmox_virtual_environment_file.cloud_config_cp[each.key].id
-  #   datastore_id      = "local-zfs"
-  # }
 
   network_device {
     bridge      = "vmbr0"
@@ -109,10 +91,9 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
 
   lifecycle {
     ignore_changes = [cpu[0].architecture]
-    #   replace_triggered_by = [
-    #     proxmox_virtual_environment_download_file.iso,
-    #     proxmox_virtual_environment_file.cloud_config_cp,
-    #   ]
+    replace_triggered_by = [
+      proxmox_virtual_environment_download_file.image,
+    ]
   }
 }
 
