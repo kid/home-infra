@@ -1,0 +1,39 @@
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: democratic-csi-values
+  namespace: flux-system
+type: Opaque
+stringData:
+  values.yaml: |-
+    csiDriver:
+      name: org.democratic-csi.freenas-nfs
+    fsGroupPolicy: File
+    storageClasses:
+      - name: truenas-nfs
+        defaultClass: false
+        parameters:
+          fsType: nfs
+        mountOptions:
+          - noatime
+          - nfsvers=4
+    driver:
+      config:
+        driver: freenas-api-nfs
+        instance_id: org.democratic-csi.truenas-nfs
+        httpConnection:
+          protocol: https
+          host: ${truenas_host}
+          port: ${truenas_port}
+          allowInsecure: ${truenas_insecure}
+          apiKey: ${truenas_api_key}
+        zfs:
+          datasetParentName: tank/talos/volumes
+          detachedSnapshotsDatasetParentName: tank/talos/snapshots
+        nfs:
+          shareHost: 10.0.30.126
+          shareAllDirs: false
+          shareAllowHosts: []
+          shareAllowNetworks:
+            - 10.0.30.0/24

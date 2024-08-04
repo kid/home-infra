@@ -26,3 +26,21 @@ variable "controlplane_ip_offset" {
   type    = number
   default = 80
 }
+
+variable "truenas_host" {
+  type = string
+}
+
+variable "truenas_port" {
+  type = number
+}
+
+variable "truenas_insecure" {
+  type    = bool
+  default = true
+}
+
+variable "truenas_api_key" {
+  type      = string
+  sensitive = true
+}

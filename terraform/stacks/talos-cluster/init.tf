@@ -32,6 +32,10 @@ terraform {
       source  = "hashicorp/random"
       version = "3.6.2"
     }
+    truenas = {
+      source  = "dariusbakunas/truenas"
+      version = "0.11.1"
+    }
   }
 }
 
@@ -134,4 +138,31 @@ variable "pdns_api_url" {
 variable "pdns_api_key" {
   type      = string
   sensitive = true
+}
+
+provider "truenas" {
+  base_url = "http://${var.truenas_host}/api/v2.0"
+  api_key  = var.truenas_api_key
+}
+
+resource "truenas_dataset" "democratic_csi" {
+  pool = "tank"
+  name = "talos"
+}
+
+moved {
+  from = truenas_dataset.talos
+  to   = truenas_dataset.democratic_csi
+}
+
+resource "truenas_dataset" "democratic_csi_volumes" {
+  pool   = "tank"
+  name   = "volumes"
+  parent = truenas_dataset.democratic_csi.name
+}
+
+resource "truenas_dataset" "democratic_csi_snapshots" {
+  pool   = "tank"
+  name   = "snapshots"
+  parent = truenas_dataset.democratic_csi.name
 }

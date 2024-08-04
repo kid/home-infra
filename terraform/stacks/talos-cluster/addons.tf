@@ -226,14 +226,18 @@ resource "kubernetes_secret" "cluster_secrets" {
   }
 
   data = {
-    cloudflare_account_id    = var.cloudflare_account_id
-    cloudflare_api_token     = var.cloudflare_api_token
-    proxmox_ccm_token_id     = proxmox_virtual_environment_user_token.ccm.id
-    proxmox_ccm_token_secret = trimprefix(proxmox_virtual_environment_user_token.ccm.value, "${proxmox_virtual_environment_user_token.ccm.id}=")
+    cloudflare_account_id = var.cloudflare_account_id
+    cloudflare_api_token  = var.cloudflare_api_token
+    # proxmox_ccm_token_id     = proxmox_virtual_environment_user_token.ccm.id
+    # proxmox_ccm_token_secret = trimprefix(proxmox_virtual_environment_user_token.ccm.value, "${proxmox_virtual_environment_user_token.ccm.id}=")
     proxmox_csi_token_id     = proxmox_virtual_environment_user_token.csi.id
     proxmox_csi_token_secret = trimprefix(proxmox_virtual_environment_user_token.csi.value, "${proxmox_virtual_environment_user_token.csi.id}=")
     powerdns_api_url         = var.pdns_api_url
     powerdns_api_key         = var.pdns_api_key
+    truenas_host             = var.truenas_host
+    truenas_port             = var.truenas_port
+    truenas_insecure         = var.truenas_insecure
+    truenas_api_key          = var.truenas_api_key
   }
 }
 

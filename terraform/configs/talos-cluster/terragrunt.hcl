@@ -9,6 +9,7 @@ terraform {
 inputs = merge(
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/proxmox.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml")),
+  yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/truenas.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/cloudflare.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/pdns.sops.yaml")),
   {
