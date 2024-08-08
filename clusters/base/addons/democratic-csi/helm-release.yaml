@@ -20,3 +20,28 @@ spec:
     name: democratic-csi-values
   driftDetection:
     mode: enabled
+  postRenderers:
+    - kustomize:
+        patches:
+          # Disable leader election
+          - target:
+              version: v1
+              kind: Deployment
+              name: democratic-csi-controller
+            patch: |
+              - op: remove
+                path: /spec/template/spec/containers/0/args/2
+              - op: remove
+                path: /spec/template/spec/containers/0/args/1
+              - op: remove
+                path: /spec/template/spec/containers/1/args/2
+              - op: remove
+                path: /spec/template/spec/containers/1/args/1
+              - op: remove
+                path: /spec/template/spec/containers/2/args/2
+              - op: remove
+                path: /spec/template/spec/containers/2/args/1
+              - op: remove
+                path: /spec/template/spec/containers/3/args/2
+              - op: remove
+                path: /spec/template/spec/containers/3/args/1
