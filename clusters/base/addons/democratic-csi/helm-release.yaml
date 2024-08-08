@@ -18,3 +18,5 @@ spec:
   valuesFrom:
   - kind: Secret
     name: democratic-csi-values
+  driftDetection:
+    mode: enabled
