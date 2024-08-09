@@ -28,6 +28,9 @@ locals {
         cleanCiliumState = ["NET_ADMIN", "SYS_ADMIN", "SYS_RESOURCE"]
       }
     }
+    routingMode           = "native"
+    ipv4NativeRoutingCIDR = local.pod_cidr
+    autoDirectNodeRoutes  = true
   }
   flux_values = {
     watchAllNamespaces = false
