@@ -75,6 +75,7 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
     datastore_id = "local-zfs"
     interface    = "virtio0"
     file_id      = proxmox_virtual_environment_download_file.image.id
+    size         = 20
   }
 
   network_device {
