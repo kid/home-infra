@@ -7,7 +7,7 @@ terraform {
 
   # Powerdns does not like parallelism with Sqlite backend
   extra_arguments "parallelism" {
-    commands =  ["apply", "destroy"]
+    commands  = ["apply", "destroy"]
     arguments = ["-parallelism=1"]
   }
 }

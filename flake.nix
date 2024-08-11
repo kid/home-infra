@@ -71,6 +71,7 @@
             programs.nixfmt.enable = true;
             programs.nixfmt.package = pkgs.nixfmt-rfc-style;
             programs.terraform.enable = true;
+            programs.hclfmt.enable = true;
             programs.cue.enable = true;
             programs.shfmt.enable = true;
           };

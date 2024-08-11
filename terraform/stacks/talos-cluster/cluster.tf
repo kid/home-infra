@@ -35,12 +35,12 @@ resource "talos_machine_configuration_apply" "controlplane" {
           "topology.kubernetes.io/region" = "pve"
           "topology.kubernetes.io/zone"   = each.value.node_name
         }
-        # kubelet = {
-        #   extraArgs = {
-        #     cloud-provider             = "external"
-        #     rotate-server-certificates = true
-        #   }
-        # }
+        kubelet = {
+          extraArgs = {
+            # cloud-provider             = "external"
+            rotate-server-certificates = true
+          }
+        }
         # features = {
         #   kubernetesTalosAPIAccess = {
         #     enabled                     = true
@@ -104,20 +104,4 @@ data "talos_client_configuration" "cluster" {
   client_configuration = talos_machine_secrets.cluster.client_configuration
   nodes                = values({ for k, v in local.controlplane_node_infos : k => v.ip })
   endpoints            = values({ for k, v in local.controlplane_node_infos : k => v.ip })
-}
-
-output "talosconfig" {
-  value     = data.talos_client_configuration.cluster.talos_config
-  sensitive = true
-}
-
-output "kubeconfig" {
-  value     = talos_cluster_kubeconfig.cluster.kubeconfig_raw
-  sensitive = true
-}
-
-
-output "machine_configuration" {
-  value     = { for k in local.controlplane_node_names : k => data.talos_machine_configuration.controlplane[k].machine_configuration }
-  sensitive = true
 }
