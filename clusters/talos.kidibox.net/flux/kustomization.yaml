@@ -6,4 +6,4 @@ resources:
   - ../../base/flux/repositories/
   # FIXME: depends on gateway-api
   # - ./webhook-route.yaml
-  - ./webhook-receiver.yaml
+  # - ./webhook-receiver.yaml
