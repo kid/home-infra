@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - ./cloudflare-secret.yaml
   - ./gateway-class.yaml
-  - ./gateway.yaml
+  # - ./gateway.yaml
