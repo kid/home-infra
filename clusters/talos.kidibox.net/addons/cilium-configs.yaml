@@ -5,8 +5,8 @@ metadata:
   name: cilium-configs
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cilium
+  # dependsOn:
+  #   - name: cilium
   interval: 1h0m0s
   path: ./clusters/base/addons/cilium-configs
   prune: true
