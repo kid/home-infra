@@ -24,6 +24,7 @@ api-key=${API_KEY:-changeme}
 webserver=yes
 webserver-address=${WEBSERVER_ADDRESS:-0.0.0.0}
 webserver-allow-from=${WEBSERVER_ALLOW_FROM:-0.0.0.0/0}
+enable-lua-records=${ENABLE_LUA_RECORDS:-no}
 EOF
 
 exec "$@"

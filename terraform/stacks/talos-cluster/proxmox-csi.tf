@@ -39,3 +39,26 @@ resource "proxmox_virtual_environment_user_token" "csi" {
   comment               = "Managed by Terraform"
   privileges_separation = false
 }
+
+resource "truenas_dataset" "democratic_csi" {
+  count = var.proxmox_csi_enable ? 1 : 0
+
+  pool = "tank"
+  name = "talos"
+}
+
+resource "truenas_dataset" "democratic_csi_volumes" {
+  count = var.proxmox_csi_enable ? 1 : 0
+
+  pool   = "tank"
+  name   = "volumes"
+  parent = truenas_dataset.democratic_csi[0].name
+}
+
+resource "truenas_dataset" "democratic_csi_snapshots" {
+  count = var.proxmox_csi_enable ? 1 : 0
+
+  pool   = "tank"
+  name   = "snapshots"
+  parent = truenas_dataset.democratic_csi[0].name
+}

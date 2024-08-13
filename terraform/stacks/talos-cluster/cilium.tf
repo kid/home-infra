@@ -5,10 +5,12 @@ variable "cilium_enable" {
 
 locals {
   cilium_values = {
-    k8sServiceHost = "localhost"
-    k8sServicePort = 7445
+    k8sServiceHost    = "localhost"
+    k8sServicePort    = 7445
+    rollOutCiliumPods = true
     operator = {
-      replicas = 1
+      rollOutPods = true
+      replicas    = 1
     }
     ipam = {
       mode = "kubernetes"
@@ -29,12 +31,22 @@ locals {
     routingMode           = "native"
     ipv4NativeRoutingCIDR = local.pod_cidr
     autoDirectNodeRoutes  = true
+    bgpControlPlane = {
+      enabled : true
+    }
+    gatewayAPI = {
+      enabled = var.gateway_api_enable
+    }
   }
 }
 
 resource "helm_release" "cilium" {
-  count      = var.cilium_enable ? 1 : 0
-  depends_on = [data.talos_cluster_health.cluster]
+  count = !var.bootstrap && var.cilium_enable ? 1 : 0
+  depends_on = [
+    data.talos_cluster_health.cluster,
+    # module.gateway_api
+  ]
+
   name       = "cilium"
   repository = "https://helm.cilium.io/"
   chart      = "cilium"
@@ -45,3 +57,47 @@ resource "helm_release" "cilium" {
     yamlencode(local.cilium_values)
   ]
 }
+
+resource "routeros_routing_bgp_connection" "bgp" {
+  for_each         = var.cilium_enable ? merge(local.controlplane_node_infos) : {}
+  name             = each.key
+  as               = 64512
+  routing_table    = "main"
+  address_families = "ip"
+
+  local {
+    role = "ibgp"
+  }
+
+  remote {
+    address = each.value.ip
+  }
+
+  output {
+    default_originate = "always"
+  }
+}
+
+resource "routeros_ip_firewall_addr_list" "local_network" {
+  for_each = var.cilium_enable ? toset(local.ros_allowed_cidrs) : []
+  list     = local.ros_addr_list
+  address  = each.value
+}
+
+# resource "kubernetes_manifest" "cilium_lb_ippool" {
+#   count      = !var.bootstrap && var.cilium_enable ? 1 : 0
+#   depends_on = [helm_release.cilium]
+#
+#   manifest = {
+#     apiVersion = "cilium.io/v2alpha1"
+#     kind       = "CiliumLoadBalancerIPPool"
+#     metadata = {
+#       name = "bgp-pool"
+#     }
+#     spec = {
+#       cidrs = [
+#         { cidr = local.lb_cidr }
+#       ]
+#     }
+#   }
+# }

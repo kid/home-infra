@@ -29,30 +29,33 @@ resource "routeros_file" "blocky_config" {
         default = [
           "https://security.cloudflare-dns.com/dns-query",
           "https://dns.quad9.net/dns-query"
-        ],
+        ]
       }
-    },
+    }
     bootstrapDns = [
       "tcp+udp:1.1.1.2",
       "tcp+udp:1.0.0.2",
-    ],
+    ]
     ports = {
       dns  = 53,
       tls  = 853,
       http = 8080,
       # https = 443,
-    },
+    }
     conditional = {
-      fallbackUpstream = true,
+      fallbackUpstream = true
       mapping = {
         "kidibox.net" = trimsuffix(module.pdns.ip_address, "/24")
       },
     },
     caching = {
-      prefetching = true,
-    },
+      prefetching = true
+    }
     prometheus = {
-      enable = true,
-    },
+      enable = true
+    }
+    queryLog = {
+      type = "none"
+    }
   })
 }

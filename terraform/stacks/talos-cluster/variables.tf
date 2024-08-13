@@ -1,12 +1,96 @@
+variable "proxmox_endpoint" {
+  type = string
+}
+
+variable "proxmox_username" {
+  type      = string
+  sensitive = true
+}
+
+variable "proxmox_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "proxmox_insecure" {
+  type    = bool
+  default = false
+}
+
+variable "routeros_endpoint" {
+  type = string
+}
+
+variable "routeros_username" {
+  type      = string
+  sensitive = true
+}
+
+variable "routeros_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "routeros_insecure" {
+  type    = bool
+  default = false
+}
+
+variable "cloudflare_account_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "cloudflare_api_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "pdns_api_url" {
+  type = string
+}
+
+variable "pdns_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "truenas_host" {
+  type = string
+}
+
+variable "truenas_port" {
+  type = number
+}
+
+variable "truenas_insecure" {
+  type    = bool
+  default = true
+}
+
+variable "truenas_api_key" {
+  type      = string
+  sensitive = true
+}
+variable "github_org" {
+  type    = string
+  default = "kid"
+}
+
+variable "github_repository" {
+  type    = string
+  default = "home-infra"
+}
+
 variable "talos_version" {
   type = string
 }
 
-variable "talos_schematic_id" {
+variable "cluster_name" {
   type = string
 }
 
-variable "cluster_name" {
+variable "cluster_domain" {
   type = string
 }
 
@@ -27,20 +111,8 @@ variable "controlplane_ip_offset" {
   default = 80
 }
 
-variable "truenas_host" {
-  type = string
-}
 
-variable "truenas_port" {
-  type = number
-}
-
-variable "truenas_insecure" {
+variable "bootstrap" {
   type    = bool
-  default = true
-}
-
-variable "truenas_api_key" {
-  type      = string
-  sensitive = true
+  default = false
 }

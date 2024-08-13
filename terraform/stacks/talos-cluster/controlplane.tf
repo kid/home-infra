@@ -1,27 +1,46 @@
-
-locals {
-  cidr                    = var.vlan_cidrs[var.vlan_id]
-  controlplane_vip        = cidrhost(local.cidr, var.controlplane_ip_offset)
-  controlplane_node_count = 3
-  controlplane_node_names = [for _, idx in range(local.controlplane_node_count) : "talos-cp-${idx + 1}"]
-  controlplane_node_infos = {
-    for _, idx in range(local.controlplane_node_count) : local.controlplane_node_names[idx] => {
-      ip        = cidrhost(local.cidr, var.controlplane_ip_offset + idx + 1)
-      vm_id     = var.vlan_id * 1000 + var.controlplane_ip_offset + idx + 1
-      node_name = "pve1"
-    }
+data "talos_image_factory_extensions_versions" "this" {
+  talos_version = var.talos_version
+  filters = {
+    names = [
+      "siderolabs/qemu-guest-agent"
+    ]
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "image" {
-  url                     = "https://factory.talos.dev/image/${var.talos_schematic_id}/v${var.talos_version}/nocloud-amd64.raw.xz"
-  file_name               = "talos-${var.talos_version}-nocloud-amd64.img"
-  decompression_algorithm = "zst"
-  content_type            = "iso"
-  node_name               = "pve1"
-  datastore_id            = "local"
-  overwrite               = false
+resource "talos_image_factory_schematic" "this" {
+  schematic = yamlencode({
+    customization = {
+      systemExtensions = {
+        officialExtensions = data.talos_image_factory_extensions_versions.this.extensions_info.*.name
+      }
+    }
+  })
 }
+
+data "talos_image_factory_urls" "this" {
+  talos_version = var.talos_version
+  schematic_id  = talos_image_factory_schematic.this.id
+  platform      = "nocloud"
+}
+
+resource "proxmox_virtual_environment_download_file" "iso" {
+  url          = data.talos_image_factory_urls.this.urls.iso
+  file_name    = "talos-${var.talos_version}-nocloud-amd64.iso"
+  content_type = "iso"
+  node_name    = "pve1"
+  datastore_id = "local"
+  overwrite    = false
+}
+
+# resource "proxmox_virtual_environment_download_file" "image" {
+#   url                     = data.talos_image_factory_urls.this.urls.disk_image
+#   file_name               = "talos-${var.talos_version}-nocloud-amd64.img"
+#   decompression_algorithm = "zst"
+#   content_type            = "iso"
+#   node_name               = "pve1"
+#   datastore_id            = "local"
+#   overwrite               = false
+# }
 
 resource "routeros_ip_dhcp_server_lease" "controlplane" {
   for_each = {
@@ -45,16 +64,16 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
   bios          = "ovmf"
   machine       = "q35"
   tablet_device = false
-  boot_order    = ["virtio0", "net0"]
+  boot_order    = ["virtio0", "ide0", "net0"]
   tags          = sort(["terraform", "talos", "controlplane"])
 
   cpu {
     type  = "x86-64-v2-AES"
-    cores = 4
+    cores = 2
   }
 
   memory {
-    dedicated = 2048
+    dedicated = 4098
   }
 
   operating_system {
@@ -63,6 +82,12 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
 
   agent {
     enabled = true
+  }
+
+  cdrom {
+    enabled   = true
+    file_id   = proxmox_virtual_environment_download_file.iso.id
+    interface = "ide0"
   }
 
   efi_disk {
@@ -74,8 +99,11 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
   disk {
     datastore_id = "local-zfs"
     interface    = "virtio0"
-    file_id      = proxmox_virtual_environment_download_file.image.id
-    size         = 20
+    # file_id      = proxmox_virtual_environment_download_file.image.id
+    file_format = "raw"
+    size        = 20
+    iothread    = true
+    discard     = "on"
   }
 
   network_device {
@@ -84,53 +112,13 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
     mac_address = upper(routeros_ip_dhcp_server_lease.controlplane[each.key].mac_address)
   }
 
-  # tpm_state {
-  #   datastore_id = "local-zfs"
-  # }
+  tpm_state {
+    datastore_id = "local-zfs"
+  }
 
   serial_device {}
 
   lifecycle {
     ignore_changes = [cpu[0].architecture]
-    replace_triggered_by = [
-      proxmox_virtual_environment_download_file.image,
-    ]
-  }
-}
-
-locals {
-  pod_cidr = "10.244.0.0/16" # Talos default, only needed for native routing
-  lb_cidr  = "10.0.42.0/24"
-
-  ros_addr_list = "local_network"
-  ros_allowed_cidrs = [
-    local.pod_cidr,
-    local.lb_cidr,
-  ]
-}
-
-resource "routeros_ip_firewall_addr_list" "local_network" {
-  for_each = toset(local.ros_allowed_cidrs)
-  list     = local.ros_addr_list
-  address  = each.value
-}
-
-resource "routeros_routing_bgp_connection" "bgp" {
-  for_each         = merge(local.controlplane_node_infos)
-  name             = each.key
-  as               = 64512
-  routing_table    = "main"
-  address_families = "ip"
-
-  local {
-    role = "ibgp"
-  }
-
-  remote {
-    address = each.value.ip
-  }
-
-  output {
-    default_originate = "always"
   }
 }

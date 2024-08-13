@@ -1,12 +1,29 @@
+locals {
+  blocky_intercept_interfaces = [
+    "lan",
+    "media",
+  ]
+}
+
+resource "routeros_interface_list" "blocky_intercept" {
+  name = "blocky-intercept"
+}
+
+resource "routeros_interface_list_member" "blocky_intercept" {
+  for_each  = toset(local.blocky_intercept_interfaces)
+  list      = routeros_interface_list.blocky_intercept.name
+  interface = each.value
+}
+
 resource "routeros_ip_firewall_nat" "dstnat_dns_tcp" {
   depends_on = [module.blocky]
   disabled   = !local.blocky_intercept
 
   chain = "dstnat"
 
-  protocol     = "tcp"
-  in_interface = "lan"
-  dst_port     = 53
+  protocol          = "tcp"
+  in_interface_list = routeros_interface_list.blocky_intercept.name
+  dst_port          = 53
 
   action       = "dst-nat"
   to_addresses = replace(module.blocky.ip_address, "//\\d+/", "")
@@ -21,9 +38,9 @@ resource "routeros_ip_firewall_nat" "dstnat_dns_udp" {
 
   chain = "dstnat"
 
-  protocol     = "udp"
-  in_interface = "lan"
-  dst_port     = 53
+  protocol          = "udp"
+  in_interface_list = routeros_interface_list.blocky_intercept.name
+  dst_port          = 53
 
   action       = "dst-nat"
   to_addresses = replace(module.blocky.ip_address, "//\\d+/", "")
