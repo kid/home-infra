@@ -13328,7 +13328,6 @@ metadata:
     app.kubernetes.io/name: flux
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.3.0
-    pod-security.kubernetes.io/enforce: privileged
   name: flux-system
 ---
 apiVersion: v1
@@ -13497,9 +13496,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: localhost
+          value: api.talos.kidibox.net
         - name: KUBERNETES_SERVICE_PORT
-          value: "7445"
+          value: "6443"
         image: ghcr.io/fluxcd/source-controller:v1.3.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -13572,9 +13571,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: localhost
+          value: api.talos.kidibox.net
         - name: KUBERNETES_SERVICE_PORT
-          value: "7445"
+          value: "6443"
         image: ghcr.io/fluxcd/kustomize-controller:v1.3.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -13641,9 +13640,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: localhost
+          value: api.talos.kidibox.net
         - name: KUBERNETES_SERVICE_PORT
-          value: "7445"
+          value: "6443"
         image: ghcr.io/fluxcd/helm-controller:v1.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
