@@ -13328,6 +13328,7 @@ metadata:
     app.kubernetes.io/name: flux
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.3.0
+    pod-security.kubernetes.io/enforce: privileged
   name: flux-system
 ---
 apiVersion: v1
