@@ -1,0 +1,94 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    matchLabels:
+      app: prowlarr
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: prowlarr
+      labels:
+        app: prowlarr
+    spec:
+      # initContainers:
+      # Init containers are exactly like regular containers, except:
+      # - Init containers always run to completion.
+      # - Each init container must complete successfully before the next one starts.
+      containers:
+        - name: prowlarr
+          image: ghcr.io/linuxserver/prowlarr:1.21.2
+          imagePullPolicy: IfNotPresent
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /_status/healthz
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 2
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          env:
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'
+            - name: TZ
+              value: Europe/Brussels
+            - name: PROWLARR__APP__THEME
+              value: dark
+            - name: PROWLARR__AUTH__METHOD
+              value: External
+            - name: PROWLARR__AUTH__REQUIRED
+              value: DisabledForLocalAddresses
+            - name: PROWLARR__LOG__ANALYTICSENABLED
+              value: "False"
+            - name: PROWLARR__LOG__LEVEL
+              value: info
+            - name: PROWLARR__LOG__DBENABLED
+              value: "False"
+            - name: PROWLARR__POSTGRES__MAINDB
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: dbname
+            - name: PROWLARR__POSTGRES__HOST
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: host
+            - name: PROWLARR__POSTGRES__PORT
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: port
+            - name: PROWLARR__POSTGRES__USER
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: user
+            - name: PROWLARR__POSTGRES__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: password
+          ports:
+            - containerPort: 9696
+              name: http
+      restartPolicy: Always
