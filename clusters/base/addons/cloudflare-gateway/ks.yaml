@@ -1,4 +1,3 @@
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -13,6 +12,4 @@ spec:
     kind: GitRepository
     name: cloudflare-kubernetes-gateway
   interval: 24h
-  retryInterval: 1m
-  timeout: 5m
   wait: true
