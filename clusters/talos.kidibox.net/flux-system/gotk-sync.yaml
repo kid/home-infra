@@ -1,0 +1,37 @@
+---
+# Instance: flux
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: flux
+    app.kubernetes.io/version: 2.3.0-0
+  name: flux
+  namespace: flux-system
+spec:
+  interval: 60m
+  path: clusters/talos.kidibox.net
+  prune: true
+  retryInterval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux
+  timeout: 3m
+  wait: true
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: flux
+    app.kubernetes.io/version: 2.3.0-0
+  name: flux
+  namespace: flux-system
+spec:
+  interval: 1m
+  ref:
+    name: refs/heads/main
+  url: https://github.com/kid/home-infra.git

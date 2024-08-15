@@ -11,7 +11,7 @@ bundle: {
 			values: {
 				hostNetwork:     true
 				securityProfile: "privileged"
-				controllers: notification: enabled: false
+				controllers: notification: enabled: true
 				// tmpfs: true
 				env: {
 					// KUBERNETES_SERVICE_HOST: "localhost"

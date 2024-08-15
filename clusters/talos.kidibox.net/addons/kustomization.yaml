@@ -1,10 +1,9 @@
----
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base/addons/gateway-api/
-  # - ./cilium.yaml
+  - ./cilium.yaml
   - ./cilium-configs.yaml
   - ./external-dns.yaml
   - ./cert-manager.yaml
@@ -17,7 +16,7 @@ resources:
   - ./proxmox-csi.yaml
 patches:
   - target:
-      group:  kustomize.toolkit.fluxcd.io
+      group: kustomize.toolkit.fluxcd.io
       kind: Kustomization
     patch: |-
       - op: add

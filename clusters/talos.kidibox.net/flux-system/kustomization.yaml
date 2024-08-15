@@ -1,9 +1,11 @@
----
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../../base/flux/repositories/
-  # FIXME: depends on gateway-api
-  # - ./webhook-route.yaml
-  # - ./webhook-receiver.yaml
+  - ./gotk-components.yaml
+  - ./gotk-sync.yaml
+patches:
+  - path: ./patch-namespace.yaml
+    target:
+      kind: Namespace
+      name: flux-system
