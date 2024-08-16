@@ -29,12 +29,8 @@ stringData:
     # Define storage classes
     # See https://pve.proxmox.com/wiki/Storage
     storageClass:
-      - name: proxmox-local-zfs-xfs
-        storage: local-zfs
-        reclaimPolicy: Delete
-        fstype: xfs
       - name: proxmox-local-zfs-ext4
         storage: local-zfs
         reclaimPolicy: Delete
         fstype: ext4
-        cache: writethrough
+        ssd: true
