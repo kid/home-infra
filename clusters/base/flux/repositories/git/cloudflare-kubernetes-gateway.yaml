@@ -8,4 +8,4 @@ spec:
   interval: 24h
   url: https://github.com/pl4nty/cloudflare-kubernetes-gateway
   ref:
-    tag: v0.5.0
+    tag: v0.6.0
