@@ -4,5 +4,8 @@ kind: Kustomization
 namespace: downloadarr
 resources:
   - ./namespace.yaml
+  - ./gateway.yaml
   - ./prowlarr-db.yaml
   - ./prowlarr.yaml
+  - ./prowlarr-svc.yaml
+  - ./prowlarr-route.yaml
