@@ -57,10 +57,14 @@
                 cilium-cli
                 hubble
                 kubernetes-helm
+                kubectl-cnpg
+                kubeconform
+                kustomize
                 earthly
                 opentofu
                 pdns
                 containerlab
+                gopls
               ]);
           };
 
@@ -74,6 +78,8 @@
             programs.hclfmt.enable = true;
             programs.cue.enable = true;
             programs.shfmt.enable = true;
+            programs.gofmt.enable = true;
+            programs.yamlfmt.enable = true;
           };
         };
     };

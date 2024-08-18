@@ -3,14 +3,23 @@ variable "flux_enable" {
   default = true
 }
 
-module "flux" {
-  count  = var.flux_enable ? 1 : 0
-  source = "../../modules/flux-helm-bootstrap"
+# module "flux_kustomize" {
+#   source = "../../modules/kustomization"
+#
+#   resources = [
+#     "${path.module}/../../../clusters/${var.cluster_name}/flux"
+#   ]
+# }
 
-  depends_on = [
-    data.talos_cluster_health.cluster,
-    helm_release.cilium,
-  ]
+module "flux" {
+  count = var.flux_enable ? 1 : 0
+  # source = "../../modules/flux-helm-bootstrap"
+  source = "../../modules/flux-kustomized"
+
+  # depends_on = [
+  #   data.talos_cluster_health.cluster,
+  #   helm_release.cilium,
+  # ]
 
   cluster_name      = var.cluster_name
   github_org        = var.github_org

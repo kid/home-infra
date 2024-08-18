@@ -35,28 +35,28 @@ locals {
       enabled : true
     }
     gatewayAPI = {
-      enabled = var.gateway_api_enable
+      enabled = true
     }
   }
 }
 
-resource "helm_release" "cilium" {
-  count = !var.bootstrap && var.cilium_enable ? 1 : 0
-  depends_on = [
-    data.talos_cluster_health.cluster,
-    # module.gateway_api
-  ]
-
-  name       = "cilium"
-  repository = "https://helm.cilium.io/"
-  chart      = "cilium"
-  version    = "1.15.7"
-  namespace  = "kube-system"
-
-  values = [
-    yamlencode(local.cilium_values)
-  ]
-}
+# resource "helm_release" "cilium" {
+#   count = !var.bootstrap && var.cilium_enable ? 1 : 0
+#   depends_on = [
+#     data.talos_cluster_health.cluster,
+#     # module.gateway_api
+#   ]
+#
+#   name       = "cilium"
+#   repository = "https://helm.cilium.io/"
+#   chart      = "cilium"
+#   version    = "1.15.7"
+#   namespace  = "kube-system"
+#
+#   values = [
+#     yamlencode(local.cilium_values)
+#   ]
+# }
 
 resource "routeros_routing_bgp_connection" "bgp" {
   for_each         = var.cilium_enable ? merge(local.controlplane_node_infos) : {}
