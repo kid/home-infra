@@ -1,0 +1,18 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: alloy
+  namespace: flux-system
+spec:
+  releaseName: alloy
+  targetNamespace: grafana-alloy
+  interval: 30m
+  chart:
+    spec:
+      chart: alloy
+      version: 0.6.0
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  driftDetection:
+    mode: enabled
