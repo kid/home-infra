@@ -32,16 +32,6 @@ resource "proxmox_virtual_environment_download_file" "iso" {
   overwrite    = false
 }
 
-# resource "proxmox_virtual_environment_download_file" "image" {
-#   url                     = data.talos_image_factory_urls.this.urls.disk_image
-#   file_name               = "talos-${var.talos_version}-nocloud-amd64.img"
-#   decompression_algorithm = "zst"
-#   content_type            = "iso"
-#   node_name               = "pve1"
-#   datastore_id            = "local"
-#   overwrite               = false
-# }
-
 resource "routeros_ip_dhcp_server_lease" "controlplane" {
   for_each = {
     for k, v in local.controlplane_node_infos : k => {
@@ -64,7 +54,7 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
   bios          = "ovmf"
   machine       = "q35"
   tablet_device = false
-  boot_order    = ["virtio0", "ide0", "net0"]
+  boot_order    = ["scsi0", "ide0", "net0"]
   tags          = sort(["terraform", "talos", "controlplane"])
 
   cpu {
@@ -84,6 +74,8 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
     enabled = true
   }
 
+  scsi_hardware = "virtio-scsi-single"
+
   cdrom {
     enabled   = true
     file_id   = proxmox_virtual_environment_download_file.iso.id
@@ -98,12 +90,12 @@ resource "proxmox_virtual_environment_vm" "controlplane" {
 
   disk {
     datastore_id = "local-zfs"
-    interface    = "virtio0"
-    # file_id      = proxmox_virtual_environment_download_file.image.id
-    file_format = "raw"
-    size        = 20
-    iothread    = true
-    discard     = "on"
+    interface    = "scsi0"
+    file_format  = "raw"
+    size         = 20
+    iothread     = true
+    ssd          = true
+    discard      = "on"
   }
 
   network_device {

@@ -41,14 +41,15 @@ resource "talos_machine_configuration_apply" "controlplane" {
           }]
         }
         install = {
-          disk       = "/dev/vda"
+          disk       = "/dev/sda"
           image      = "ghcr.io/siderolabs/installer:${var.talos_version}"
           extensions = [for ext in data.talos_image_factory_extensions_versions.this.extensions_info : { image = ext.ref }]
         }
         features = {
           hostDNS = {
-            enabled              = true
-            forwardKubeDNSToHost = true
+            enabled = true
+            # FIXME: This is causing issues with Flux client
+            # forwardKubeDNSToHost = true
           }
         }
         nodeLabels = {
