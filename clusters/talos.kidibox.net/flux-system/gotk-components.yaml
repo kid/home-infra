@@ -13497,9 +13497,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: api.talos.kidibox.net
+          value: localhost
         - name: KUBERNETES_SERVICE_PORT
-          value: "6443"
+          value: "7445"
         image: ghcr.io/fluxcd/source-controller:v1.3.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -13573,9 +13573,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: api.talos.kidibox.net
+          value: localhost
         - name: KUBERNETES_SERVICE_PORT
-          value: "6443"
+          value: "7445"
         image: ghcr.io/fluxcd/kustomize-controller:v1.3.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -13643,9 +13643,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: api.talos.kidibox.net
+          value: localhost
         - name: KUBERNETES_SERVICE_PORT
-          value: "6443"
+          value: "7445"
         image: ghcr.io/fluxcd/helm-controller:v1.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -13710,9 +13710,9 @@ spec:
         - name: NO_PROXY
           value: .cluster.local.,.cluster.local,.svc
         - name: KUBERNETES_SERVICE_HOST
-          value: api.talos.kidibox.net
+          value: localhost
         - name: KUBERNETES_SERVICE_PORT
-          value: "6443"
+          value: "7445"
         image: ghcr.io/fluxcd/notification-controller:v1.3.0
         imagePullPolicy: IfNotPresent
         livenessProbe:

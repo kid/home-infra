@@ -14,10 +14,8 @@ bundle: {
 				controllers: notification: enabled: true
 				tmpfs: enabled: true
 				env: {
-					// KUBERNETES_SERVICE_HOST: "localhost"
-					// KUBERNETES_SERVICE_PORT: "7445"
-					KUBERNETES_SERVICE_HOST: "api.talos.kidibox.net"
-					KUBERNETES_SERVICE_PORT: "6443"
+					KUBERNETES_SERVICE_HOST: "localhost"
+					KUBERNETES_SERVICE_PORT: "7445"
 				}
 			}
 		}
