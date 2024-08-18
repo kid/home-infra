@@ -44,6 +44,7 @@ module "flux" {
       truenas_port          = var.truenas_port
       truenas_insecure      = var.truenas_insecure
       truenas_api_key       = var.truenas_api_key
+      gcloud_rw_api_key     = var.gcloud_api_key
     },
     var.proxmox_ccm_enable ? {
       proxmox_ccm_token_id     = proxmox_virtual_environment_user_token.ccm[0].id

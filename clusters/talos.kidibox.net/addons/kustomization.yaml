@@ -6,7 +6,7 @@ resources:
   - ./cilium.yaml
   - ./cilium-configs.yaml
   - ./external-dns.yaml
-  - ./grafana-alloy.yaml
+  - ./monitoring.yaml
   - ./cert-manager.yaml
   - ./cert-manager-issuers.yaml
   - ../../base/addons/cloudflare-gateway/

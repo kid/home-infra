@@ -116,3 +116,8 @@ variable "bootstrap" {
   type    = bool
   default = false
 }
+
+variable "gcloud_api_key" {
+  type      = string
+  sensitive = true
+}
