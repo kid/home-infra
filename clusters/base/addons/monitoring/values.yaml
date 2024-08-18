@@ -59,7 +59,7 @@ prometheus-node-exporter:
 prometheus-operator-crds:
   enabled: true
 kepler:
-  enabled: false
+  enabled: true
 alloy: {}
 alloy-events: {}
 alloy-logs: {}
