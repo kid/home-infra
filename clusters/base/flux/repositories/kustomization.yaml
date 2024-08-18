@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -9,5 +8,6 @@ resources:
   - ./helm/cloudnative-pg.yaml
   - ./helm/democratic-csi.yaml
   - ./helm/fluxcd-community.yaml
+  - ./helm/grafana.yaml
   - ./helm/jetstack.yaml
   - ./helm/sergelogvinov.yaml
