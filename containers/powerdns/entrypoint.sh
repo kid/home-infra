@@ -25,6 +25,8 @@ webserver=yes
 webserver-address=${WEBSERVER_ADDRESS:-0.0.0.0}
 webserver-allow-from=${WEBSERVER_ALLOW_FROM:-0.0.0.0/0}
 enable-lua-records=${ENABLE_LUA_RECORDS:-no}
+log-dns-queries=${LOG_DNS_QUERIES:-yes}
+loglevel=${LOG_LEVEL:-5}
 EOF
 
 exec "$@"

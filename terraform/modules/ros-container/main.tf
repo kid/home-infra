@@ -27,6 +27,7 @@ resource "routeros_container" "self" {
   ]
 
   remote_image  = var.image
+  file          = var.file
   interface     = routeros_interface_veth.self.name
   user          = var.user_id
   logging       = true
@@ -34,6 +35,7 @@ resource "routeros_container" "self" {
   root_dir      = "usb1/containers/${var.name}/root"
   envlist       = length(keys(local.env_vars)) > 0 ? var.name : null
   mounts        = [for k, _ in var.mounts : routeros_container_mounts.self[k].name]
+  cmd           = var.cmd
 }
 
 resource "routeros_container_mounts" "self" {

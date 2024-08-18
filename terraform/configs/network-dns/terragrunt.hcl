@@ -16,6 +16,7 @@ inputs = merge(
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/routeros.sops.yaml")),
   yamldecode(sops_decrypt_file("${get_repo_root()}/secrets/pdns.sops.yaml")),
   {
-    domain_name = "kidibox.net"
+    domain_name              = "kidibox.net"
+    dns_intercept_interfaces = ["media", "lan"]
   }
 )

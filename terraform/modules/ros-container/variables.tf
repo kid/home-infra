@@ -3,7 +3,13 @@ variable "name" {
 }
 
 variable "image" {
-  type = string
+  type    = string
+  default = null
+}
+
+variable "file" {
+  type    = string
+  default = null
 }
 
 variable "vlan_id" {
@@ -37,4 +43,9 @@ variable "mounts" {
     dst = string
   }))
   default = {}
+}
+
+variable "cmd" {
+  type    = string
+  default = null
 }

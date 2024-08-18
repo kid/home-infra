@@ -19,14 +19,6 @@ resource "powerdns_zone" "local" {
   nameservers = ["ns1.kidibox.net."]
 }
 
-resource "powerdns_record" "soa" {
-  zone    = powerdns_zone.local.name
-  name    = "ns1.kidibox.net."
-  type    = "A"
-  ttl     = 300
-  records = [""]
-}
-
 resource "powerdns_record" "ns" {
   zone    = powerdns_zone.local.name
   name    = "ns1.kidibox.net."

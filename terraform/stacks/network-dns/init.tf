@@ -2,7 +2,7 @@ terraform {
   required_providers {
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.56.0"
+      version = "1.59.4"
     }
     powerdns = {
       source  = "pan-net/powerdns"
@@ -58,4 +58,9 @@ provider "powerdns" {
 
 variable "domain_name" {
   type = string
+}
+
+variable "dns_intercept_interfaces" {
+  type    = list(string)
+  default = []
 }
