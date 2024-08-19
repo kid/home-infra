@@ -17,5 +17,5 @@ spec:
         kind: HelmRepository
         name: grafana
   valuesFrom:
-    - kind: ConfigMap
+    - kind: Secret
       name: monitoring-values

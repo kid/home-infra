@@ -6,7 +6,7 @@ resources:
   - ./helm-release.yaml
 generatorOptions:
   disableNameSuffixHash: true
-configMapGenerator:
+secretGenerator:
   - name: monitoring-values
     files:
       - values.yaml
