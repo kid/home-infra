@@ -12,7 +12,7 @@ resources:
   # - ../../base/addons/cloudflare-gateway/
   # - ./cloudflare-gateway-configs.yaml
   - ./cnpg-operator.yaml
-  - ./democratic-csi.yaml
+  # - ./democratic-csi.yaml
   # - ./proxmox-ccm.yaml
   - ./proxmox-csi.yaml
 patches:
