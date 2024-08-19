@@ -1,5 +1,5 @@
 cluster:
-  name: ${cluster_name}
+  name: talos.kidibox.net
 externalServices:
   prometheus:
     host: https://prometheus-prod-01-eu-west-0.grafana.net
@@ -48,7 +48,7 @@ opencost:
   enabled: false
   opencost:
     exporter:
-      defaultClusterId: ${cluster_name}
+      defaultClusterId: talos.kidibox.net
     prometheus:
       external:
         url: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom
