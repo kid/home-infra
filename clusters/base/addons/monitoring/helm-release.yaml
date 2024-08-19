@@ -17,5 +17,17 @@ spec:
         kind: HelmRepository
         name: grafana
   valuesFrom:
-    - kind: Secret
+    - kind: ConfigMap
       name: monitoring-values
+    - kind: Secret
+      name: cluster-secrets
+      valuesKey: gcloud_rw_api_key
+      targetPath: externalServices.prometheus.basicAuth.password
+    - kind: Secret
+      name: cluster-secrets
+      valuesKey: gcloud_rw_api_key
+      targetPath: externalServices.loki.basicAuth.password
+    - kind: Secret
+      name: cluster-secrets
+      valuesKey: gcloud_rw_api_key
+      targetPath: externalServices.tempo.basicAuth.password

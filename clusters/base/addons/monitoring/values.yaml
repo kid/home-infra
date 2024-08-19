@@ -5,17 +5,14 @@ externalServices:
     host: https://prometheus-prod-01-eu-west-0.grafana.net
     basicAuth:
       username: "609653"
-      password: "${gcloud_rw_api_key}"
   loki:
     host: https://logs-prod-eu-west-0.grafana.net
     basicAuth:
       username: "303796"
-      password: "${gcloud_rw_api_key}"
   tempo:
     host: https://tempo-eu-west-0.grafana.net:443
     basicAuth:
       username: "300309"
-      password: "${gcloud_rw_api_key}"
 metrics:
   enabled: true
   alloy:
