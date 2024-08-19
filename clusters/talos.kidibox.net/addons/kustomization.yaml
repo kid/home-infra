@@ -9,8 +9,8 @@ resources:
   - ./monitoring.yaml
   - ./cert-manager.yaml
   - ./cert-manager-issuers.yaml
-  - ../../base/addons/cloudflare-gateway/
-  - ./cloudflare-gateway-configs.yaml
+  # - ../../base/addons/cloudflare-gateway/
+  # - ./cloudflare-gateway-configs.yaml
   - ./cnpg-operator.yaml
   - ./democratic-csi.yaml
   # - ./proxmox-ccm.yaml
