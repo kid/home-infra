@@ -39,7 +39,7 @@ spec:
             claimName: library-series
       containers:
         - name: sonarr
-          image: ghcr.io/linuxserver/sonarr:4.0.8
+          image: ghcr.io/linuxserver/sonarr:4.0.8-develop
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8989
