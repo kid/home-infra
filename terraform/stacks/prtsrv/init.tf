@@ -4,7 +4,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.42.1"
+      version = "0.63.0"
     }
     ignition = {
       source  = "community-terraform-providers/ignition"
