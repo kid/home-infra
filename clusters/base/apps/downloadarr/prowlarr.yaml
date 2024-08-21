@@ -50,9 +50,9 @@ spec:
               port: http
           env:
             - name: PUID
-              value: '1000'
+              value: "1000"
             - name: PGID
-              value: '1000'
+              value: "1000"
             - name: TZ
               value: Europe/Brussels
             - name: PROWLARR__APP__THEME
@@ -63,6 +63,8 @@ spec:
               value: DisabledForLocalAddresses
             - name: PROWLARR__LOG__ANALYTICSENABLED
               value: "False"
+            - name: PROWLARR__LOG__CONSOLEFORMAT
+              value: "Clef"
             - name: PROWLARR__LOG__LEVEL
               value: info
             - name: PROWLARR__LOG__DBENABLED

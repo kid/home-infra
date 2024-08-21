@@ -57,9 +57,9 @@ spec:
               mountPath: /mnt/tank/library/series
           env:
             - name: PUID
-              value: '1000'
+              value: "1000"
             - name: PGID
-              value: '1000'
+              value: "1000"
             - name: TZ
               value: Europe/Brussels
             - name: SONARR__APP__THEME
@@ -70,6 +70,8 @@ spec:
               value: DisabledForLocalAddresses
             - name: SONARR__LOG__ANALYTICSENABLED
               value: "False"
+            - name: SONARR__LOG__CONSOLEFORMAT
+              value: "Clef"
             - name: SONARR__LOG__LEVEL
               value: info
             - name: SONARR__LOG__DBENABLED
