@@ -31,3 +31,9 @@ patches:
               name: cluster-values
             - kind: Secret
               name: cluster-secrets
+      - op: add
+        path: /spec/decryption
+        value:
+          provider: sops
+          secretRef:
+            name: sops-age
