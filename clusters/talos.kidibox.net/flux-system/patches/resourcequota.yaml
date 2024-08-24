@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: flux
+spec:
+  hard:
+    pods: 1k

@@ -5,7 +5,12 @@ resources:
   - ./gotk-components.yaml
   - ./gotk-sync.yaml
 patches:
-  - path: ./patch-namespace.yaml
+  - path: ./patches/namespace.yaml
     target:
       kind: Namespace
       name: flux-system
+  - path: ./patches/resourcequota.yaml
+    target:
+      kind: ResourceQuota
+      name: flux
+  - path: ./patches/deployment.yaml
