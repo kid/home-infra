@@ -44,3 +44,17 @@ resource "kubernetes_secret" "cluster_secrets" {
 
   data = var.cluster_secrets
 }
+
+resource "kubernetes_secret" "sops_age" {
+  count      = var.sops_age != null ? 1 : 0
+  depends_on = [module.flux_kustomize]
+
+  metadata {
+    name      = "sops-age"
+    namespace = "flux-system"
+  }
+
+  data = {
+    "age.ageKey" = var.sops_age
+  }
+}

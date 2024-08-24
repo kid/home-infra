@@ -25,3 +25,9 @@ variable "extra_config_maps" {
   type    = map(map(string))
   default = {}
 }
+
+variable "sops_age" {
+  type      = string
+  sensitive = true
+  default   = null
+}

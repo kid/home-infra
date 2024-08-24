@@ -25,6 +25,8 @@ module "flux" {
   github_org        = var.github_org
   github_repository = var.github_repository
 
+  sops_age = data.sops_file.cluster.data["age.ageKey"]
+
   cluster_values = {
     cluster_name         = var.cluster_name
     cluster_domain       = "kidbox.net"

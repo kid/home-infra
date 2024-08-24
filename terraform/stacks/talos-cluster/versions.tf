@@ -48,5 +48,9 @@ terraform {
       source  = "pan-net/powerdns"
       version = "1.5.0"
     }
+    sops = {
+      source  = "carlpett/sops"
+      version = "1.1.1"
+    }
   }
 }
