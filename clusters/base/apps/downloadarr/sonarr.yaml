@@ -34,6 +34,8 @@ spec:
         app: sonarr
     spec:
       volumes:
+        - name: config
+          emptyDir: {}
         - name: library-series
           persistentVolumeClaim:
             claimName: library-series
@@ -56,6 +58,8 @@ spec:
               path: /ping
               port: http
           volumeMounts:
+            - name: config
+              mountPath: /config
             - name: library-series
               mountPath: /data/library/series
           env:

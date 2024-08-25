@@ -33,6 +33,9 @@ spec:
       labels:
         app: prowlarr
     spec:
+      volumes:
+        - name: config
+          emptyDir: {}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -51,6 +54,9 @@ spec:
             httpGet:
               path: /ping
               port: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
           env:
             - name: TZ
               value: Europe/Brussels
