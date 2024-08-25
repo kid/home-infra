@@ -12,7 +12,7 @@ spec:
     - noatime
   nfs:
     server: 10.0.30.126
-    path: /mnt/tank/library/series
+    path: /mnt/tank/library-dev/series
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
