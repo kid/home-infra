@@ -13,4 +13,3 @@ patches:
     target:
       kind: ResourceQuota
       name: flux
-  - path: ./patches/deployment.yaml
