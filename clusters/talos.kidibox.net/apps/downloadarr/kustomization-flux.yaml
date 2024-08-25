@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h0m0s
-  path: ./clusters/base/apps/downloadarr
+  path: ./clusters/talos.kidibox.net/apps/downloadarr
   prune: true
   sourceRef:
     kind: GitRepository

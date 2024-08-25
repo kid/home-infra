@@ -33,6 +33,9 @@ spec:
       labels:
         app: prowlarr
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: prowlarr
           image: ghcr.io/linuxserver/prowlarr:1.21.2
@@ -61,6 +64,10 @@ spec:
               value: External
             - name: PROWLARR__AUTH__REQUIRED
               value: DisabledForLocalAddresses
+            - name: PROWLARR__AUTH__APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
             - name: PROWLARR__LOG__ANALYTICSENABLED
               value: "False"
             - name: PROWLARR__LOG__CONSOLEFORMAT
