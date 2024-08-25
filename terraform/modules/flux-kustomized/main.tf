@@ -55,6 +55,6 @@ resource "kubernetes_secret" "sops_age" {
   }
 
   data = {
-    "age.ageKey" = var.sops_age
+    "age.agekey" = var.sops_age
   }
 }
