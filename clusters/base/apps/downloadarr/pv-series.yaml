@@ -26,12 +26,3 @@ spec:
     requests:
       storage: 1Mi
   volumeName: library-series
-# ---
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: library-series
-# spec:
-#   storageClassName: truenas-nfs
-#   accessModes:
-#     - ReadWriteMany
