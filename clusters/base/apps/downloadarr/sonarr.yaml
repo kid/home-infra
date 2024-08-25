@@ -71,6 +71,10 @@ spec:
               value: External
             - name: SONARR__AUTH__REQUIRED
               value: DisabledForLocalAddresses
+            - name: SONARR__AUTH__APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
             - name: SONARR__LOG__ANALYTICSENABLED
               value: "False"
             - name: SONARR__LOG__CONSOLEFORMAT
