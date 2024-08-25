@@ -68,6 +68,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: api-keys
+                  key: PROWLARR__AUTH__APIKEY
             - name: PROWLARR__LOG__ANALYTICSENABLED
               value: "False"
             - name: PROWLARR__LOG__CONSOLEFORMAT
