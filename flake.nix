@@ -75,6 +75,8 @@
                 containerlab
                 gopls
                 terraform-backend-git
+                grafana-alloy
+                envsubst
               ]);
           };
 
