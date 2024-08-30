@@ -75,7 +75,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: api-keys
-                  key: SONARR__AUTH__APIKEY
+                  key: SONARR_API_KEY
             - name: SONARR__LOG__ANALYTICSENABLED
               value: "False"
             - name: SONARR__LOG__CONSOLEFORMAT

@@ -5,6 +5,12 @@ namespace: downloadarr
 resources:
   - ./namespace.yaml
   - ./pv-series.yaml
+  - ./pv-recyclarr.yaml
   - ./gateway.yaml
   - ./prowlarr.yaml
   - ./sonarr.yaml
+  - ./recyclarr.yaml
+configMapGenerator:
+  - name: recyclarr-config
+    files:
+      - recyclarr.yml=./resources/recyclarr.yaml
