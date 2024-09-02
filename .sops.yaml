@@ -15,6 +15,11 @@ creation_rules:
       - age:
           - *kid-nixos
           - *talos-kidibox-net
+  - path_regex: clusters/talos.kidibox.net/.+\.sops\.env
+    key_groups:
+      - age:
+          - *kid-nixos
+          - *talos-kidibox-net
   - path_regex: clusters/kairos/.+\.sops\.ya?ml
     encrypted_regex: ^(data|stringData)$
     key_groups:

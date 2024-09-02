@@ -4,4 +4,7 @@ kind: Kustomization
 namespace: downloadarr
 resources:
   - ../../../base/apps/downloadarr/
-  - ./api-keys.sops.yaml
+secretGenerator:
+  - name: api-keys
+    envs:
+      - api-keys.sops.env
