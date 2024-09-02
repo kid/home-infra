@@ -41,7 +41,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: prowlarr
-          image: ghcr.io/onedr0p/prowlarr:1.21.2
+          image: ghcr.io/onedr0p/prowlarr:1.23.1@sha256:63bf8d5bcf275043cf9bc94f50ac85b5e35775d3d217c0725300b4d54968db3e
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9696
