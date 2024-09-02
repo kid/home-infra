@@ -14,7 +14,7 @@
   },
   kubernetes: {
     fileMatch: [
-      "(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$",
+      "(^|/)clusters/.+\\.ya?ml(?:\\.j2)?$",
     ],
   },
 }
