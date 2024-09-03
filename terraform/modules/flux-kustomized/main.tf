@@ -4,10 +4,10 @@ variable "flux_enable" {
 }
 
 module "flux_kustomize" {
-  source = "${path.module}/../kustomization"
+  source = "../kustomization"
 
   resources = [
-    "${path.module}/../../../clusters/${var.cluster_name}/flux-system",
+    "../../../clusters/${var.cluster_name}/flux-system",
   ]
 }
 

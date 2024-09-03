@@ -3,3 +3,6 @@
 .terraform
 .terragrunt-cache
 kubeconfig
+
+go.work
+go.work.sum
