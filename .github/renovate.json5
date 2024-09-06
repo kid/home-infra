@@ -5,6 +5,8 @@
     "docker:enableMajor",
   ],
   ignorePaths: [
+    ".dagger/go\\.mod",
+    ".github/go\\.mod",
     "**/*.sops.*",
   ],
   flux: {
