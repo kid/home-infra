@@ -12,21 +12,22 @@ func New(
 	// The home-infra repository
 	// +optional
 	// +defaultPath="/"
-	// +ignore=["!.github"]
+	// +ignore=["**", "!.github"]
 	repository *dagger.Directory,
 ) *CI {
 	ci := new(CI)
 
 	ci.Gha = dag.Gha(dagger.GhaOpts{
-		DaggerVersion: "v0.12.7",
+		DaggerVersion: "v0.13.0",
 		NoTraces:      true,
 		Repository:    repository,
 	})
 
 	return ci.
 		// WithPipeline("commitlint", "lint-commits --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }}").
-		WithPipeline("terraform/tflint", "tf-lint").
-		WithPipeline("clusters/talos.kidibox.net/kubeconform", "kube-conform-cluster --cluster-name=talos.kidibox.net")
+		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --pr ${{ github.event.pull_request.number }} check")
+	// WithPipeline("terraform", "terraform --gh-token=env:GITHUB_TOKEN ci --pr ${{ github.event.pull_request.number }}").
+	// WithPipeline("clusters/talos.kidibox.net/kubeconform", "kube-conform-cluster --cluster-name=talos.kidibox.net")
 }
 
 func (ci *CI) WithPipeline(
@@ -42,6 +43,8 @@ func (ci *CI) WithPipeline(
 		OnPullRequestSynchronize:    true,
 		OnPullRequestReadyForReview: true,
 		PullRequestConcurrency:      "preempt",
+		Secrets:                     []string{"GITHUB_TOKEN"},
+		Permissions:                 []dagger.GhaPermission{dagger.WriteIssues, dagger.WritePullRequests},
 	}
 	ci.Gha = ci.Gha.WithPipeline(name, command, opts)
 	return ci

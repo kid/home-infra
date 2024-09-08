@@ -1,6 +1,12 @@
 {
   "name": "home-infra",
   "sdk": "go",
+  "dependencies": [
+    {
+      "name": "wolfi",
+      "source": "github.com/dagger/dagger/modules/wolfi@742841f49b208ece1a4f9a105939319e1eee7a16"
+    }
+  ],
   "source": ".dagger",
-  "engineVersion": "v0.12.7"
+  "engineVersion": "v0.13.0"
 }

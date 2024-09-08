@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
+
 	"github.com/kid/home-infra/.dagger/internal/dagger"
-	"path/filepath"
-	"strings"
 )
 
 func (m *HomeInfra) LintCommits(
@@ -46,23 +45,4 @@ func (m *HomeInfra) LintCommits(
 	}
 
 	return out, nil
-}
-
-func (m *HomeInfra) Containing(ctx context.Context, filename string) ([]string, error) {
-	entries, err := m.Source.Glob(ctx, "**/"+filename)
-	if err != nil {
-		return nil, err
-	}
-
-	var parents []string
-	for _, entry := range entries {
-		entry = filepath.Clean(entry)
-		parent := strings.TrimSuffix(entry, filename)
-		if parent == "" {
-			parent = "."
-		}
-		parents = append(parents, parent)
-	}
-
-	return parents, nil
 }
