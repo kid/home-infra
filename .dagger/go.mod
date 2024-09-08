@@ -5,6 +5,8 @@ go 1.23.0
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Khan/genqlient v0.7.0
+	github.com/google/go-github/v64 v64.0.0
+	github.com/pkg/errors v0.9.1
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.0.0-20240518090000-14441aefdf88
@@ -17,6 +19,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.27.0
 	go.opentelemetry.io/proto/otlp v1.3.1
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
+	golang.org/x/oauth2 v0.20.0
 	golang.org/x/sync v0.7.0
 	google.golang.org/grpc v1.64.0
 )
@@ -25,6 +28,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect

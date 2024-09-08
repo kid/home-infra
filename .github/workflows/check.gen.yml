@@ -1,5 +1,5 @@
 # This file was generated. See https://daggerverse.dev/mod/github.com/shykes/gha
-name: terraform/tflint
+name: check
 "on":
     push:
         branches:
@@ -17,7 +17,10 @@ concurrency:
 jobs:
     dagger:
         runs-on: ubuntu-latest
-        name: terraform/tflint
+        permissions:
+            issues: write
+            pull-requests: write
+        name: check
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -46,7 +49,7 @@ jobs:
                 # The install.sh script creates path ${prefix_dir}/bin
                 curl -fsS https://dl.dagger.io/dagger/install.sh | BIN_DIR=${prefix_dir}/bin sh
               env:
-                DAGGER_VERSION: v0.12.7
+                DAGGER_VERSION: v0.13.0
               shell: bash
             - name: scripts/warm-engine.sh
               id: warm-engine
@@ -192,7 +195,8 @@ jobs:
 
                 exit $EXIT_CODE
               env:
-                COMMAND: dagger call -q tf-lint
+                COMMAND: dagger call -q --gh-token=env:GITHUB_TOKEN --pr ${{ github.event.pull_request.number }} check
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               shell: bash
         outputs:
             stderr: ${{ steps.exec.outputs.stderr }}

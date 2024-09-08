@@ -16,14 +16,16 @@ package main
 
 import (
 	"context"
+
 	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
 
 type HomeInfra struct {
-	// +pivate
-	Source *dagger.Directory
-	// +pivate
-	GitDir *dagger.Directory
+	Source  *dagger.Directory // +private
+	GitDir  *dagger.Directory // +private
+	IsCi    bool              // +private
+	GhPr    int               // +private
+	GhToken *dagger.Secret    // +private
 }
 
 func New(
@@ -36,10 +38,18 @@ func New(
 	// +optional
 	// +defaultPath="/.git"
 	gitDir *dagger.Directory,
+	// +optional
+	pr int,
+	// +optional
+	ghToken *dagger.Secret,
+	// +optional
 ) (*HomeInfra, error) {
 	return &HomeInfra{
-		Source: source,
-		GitDir: gitDir,
+		Source:  source,
+		GitDir:  gitDir,
+		IsCi:    pr > 0,
+		GhToken: ghToken,
+		GhPr:    pr,
 	}, nil
 }
 

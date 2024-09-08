@@ -17,6 +17,8 @@ concurrency:
 jobs:
     dagger:
         runs-on: ubuntu-latest
+        permissions:
+            issues: write
         name: clusters/talos.kidibox.net/kubeconform
         steps:
             - name: Checkout
@@ -193,6 +195,7 @@ jobs:
                 exit $EXIT_CODE
               env:
                 COMMAND: dagger call -q kube-conform-cluster --cluster-name=talos.kidibox.net
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               shell: bash
         outputs:
             stderr: ${{ steps.exec.outputs.stderr }}
