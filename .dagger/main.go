@@ -39,6 +39,8 @@ func New(
 	// +defaultPath="/.git"
 	gitDir *dagger.Directory,
 	// +optional
+	ci bool,
+	// +optional
 	pr int,
 	// +optional
 	ghToken *dagger.Secret,
@@ -47,7 +49,7 @@ func New(
 	return &HomeInfra{
 		Source:  source,
 		GitDir:  gitDir,
-		IsCi:    pr > 0,
+		IsCi:    ci || pr > 0,
 		GhToken: ghToken,
 		GhPr:    pr,
 	}, nil
