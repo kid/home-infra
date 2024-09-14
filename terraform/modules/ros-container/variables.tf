@@ -13,6 +13,7 @@ variable "file" {
 }
 
 variable "vlan_id" {
+  type    = number
   default = 5
 }
 

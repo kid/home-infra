@@ -1,7 +1,3 @@
-variable "flux_enable" {
-  type    = bool
-  default = true
-}
 
 module "flux_kustomize" {
   source = "../kustomization"
