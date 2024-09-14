@@ -1,15 +1,22 @@
+provider "sops" {}
+
 provider "proxmox" {
-  endpoint = var.proxmox_endpoint
-  username = var.proxmox_username
-  password = var.proxmox_password
-  insecure = var.proxmox_insecure
+  endpoint = data.sops_file.proxmox.data.proxmox_endpoint
+  username = data.sops_file.proxmox.data.proxmox_username
+  password = data.sops_file.proxmox.data.proxmox_password
+  insecure = data.sops_file.proxmox.data.proxmox_insecure
 }
 
 provider "routeros" {
-  hosturl  = var.routeros_endpoint
-  username = var.routeros_username
-  password = var.routeros_password
-  insecure = var.routeros_insecure
+  hosturl  = data.sops_file.routeros.data.routeros_endpoint
+  username = data.sops_file.routeros.data.routeros_username
+  password = data.sops_file.routeros.data.routeros_password
+  insecure = data.sops_file.routeros.data.routeros_insecure
+}
+
+provider "powerdns" {
+  server_url = data.sops_file.powerdns.data.pdns_api_url
+  api_key    = data.sops_file.powerdns.data.pdns_api_key
 }
 
 provider "kubernetes" {
@@ -37,11 +44,7 @@ provider "github" {
 }
 
 provider "truenas" {
-  base_url = "http://${var.truenas_host}/api/v2.0"
-  api_key  = var.truenas_api_key
+  base_url = "http://${data.sops_file.truenas.data.truenas_host}/api/v2.0"
+  api_key  = data.sops_file.truenas.data.truenas_api_key
 }
 
-provider "powerdns" {
-  server_url = var.pdns_api_url
-  api_key    = var.pdns_api_key
-}
