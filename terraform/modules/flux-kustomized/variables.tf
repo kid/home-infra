@@ -2,14 +2,6 @@ variable "cluster_name" {
   type = string
 }
 
-variable "github_org" {
-  type = string
-}
-
-variable "github_repository" {
-  type = string
-}
-
 variable "cluster_values" {
   type    = map(string)
   default = {}
