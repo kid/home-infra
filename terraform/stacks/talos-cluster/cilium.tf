@@ -63,7 +63,7 @@ resource "routeros_routing_bgp_connection" "bgp" {
   name             = each.key
   as               = 64512
   routing_table    = "main"
-  address_families =  "ip"
+  address_families = "ip"
 
   local {
     role = "ibgp"
