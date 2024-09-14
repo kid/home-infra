@@ -26,6 +26,7 @@ type HomeInfra struct {
 	IsCi    bool              // +private
 	GhPr    int               // +private
 	GhToken *dagger.Secret    // +private
+	SopsKey *dagger.Secret    // +private
 }
 
 func New(
@@ -45,6 +46,7 @@ func New(
 	// +optional
 	ghToken *dagger.Secret,
 	// +optional
+	sopsKey *dagger.Secret,
 ) (*HomeInfra, error) {
 	return &HomeInfra{
 		Source:  source,
@@ -52,6 +54,7 @@ func New(
 		IsCi:    ci || pr > 0,
 		GhToken: ghToken,
 		GhPr:    pr,
+		SopsKey: sopsKey,
 	}, nil
 }
 
