@@ -120,6 +120,7 @@ resource "talos_cluster_kubeconfig" "cluster" {
   client_configuration = talos_machine_secrets.cluster.client_configuration
 }
 
+# tflint-ignore: terraform_unused_declarations
 data "talos_cluster_health" "cluster" {
   depends_on             = [talos_machine_bootstrap.cluster]
   client_configuration   = talos_machine_secrets.cluster.client_configuration
