@@ -83,9 +83,15 @@ func (m *Terraform) Base(ctx context.Context) (ctr *dagger.Container, err error)
 			WithEnvVariable("TF_IN_AUTOMATION", "true").
 			WithDirectory("/src", m.HomeInfra.Source).
 			WithWorkdir("/src")
+
 		if m.Token != nil {
 			ctr = ctr.WithSecretVariable("TF_TOKEN_app_terraform_io", m.Token)
 		}
+
+		if m.HomeInfra.SopsKey != nil {
+			ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.HomeInfra.SopsKey)
+		}
+
 		ctr, err = ctr.Sync(ctx)
 		if err != nil {
 			return
@@ -224,6 +230,50 @@ func (m *Terraform) Validate(
 	}
 
 	return err
+}
+
+func (m *Terraform) Plan(
+	ctx context.Context,
+	// Directory to validate
+	chdir string,
+) (ctr *dagger.Container, err error) {
+	ctr, err = m.Init(ctx, chdir, false, false)
+	if err != nil {
+		return
+	}
+
+	args := []string{TF_BINARY, "-chdir=" + chdir, "plan", "-out=plan.tfplan"}
+	if m.HomeInfra.IsCi {
+		args = append(args, "-json")
+	}
+	ctr, err = ctr.WithExec(args).Sync(ctx)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (m *Terraform) Apply(
+	ctx context.Context,
+	// Directory to validate
+	chdir string,
+) (ctr *dagger.Container, err error) {
+	ctr, err = m.Plan(ctx, chdir)
+	if err != nil {
+		return
+	}
+
+	args := []string{TF_BINARY, "-chdir=" + chdir, "apply", "plan.tfplan"}
+	if m.HomeInfra.IsCi {
+		args = append(args, "-json")
+	}
+	ctr, err = ctr.WithExec(args).Sync(ctx)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 //go:embed templates/*
