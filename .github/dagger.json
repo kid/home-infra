@@ -4,9 +4,9 @@
   "dependencies": [
     {
       "name": "gha",
-      "source": "github.com/shykes/gha@0470df4daeb846af150cb54b38aca39972143ce9"
+      "source": "github.com/shykes/gha@503d8e46e85ced36029a451b32e375a2076a49b2"
     }
   ],
   "source": ".",
-  "engineVersion": "v0.12.7"
+  "engineVersion": "v0.13.0"
 }

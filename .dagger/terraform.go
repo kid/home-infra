@@ -1,8 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"embed"
+	"encoding/json"
+	"errors"
 	"path/filepath"
+	"text/template"
 
 	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
@@ -91,46 +96,6 @@ func (m *Terraform) Base(ctx context.Context) (ctr *dagger.Container, err error)
 	return m.Ctr, err
 }
 
-type LintResult struct {
-	Identifier string
-	Markdown   string
-}
-
-func (m *Terraform) Lint(ctx context.Context) error {
-	args := []string{"tflint", "--recursive", "--minimum-failure-severity=warning"}
-	if m.HomeInfra.IsCi {
-		args = append(args, "--format", "json")
-	} else {
-		args = append(args, "--color")
-	}
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return err
-	}
-	_, err = ctr.WithExec(args).Sync(ctx)
-	if execError, ok := err.(*dagger.ExecError); ok {
-		return &CheckError{
-			Markdown: "### `tflint`:\n```json\n" + execError.Stdout + "\n```",
-			original: err,
-		}
-	}
-
-	return err
-}
-
-func (m *Terraform) LintFix(ctx context.Context) (*dagger.Directory, error) {
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return nil, err
-	}
-	_, err = ctr.WithExec([]string{"tflint", "--color", "--recursive", "--fix", "--force"}).Sync(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return ctr.Directory("/src"), err
-}
-
 func (m *Terraform) Fmt(ctx context.Context) (err error) {
 	ctr, err := m.Base(ctx)
 	if err != nil {
@@ -159,6 +124,45 @@ func (m *Terraform) FmtFix(ctx context.Context) (dir *dagger.Directory, err erro
 
 	if err != nil {
 		return
+	}
+
+	return ctr.Directory("/src"), err
+}
+
+func (m *Terraform) Lint(ctx context.Context) error {
+	args := []string{"tflint", "--recursive", "--minimum-failure-severity=warning"}
+	if m.HomeInfra.IsCi {
+		args = append(args, "--format", "json")
+	} else {
+		args = append(args, "--color")
+	}
+	ctr, err := m.Base(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = ctr.WithExec(args).Sync(ctx)
+	if execError, ok := err.(*dagger.ExecError); ok {
+		md, err := m.LintReport(ctx, execError.Stdout)
+		if err != nil {
+			return errors.Join(err, execError)
+		}
+		return &CheckError{
+			Markdown: md,
+			original: execError,
+		}
+	}
+
+	return err
+}
+
+func (m *Terraform) LintFix(ctx context.Context) (*dagger.Directory, error) {
+	ctr, err := m.Base(ctx)
+	if err != nil {
+		return nil, err
+	}
+	_, err = ctr.WithExec([]string{"tflint", "--color", "--recursive", "--fix", "--force"}).Sync(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return ctr.Directory("/src"), err
@@ -222,70 +226,24 @@ func (m *Terraform) Validate(
 	return err
 }
 
-// func (m *Terraform) CI(ctx context.Context, pr int) (*dagger.Directory, error) {
-// 	m.IsCi = true
-//
-// 	var (
-// 		results = dag.Directory()
-// 		errs    []error
-// 	)
-// 	if err := m.Fmt(ctx); err != nil {
-// 		var execError *dagger.ExecError
-// 		if errors.As(err, &execError) {
-// 			markdown := fmt.Sprintf("### `terraform fmt`:\n```diff\n%s\n```", execError.Stdout)
-// 			results = results.WithNewFile("terraform-fmt.md", markdown)
-// 			if pr > 0 {
-// 				if err := m.PublishComment(ctx, pr, markdown); err != nil {
-// 					errs = append(errs, errors.Join(execError, err))
-// 				}
-// 			}
-// 		} else {
-// 			errs = append(errs, err)
-// 		}
-// 	}
-//
-// 	// if err := m.Lint(ctx, "warning"); err != nil {
-// 	// 	errs = append(errs, err)
-// 	// }
-//
-// 	stacks, err := Containing(ctx, m.Source, "_.terraform.lock.hcl")
-// 	if err != nil {
-// 		errs = append(errs, err)
-// 	}
-//
-// 	for _, stack := range stacks {
-// 		_, err := m.Validate(ctx, path.Join("terraform", stack))
-// 		if err != nil {
-// 			errs = append(errs, err)
-// 		}
-// 	}
-//
-// 	return results, errors.Join(errs...)
-// }
+//go:embed templates/*
+var templates embed.FS
 
-// func (m *Terraform) PublishComment(ctx context.Context, pr int, body string) error {
-// 	token, err := m.GhToken.Plaintext(ctx)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	ts := oauth2.StaticTokenSource(
-// 		&oauth2.Token{AccessToken: token},
-// 	)
-// 	tc := oauth2.NewClient(ctx, ts)
-//
-// 	client := github.NewClient(tc)
-//
-// 	// The owner of the repository
-// 	owner := "kid"
-//
-// 	// The repository name
-// 	repo := "home-infra"
-//
-// 	comment := &github.IssueComment{
-// 		Body: github.String(body),
-// 	}
-//
-// 	_, _, err = client.Issues.CreateComment(ctx, owner, repo, pr, comment)
-// 	return errpkg.Wrap(err, "failed to publish comment")
-// }
+func (m *Terraform) LintReport(ctx context.Context, js string) (string, error) {
+	data := map[string]interface{}{}
+	if err := json.Unmarshal([]byte(js), &data); err != nil {
+		return "", err
+	}
+
+	// t, err := template.New("").ParseFS(templates, "templates/tflint.md.gotpl")
+	t, err := template.ParseFS(templates, "templates/tflint.md.tpl")
+	if err != nil {
+		return "", err
+	}
+	var tpl bytes.Buffer
+	if err = t.Execute(&tpl, data); err != nil {
+		return "", err
+	}
+
+	return tpl.String(), nil
+}
