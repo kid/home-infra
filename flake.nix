@@ -14,9 +14,6 @@
 
     dagger.url = "github:dagger/nix";
     dagger.inputs.nixpkgs.follows = "nixpkgs";
-
-    nix-topology.url = "github:oddlama/nix-topology";
-    nix-topology.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -25,7 +22,6 @@
       imports = [
         inputs.devshell.flakeModule
         inputs.treefmt-nix.flakeModule
-        inputs.nix-topology.flakeModule
       ];
       systems = [
         "x86_64-linux"
@@ -54,14 +50,11 @@
                 inputs'.dagger.packages.dagger
               ]
               ++ (with pkgs; [
-                azure-cli
                 age
                 sops
-                terragrunt
                 terraform-ls
                 talosctl
                 timoni
-                cue
                 fluxcd
                 cilium-cli
                 hubble
@@ -71,38 +64,21 @@
                 kustomize
                 earthly
                 opentofu
-                pdns
-                containerlab
                 gopls
-                terraform-backend-git
-                grafana-alloy
-                envsubst
               ]);
           };
 
           treefmt = {
             projectRootFile = "flake.nix";
-            # build.check = true;
             flakeFormatter = true;
             programs.nixfmt.enable = true;
             programs.nixfmt.package = pkgs.nixfmt-rfc-style;
             programs.terraform.enable = true;
             programs.hclfmt.enable = true;
-            programs.cue.enable = true;
             programs.shfmt.enable = true;
             programs.gofmt.enable = true;
             programs.yamlfmt.enable = true;
           };
-
-          topology.modules = [
-            {
-              networks.lan = {
-                name = "lan";
-                cidrv4 = "10.0.100.0/24";
-
-              };
-            }
-          ];
         };
     };
 }
