@@ -14,14 +14,14 @@ locals {
 
 resource "powerdns_zone" "local" {
   depends_on  = [module.pdns]
-  name        = "kidibox.net."
+  name        = "${var.domain_name}."
   kind        = "Native"
-  nameservers = ["ns1.kidibox.net."]
+  nameservers = ["ns1.${var.domain_name}."]
 }
 
 resource "powerdns_record" "ns" {
   zone    = powerdns_zone.local.name
-  name    = "ns1.kidibox.net."
+  name    = "ns1.${var.domain_name}."
   type    = "A"
   ttl     = 300
   records = ["10.0.5.53"]
