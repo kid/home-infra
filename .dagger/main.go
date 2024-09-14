@@ -33,7 +33,7 @@ func New(
 	ctx context.Context,
 	// +optional
 	// +defaultPath="/"
-	// +ignore=[".git", ".devenv", ".direnv", "dagger/dagger.gen.go", "dagger/internal", "**/.terraform", "**/.terragrunt-cache"]
+	// +ignore=[".git", ".archived", ".devenv", ".direnv", "dagger/dagger.gen.go", "dagger/internal", "**/.terraform", "**/.terragrunt-cache"]
 	source *dagger.Directory,
 	// Git directory, used for commitlint.
 	// +optional
