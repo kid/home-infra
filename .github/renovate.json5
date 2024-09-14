@@ -5,6 +5,7 @@
     "docker:enableMajor",
   ],
   ignorePaths: [
+    ".archived/**/*",
     ".dagger/go\\.mod",
     ".github/go\\.mod",
     "**/*.sops.*",
