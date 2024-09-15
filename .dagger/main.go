@@ -58,12 +58,10 @@ func New(
 	}, nil
 }
 
-func (m *HomeInfra) base(pkgs []string) *dagger.Container {
-	ctr := dag.Container().From("alpine:edge")
-
-	if len(pkgs) > 0 {
-		ctr = ctr.WithExec(append([]string{"apk", "add", "--no-cache"}, pkgs...))
-	}
-
-	return ctr
+func (m *HomeInfra) Base(pkgs ...string) *dagger.Container {
+	return dag.
+		Wolfi().
+		Container(dagger.WolfiContainerOpts{
+			Packages: pkgs,
+		})
 }

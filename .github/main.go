@@ -25,8 +25,7 @@ func New(
 
 	return ci.
 		// WithPipeline("commitlint", "lint-commits --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }}").
-		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --pr ${{ github.event.pull_request.number }} check").
-		WithPipeline("clusters/talos.kidibox.net/kubeconform", "kube-conform-cluster --cluster-name=talos.kidibox.net")
+		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --pr ${{ github.event.pull_request.number }} check")
 }
 
 func (ci *CI) WithPipeline(
@@ -41,7 +40,6 @@ func (ci *CI) WithPipeline(
 		OnPullRequestReopened:       true,
 		OnPullRequestSynchronize:    true,
 		OnPullRequestReadyForReview: true,
-		PullRequestConcurrency:      "preempt",
 		Secrets:                     []string{"GITHUB_TOKEN"},
 		Permissions:                 []dagger.GhaPermission{dagger.WriteIssues, dagger.WritePullRequests},
 	}
