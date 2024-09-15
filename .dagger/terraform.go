@@ -6,6 +6,7 @@ import (
 	"embed"
 	"encoding/json"
 	"errors"
+	"path"
 	"path/filepath"
 	"text/template"
 
@@ -17,26 +18,26 @@ const (
 )
 
 type Terraform struct {
-	HomeInfra *HomeInfra        // +private
-	Ctr       *dagger.Container // +private
-	Token     *dagger.Secret    // +private
+	checkBuilder                   // +private
+	HomeInfra    *HomeInfra        // +private
+	Ctr          *dagger.Container // +private
+	Token        *dagger.Secret    // +private
 }
 
-func (m *HomeInfra) terraformChecks(ctx context.Context) ([]Check, error) {
-	tf := m.Terraform(ctx, nil)
+func (m *Terraform) buildChecks(ctx context.Context) ([]Check, error) {
 	name := "terraform"
 	checks := []Check{
 		{
 			Name:  name + "/fmt",
-			Check: tf.Fmt,
+			Check: m.Fmt,
 		},
 		{
 			Name:  name + "/lint",
-			Check: tf.Lint,
+			Check: m.Lint,
 		},
 	}
 
-	stacks, err := Containing(ctx, m.Source, ".terraform.lock.hcl")
+	stacks, err := Containing(ctx, m.HomeInfra.Source, ".terraform.lock.hcl")
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +47,9 @@ func (m *HomeInfra) terraformChecks(ctx context.Context) ([]Check, error) {
 			return nil, err
 		}
 		checks = append(checks, Check{
-			Name: name + "/validate/" + dir,
+			Name: path.Join(name, dir, "validate"),
 			Check: func(ctx context.Context) error {
-				return tf.Validate(ctx, stack)
+				return m.Validate(ctx, stack)
 			},
 		})
 	}
@@ -69,46 +70,33 @@ func (m *HomeInfra) Terraform(
 	return tf
 }
 
-func (m *Terraform) Base(ctx context.Context) (ctr *dagger.Container, err error) {
-	if m.Ctr == nil {
-		ctr = dag.
-			Wolfi().
-			Container(dagger.WolfiContainerOpts{
-				Packages: []string{
-					"opentofu=1.8.2",
-					"tflint=0.53.0",
-				},
-			}).
-			WithMountedCache("/root/.terraform.d/plugin-cache", dag.CacheVolume("terraform-plugin-cache")).
-			WithEnvVariable("TF_IN_AUTOMATION", "true").
-			WithDirectory("/src", m.HomeInfra.Source).
-			WithWorkdir("/src")
+func (m *Terraform) Base() *dagger.Container {
+	ctr := dag.
+		Wolfi().
+		Container(dagger.WolfiContainerOpts{
+			Packages: []string{
+				"opentofu=1.8.2",
+				"tflint=0.53.0",
+			},
+		}).
+		WithMountedCache("~/.terraform.d/plugin-cache", dag.CacheVolume("terraform-plugin-cache")).
+		WithEnvVariable("TF_IN_AUTOMATION", "true").
+		WithDirectory("/src", m.HomeInfra.Source).
+		WithWorkdir("/src")
 
-		if m.Token != nil {
-			ctr = ctr.WithSecretVariable("TF_TOKEN_app_terraform_io", m.Token)
-		}
-
-		if m.HomeInfra.SopsKey != nil {
-			ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.HomeInfra.SopsKey)
-		}
-
-		ctr, err = ctr.Sync(ctx)
-		if err != nil {
-			return
-		}
-		m.Ctr = ctr
+	if m.Token != nil {
+		ctr = ctr.WithSecretVariable("TF_TOKEN_app_terraform_io", m.Token)
 	}
 
-	return m.Ctr, err
+	if m.HomeInfra.SopsKey != nil {
+		ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.HomeInfra.SopsKey)
+	}
+
+	return ctr
 }
 
 func (m *Terraform) Fmt(ctx context.Context) (err error) {
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctr.WithExec([]string{TF_BINARY, "fmt", "-recursive", "-diff", "-check"}).Sync(ctx)
+	_, err = m.Base().WithExec([]string{TF_BINARY, "fmt", "-recursive", "-diff", "-check"}).Sync(ctx)
 	if err != nil {
 		if execError, ok := err.(*dagger.ExecError); ok {
 			return &CheckError{
@@ -122,12 +110,7 @@ func (m *Terraform) Fmt(ctx context.Context) (err error) {
 }
 
 func (m *Terraform) FmtFix(ctx context.Context) (dir *dagger.Directory, err error) {
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return
-	}
-	ctr, err = ctr.WithExec([]string{TF_BINARY, "fmt", "-recursive", "-diff"}).Sync(ctx)
-
+	ctr, err := m.Base().WithExec([]string{TF_BINARY, "fmt", "-recursive", "-diff"}).Sync(ctx)
 	if err != nil {
 		return
 	}
@@ -142,11 +125,8 @@ func (m *Terraform) Lint(ctx context.Context) error {
 	} else {
 		args = append(args, "--color")
 	}
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return err
-	}
-	_, err = ctr.WithExec(args).Sync(ctx)
+
+	_, err := m.Base().WithExec(args).Sync(ctx)
 	if execError, ok := err.(*dagger.ExecError); ok {
 		md, err := m.LintReport(ctx, execError.Stdout)
 		if err != nil {
@@ -162,11 +142,7 @@ func (m *Terraform) Lint(ctx context.Context) error {
 }
 
 func (m *Terraform) LintFix(ctx context.Context) (*dagger.Directory, error) {
-	ctr, err := m.Base(ctx)
-	if err != nil {
-		return nil, err
-	}
-	_, err = ctr.WithExec([]string{"tflint", "--color", "--recursive", "--fix", "--force"}).Sync(ctx)
+	ctr, err := m.Base().WithExec([]string{"tflint", "--color", "--recursive", "--fix", "--force"}).Sync(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +160,7 @@ func (m *Terraform) Init(
 	// Whether to reconfigure the backend
 	// +default=false
 	reconfigure bool,
-) (ctr *dagger.Container, err error) {
+) (*dagger.Container, error) {
 	args := []string{
 		TF_BINARY,
 		"-chdir=" + chdir,
@@ -199,15 +175,11 @@ func (m *Terraform) Init(
 	if reconfigure {
 		args = append(args, "-reconfigure")
 	}
-	ctr, err = m.Base(ctx)
+	ctr, err := m.Base().WithExec(args).Sync(ctx)
 	if err != nil {
-		return
+		return nil, err
 	}
-	ctr, err = ctr.WithExec(args).Sync(ctx)
-	if err != nil {
-		return
-	}
-	return
+	return ctr, nil
 }
 
 func (m *Terraform) Validate(

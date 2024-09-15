@@ -10,18 +10,24 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
+	return buildCheckRouter(
+		ctx,
+		m.Terraform(ctx, nil),
+		m.Kube(),
+	)
+}
+
 func (m *HomeInfra) Check(
 	ctx context.Context,
 	// +optional
 	// +default=[""]
 	targets []string,
 ) error {
-	var routes checkRouter
-	tfChecks, err := m.terraformChecks(ctx)
+	routes, err := buildRoutes(ctx, m)
 	if err != nil {
 		return err
 	}
-	routes.Add(tfChecks...)
 
 	eg := errgroup.Group{}
 	for _, check := range routes.Get(targets...) {
@@ -62,23 +68,16 @@ func (m *HomeInfra) CheckList(
 	// +default=[""]
 	targets []string,
 ) (checks []string, err error) {
-	var routes checkRouter
-	tfChecks, err := m.terraformChecks(ctx)
+	routes, err := buildRoutes(ctx, m)
 	if err != nil {
 		return
 	}
-	routes.Add(tfChecks...)
 
 	for _, check := range routes.Get(targets...) {
 		checks = append(checks, check.Name)
 	}
 
 	return
-}
-
-type Check struct {
-	Name  string
-	Check func(context.Context) error
 }
 
 type CheckError struct {
@@ -101,9 +100,30 @@ func (e *CheckError) Unwrap() error {
 	return e.original
 }
 
+type Check struct {
+	Name  string
+	Check func(context.Context) error
+}
+
 type checkRouter struct {
 	check    Check
 	children map[string]*checkRouter
+}
+
+type checkBuilder interface {
+	buildChecks(context.Context) ([]Check, error)
+}
+
+func buildCheckRouter(ctx context.Context, builders ...checkBuilder) (*checkRouter, error) {
+	router := &checkRouter{}
+	for _, builder := range builders {
+		checks, err := builder.buildChecks(ctx)
+		if err != nil {
+			return nil, err
+		}
+		router.Add(checks...)
+	}
+	return router, nil
 }
 
 func (r *checkRouter) Add(checks ...Check) {
