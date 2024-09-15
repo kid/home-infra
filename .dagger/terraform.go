@@ -79,7 +79,7 @@ func (m *Terraform) Base(ctx context.Context) (ctr *dagger.Container, err error)
 					"tflint=0.53.0",
 				},
 			}).
-			WithMountedCache("~/.terraform.d/plugin-cache", dag.CacheVolume("terraform-plugin-cache")).
+			WithMountedCache("/root/.terraform.d/plugin-cache", dag.CacheVolume("terraform-plugin-cache")).
 			WithEnvVariable("TF_IN_AUTOMATION", "true").
 			WithDirectory("/src", m.HomeInfra.Source).
 			WithWorkdir("/src")
