@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 
+	"github.com/google/go-github/v64/github"
 	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
 
@@ -41,21 +42,43 @@ func New(
 	gitDir *dagger.Directory,
 	// +optional
 	ci bool,
+	// GitHub event type (e.g., pull_request)
 	// +optional
-	pr int,
+	ghEventName string,
+	// Github event payload
+	// +optional
+	ghEvent *dagger.File,
 	// +optional
 	ghToken *dagger.Secret,
 	// +optional
 	sopsKey *dagger.Secret,
 ) (*HomeInfra, error) {
-	return &HomeInfra{
+	m := &HomeInfra{
 		Source:  source,
 		GitDir:  gitDir,
-		IsCi:    ci || pr > 0,
+		IsCi:    ci,
 		GhToken: ghToken,
-		GhPr:    pr,
 		SopsKey: sopsKey,
-	}, nil
+	}
+
+	if ghEventName != "" && ghEvent != nil {
+		m.IsCi = true
+
+		payload, err := ghEvent.Contents(ctx)
+		if err != nil {
+			return nil, err
+		}
+		event, err := github.ParseWebHook(ghEventName, []byte(payload))
+		if err != nil {
+			return nil, err
+		}
+
+		if e, ok := event.(*github.PullRequestEvent); ok {
+			m.GhPr = e.GetNumber()
+		}
+	}
+
+	return m, nil
 }
 
 func (m *HomeInfra) Base(pkgs ...string) *dagger.Container {

@@ -41,7 +41,7 @@ func (m *HomeInfra) Check(
 			}()
 
 			rerr = check.Check(ctx)
-			if m.IsCi {
+			if m.IsCi && m.GhPr > 0 {
 				gh := m.Github(ctx, "kid", "home-infra")
 				if rerr != nil {
 					checkErr := &CheckError{}
