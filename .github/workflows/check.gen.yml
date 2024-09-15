@@ -192,7 +192,9 @@ jobs:
 
                 exit $EXIT_CODE
               env:
+                _EXPERIMENTAL_DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
                 COMMAND: dagger call -q --gh-token=env:GITHUB_TOKEN --pr ${{ github.event.pull_request.number }} check
+                DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               shell: bash
         outputs:

@@ -19,7 +19,6 @@ func New(
 
 	ci.Gha = dag.Gha(dagger.GhaOpts{
 		DaggerVersion: "v0.13.0",
-		NoTraces:      true,
 		Repository:    repository,
 	})
 
