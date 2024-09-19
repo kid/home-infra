@@ -14,6 +14,11 @@ func (m *HomeInfra) LintCommits(
 	// +default="commitlint/commitlint:19.4.1"
 	image string,
 	// +optional
+	// +default="main"
+	base,
+	// +optional
+	branch,
+	// +optional
 	// lower range of the commit range
 	from string,
 	// +optional
@@ -23,18 +28,23 @@ func (m *HomeInfra) LintCommits(
 	args := []string{"--color", "--verbose", "--extends", "@commitlint/config-conventional"}
 	if from != "" {
 		args = append(args, "--from", from)
+	} else {
+		args = append(args, "--from", base)
 	}
 	if to != "" {
 		args = append(args, "--to", to)
 	}
-	if from == "" && to == "" {
-		args = append(args, "--last")
-	}
+	// if from == "" && to == "" {
+	// 	args = append(args, "--last")
+	// }
+
+	dag.Git("https://github.com/kid/home-infra.git", dagger.GitOpts{KeepGitDir: true}).Branch(branch).Tree()
 
 	ctr := dag.
 		Container().
 		From(image).
-		WithDirectory("/src/.git", m.GitDir).
+		// WithDirectory("/src/.git", m.GitDir).
+		WithDirectory("/src/", m.GitDir).
 		WithWorkdir("/src").
 		WithExec(args, dagger.ContainerWithExecOpts{UseEntrypoint: true})
 
