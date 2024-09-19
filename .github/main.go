@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/kid/home-infra/.github/internal/dagger"
 )
 
@@ -9,22 +11,26 @@ type CI struct {
 }
 
 func New(
+	ctx context.Context,
 	// The home-infra repository
 	// +optional
 	// +defaultPath="/"
 	// +ignore=["**", "!.github"]
 	repository *dagger.Directory,
-) *CI {
-	ci := new(CI)
+) (ci *CI, err error) {
+	version, err := dag.Version(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ci = new(CI)
 
 	ci.Gha = dag.Gha(dagger.GhaOpts{
-		DaggerVersion: "v0.13.0",
+		DaggerVersion: version,
 		Repository:    repository,
 	})
 
-	return ci.
-		// WithPipeline("commitlint", "lint-commits --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }}").
-		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --gh-event-name '${{ github.event_name }}' --gh-event '${{ github.event_path }}' check")
+	return
 }
 
 func (ci *CI) WithPipeline(
@@ -48,5 +54,7 @@ func (ci *CI) WithPipeline(
 
 // Generate Github Actions to call our Dagger pipelines
 func (ci *CI) Generate() *dagger.Directory {
-	return ci.Gha.Config()
+	return ci.
+		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --gh-event-name '${{ github.event_name }}' --gh-event '${{ github.event_path }}' check").
+		Gha.Config()
 }
