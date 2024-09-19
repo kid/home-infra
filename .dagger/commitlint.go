@@ -20,7 +20,7 @@ func (m *HomeInfra) LintCommits(
 	// upper range of the commit range
 	to string,
 ) (string, error) {
-	args := []string{"--color", "--verbose"}
+	args := []string{"--color", "--verbose", "--extends", "@commitlint/config-conventional"}
 	if from != "" {
 		args = append(args, "--from", from)
 	}
@@ -35,7 +35,6 @@ func (m *HomeInfra) LintCommits(
 		Container().
 		From(image).
 		WithDirectory("/src/.git", m.GitDir).
-		WithFile("/src/.commitlintrc.ts", m.Source.File("/.commitlintrc.ts")).
 		WithWorkdir("/src").
 		WithExec(args, dagger.ContainerWithExecOpts{UseEntrypoint: true})
 

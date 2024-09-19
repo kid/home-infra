@@ -55,6 +55,7 @@ func (ci *CI) WithPipeline(
 // Generate Github Actions to call our Dagger pipelines
 func (ci *CI) Generate() *dagger.Directory {
 	return ci.
+		WithPipeline("commitlint", "lint-commits --from '${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }}' --to '${{ github.event.pull_request.head.sha }}'").
 		WithPipeline("check", "--gh-token=env:GITHUB_TOKEN --gh-event-name '${{ github.event_name }}' --gh-event '${{ github.event_path }}' check").
 		Gha.Config()
 }
