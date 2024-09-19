@@ -6,6 +6,7 @@ import (
 	"embed"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path"
 	"path/filepath"
 	"text/template"
@@ -79,7 +80,8 @@ func (m *Terraform) Base() *dagger.Container {
 				"tflint=0.53.0",
 			},
 		}).
-		WithMountedCache("~/.terraform.d/plugin-cache", dag.CacheVolume("terraform-plugin-cache")).
+		WithMountedCache("/.terraform.d/plugin-cache", dag.CacheVolume(fmt.Sprintf("%s-plugin-cache", TF_BINARY))).
+		WithEnvVariable("TF_PLUGIN_CACHE_DIR", "/.terraform.d/plugin-cache").
 		WithEnvVariable("TF_IN_AUTOMATION", "true").
 		WithDirectory("/src", m.HomeInfra.Source).
 		WithWorkdir("/src")
