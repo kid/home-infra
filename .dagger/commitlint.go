@@ -38,13 +38,10 @@ func (m *HomeInfra) LintCommits(
 	// 	args = append(args, "--last")
 	// }
 
-	dag.Git("https://github.com/kid/home-infra.git", dagger.GitOpts{KeepGitDir: true}).Branch(branch).Tree()
-
 	ctr := dag.
 		Container().
 		From(image).
-		// WithDirectory("/src/.git", m.GitDir).
-		WithDirectory("/src/", m.GitDir).
+		WithDirectory("/src/.git", m.GitDir).
 		WithWorkdir("/src").
 		WithExec(args, dagger.ContainerWithExecOpts{UseEntrypoint: true})
 
