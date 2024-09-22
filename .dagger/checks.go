@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"path"
 	"strings"
 
 	"go.opentelemetry.io/otel/codes"
@@ -11,11 +12,43 @@ import (
 )
 
 func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
-	return buildCheckRouter(
+	router, err := buildCheckRouter(
 		ctx,
 		m.Terraform(ctx, nil),
 		m.Kube(),
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	ctrs := dag.Containers()
+	targets, err := ctrs.Targets(ctx)
+	if err != nil {
+		return nil, err
+	}
+	platforms, err := ctrs.Platforms(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, target := range targets {
+		router.Add(Check{
+			Name: path.Join(target, "lint"),
+			Check: func(ctx context.Context) error {
+				return ctrs.Lint(ctx, target)
+			},
+		})
+		for _, platform := range platforms {
+			router.Add(Check{
+				Name: path.Join(target, "build", string(platform)),
+				Check: func(ctx context.Context) error {
+					_, err := ctrs.Build(target, platform).Sync(ctx)
+					return err
+				},
+			})
+		}
+	}
+
+	return router, err
 }
 
 func (m *HomeInfra) Check(
