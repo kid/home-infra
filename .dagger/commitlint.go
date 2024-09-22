@@ -14,28 +14,34 @@ func (m *HomeInfra) LintCommits(
 	// +default="commitlint/commitlint:19.4.1"
 	image string,
 	// +optional
+	// +default="main"
+	base,
+	// +optional
+	branch,
+	// +optional
 	// lower range of the commit range
 	from string,
 	// +optional
 	// upper range of the commit range
 	to string,
 ) (string, error) {
-	args := []string{"--color", "--verbose"}
+	args := []string{"--color", "--verbose", "--extends", "@commitlint/config-conventional"}
 	if from != "" {
 		args = append(args, "--from", from)
+	} else {
+		args = append(args, "--from", base)
 	}
 	if to != "" {
 		args = append(args, "--to", to)
 	}
-	if from == "" && to == "" {
-		args = append(args, "--last")
-	}
+	// if from == "" && to == "" {
+	// 	args = append(args, "--last")
+	// }
 
 	ctr := dag.
 		Container().
 		From(image).
 		WithDirectory("/src/.git", m.GitDir).
-		WithFile("/src/.commitlintrc.ts", m.Source.File("/.commitlintrc.ts")).
 		WithWorkdir("/src").
 		WithExec(args, dagger.ContainerWithExecOpts{UseEntrypoint: true})
 
