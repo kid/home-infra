@@ -6,8 +6,8 @@
   ],
   ignorePaths: [
     ".archived/**/*",
-    ".dagger/go\\.mod",
     ".github/go\\.mod",
+    "**/.dagger/go\\.mod",
     "**/*.sops.*",
   ],
   flux: {
