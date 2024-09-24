@@ -5,13 +5,11 @@ import (
 	"context"
 	"embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"path"
-	"path/filepath"
 	"text/template"
 
-	"github.com/kid/home-infra/.dagger/internal/dagger"
+	"github.com/kid/home-infra/terraform/.dagger/internal/dagger"
 )
 
 const (
@@ -19,56 +17,47 @@ const (
 )
 
 type Terraform struct {
-	checkBuilder                   // +private
-	HomeInfra    *HomeInfra        // +private
-	Ctr          *dagger.Container // +private
-	Token        *dagger.Secret    // +private
+	Source  *dagger.Directory
+	Ctr     *dagger.Container
+	Token   *dagger.Secret // +private
+	SopsKey *dagger.Secret // +private
+	IsCi    bool           // +private
 }
 
-func (m *Terraform) buildChecks(ctx context.Context) ([]Check, error) {
-	name := "terraform"
-	checks := []Check{
-		{
-			Name:  name + "/fmt",
-			Check: m.Fmt,
-		},
-		{
-			Name:  name + "/lint",
-			Check: m.Lint,
-		},
+func New(
+	ctx context.Context,
+	// +optional
+	// +defaultPath="/"
+	// +ignore=[".git", "**/.terraform", "**/.terragrunt-cache"]
+	// +ignore=["**/*", "!terraform/", "terraform/.dagger", "terraform/dagger.json", "!clusters/", "clusters/.dagger", "clusters/dagger.json"]
+	source *dagger.Directory,
+	// +optional
+	token *dagger.Secret,
+	// +optional
+	sopsKey *dagger.Secret,
+	// +optional
+	isCi bool,
+) *Terraform {
+	return &Terraform{
+		Source:  source,
+		Token:   token,
+		SopsKey: sopsKey,
+		IsCi:    isCi,
 	}
+}
 
-	stacks, err := Containing(ctx, m.HomeInfra.Source, ".terraform.lock.hcl")
+// Targets returns a list of terraform stacks
+func (m *Terraform) Targets(ctx context.Context) (targets []string, err error) {
+	entries, err := m.Source.Glob(ctx, "**/.terraform.lock.hcl")
 	if err != nil {
 		return nil, err
 	}
-	for _, stack := range stacks {
-		dir, err := filepath.Rel("terraform", stack)
-		if err != nil {
-			return nil, err
-		}
-		checks = append(checks, Check{
-			Name: path.Join(name, dir, "validate"),
-			Check: func(ctx context.Context) error {
-				return m.Validate(ctx, stack)
-			},
-		})
+
+	for _, entry := range entries {
+		targets = append(targets, path.Dir(entry))
 	}
 
-	return checks, nil
-}
-
-func (m *HomeInfra) Terraform(
-	ctx context.Context,
-	// +optional
-	token *dagger.Secret,
-) *Terraform {
-	tf := &Terraform{
-		HomeInfra: m,
-		// Source:    source,
-		Token: token,
-	}
-	return tf
+	return
 }
 
 func (m *Terraform) Base() *dagger.Container {
@@ -83,15 +72,15 @@ func (m *Terraform) Base() *dagger.Container {
 		WithMountedCache("/.terraform.d/plugin-cache", dag.CacheVolume(fmt.Sprintf("%s-plugin-cache", TF_BINARY))).
 		WithEnvVariable("TF_PLUGIN_CACHE_DIR", "/.terraform.d/plugin-cache").
 		WithEnvVariable("TF_IN_AUTOMATION", "true").
-		WithDirectory("/src", m.HomeInfra.Source).
+		WithDirectory("/src", m.Source).
 		WithWorkdir("/src")
 
 	if m.Token != nil {
 		ctr = ctr.WithSecretVariable("TF_TOKEN_app_terraform_io", m.Token)
 	}
 
-	if m.HomeInfra.SopsKey != nil {
-		ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.HomeInfra.SopsKey)
+	if m.SopsKey != nil {
+		ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.SopsKey)
 	}
 
 	return ctr
@@ -99,14 +88,14 @@ func (m *Terraform) Base() *dagger.Container {
 
 func (m *Terraform) Fmt(ctx context.Context) (err error) {
 	_, err = m.Base().WithExec([]string{TF_BINARY, "fmt", "-recursive", "-diff", "-check"}).Sync(ctx)
-	if err != nil {
-		if execError, ok := err.(*dagger.ExecError); ok {
-			return &CheckError{
-				Markdown: "### `terraform fmt`:\n```diff\n" + execError.Stdout + "\n```",
-				original: err,
-			}
-		}
-	}
+	// if err != nil {
+	// 	if execError, ok := err.(*dagger.ExecError); ok {
+	// 		return &CheckError{
+	// 			Markdown: "### `terraform fmt`:\n```diff\n" + execError.Stdout + "\n```",
+	// 			original: err,
+	// 		}
+	// 	}
+	// }
 
 	return
 }
@@ -122,23 +111,23 @@ func (m *Terraform) FmtFix(ctx context.Context) (dir *dagger.Directory, err erro
 
 func (m *Terraform) Lint(ctx context.Context) error {
 	args := []string{"tflint", "--recursive", "--minimum-failure-severity=warning"}
-	if m.HomeInfra.IsCi {
+	if m.IsCi {
 		args = append(args, "--format", "json")
 	} else {
 		args = append(args, "--color")
 	}
 
 	_, err := m.Base().WithExec(args).Sync(ctx)
-	if execError, ok := err.(*dagger.ExecError); ok {
-		md, err := m.LintReport(ctx, execError.Stdout)
-		if err != nil {
-			return errors.Join(err, execError)
-		}
-		return &CheckError{
-			Markdown: md,
-			original: execError,
-		}
-	}
+	// if execError, ok := err.(*dagger.ExecError); ok {
+	// 	md, err := m.LintReport(ctx, execError.Stdout)
+	// 	if err != nil {
+	// 		return errors.Join(err, execError)
+	// 	}
+	// 	return &CheckError{
+	// 		Markdown: md,
+	// 		original: execError,
+	// 	}
+	// }
 
 	return err
 }
@@ -195,7 +184,7 @@ func (m *Terraform) Validate(
 	}
 
 	args := []string{TF_BINARY, "-chdir=" + chdir, "validate"}
-	if m.HomeInfra.IsCi {
+	if m.IsCi {
 		args = append(args, "-json")
 	}
 	ctr, err = ctr.WithExec(args).Sync(ctx)
@@ -217,7 +206,7 @@ func (m *Terraform) Plan(
 	}
 
 	args := []string{TF_BINARY, "-chdir=" + chdir, "plan", "-out=plan.tfplan"}
-	if m.HomeInfra.IsCi {
+	if m.IsCi {
 		args = append(args, "-json")
 	}
 	ctr, err = ctr.WithExec(args).Sync(ctx)
@@ -239,7 +228,7 @@ func (m *Terraform) Apply(
 	}
 
 	args := []string{TF_BINARY, "-chdir=" + chdir, "apply", "plan.tfplan"}
-	if m.HomeInfra.IsCi {
+	if m.IsCi {
 		args = append(args, "-json")
 	}
 	ctr, err = ctr.WithExec(args).Sync(ctx)
