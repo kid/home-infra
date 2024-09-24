@@ -5,16 +5,18 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"path/filepath"
 	"strings"
 
+	"github.com/kid/home-infra/.dagger/internal/dagger"
 	"go.opentelemetry.io/otel/codes"
 	"golang.org/x/sync/errgroup"
 )
 
 func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
+	router := &checkRouter{}
 	router, err := buildCheckRouter(
 		ctx,
-		m.Terraform(ctx, nil),
 		m.Kube(),
 	)
 	if err != nil {
@@ -46,6 +48,31 @@ func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
 				},
 			})
 		}
+	}
+
+	tf := dag.Terraform(dagger.TerraformOpts{
+		SopsKey: m.SopsKey,
+		IsCi:    m.IsCi,
+	})
+
+	router.Add(Check{Name: "terraform/fmt", Check: tf.Fmt})
+	router.Add(Check{Name: "terraform/lint", Check: tf.Lint})
+
+	stacks, err := tf.Targets(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, stack := range stacks {
+		dir, err := filepath.Rel("terraform", stack)
+		if err != nil {
+			return nil, err
+		}
+		router.Add(Check{
+			Name: path.Join(dir, "fmt"),
+			Check: func(ctx context.Context) error {
+				return tf.Validate(ctx, stack)
+			},
+		})
 	}
 
 	return router, err

@@ -1,0 +1,12 @@
+{
+  "name": "terraform",
+  "sdk": "go",
+  "dependencies": [
+    {
+      "name": "wolfi",
+      "source": "github.com/dagger/dagger/modules/wolfi@583b8437d5f2004008562bb24de6b1aaa38d0b45"
+    }
+  ],
+  "source": ".dagger",
+  "engineVersion": "v0.13.3"
+}

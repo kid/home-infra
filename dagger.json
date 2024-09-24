@@ -7,12 +7,18 @@
     "!/.dagger/**/*",
     "!/dagger.json",
     "!/containers/.dagger/**/*",
-    "!/containers/dagger.json"
+    "!/containers/dagger.json",
+    "!/terraform/.dagger/**/*",
+    "!/terraform/dagger.json"
   ],
   "dependencies": [
     {
       "name": "containers",
       "source": "containers"
+    },
+    {
+      "name": "terraform",
+      "source": "terraform"
     },
     {
       "name": "wolfi",
