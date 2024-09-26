@@ -13500,7 +13500,7 @@ spec:
           value: localhost
         - name: KUBERNETES_SERVICE_PORT
           value: "7445"
-        image: ghcr.io/fluxcd/source-controller:v1.3.0
+        image: ghcr.io/fluxcd/source-controller:v1.4.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
