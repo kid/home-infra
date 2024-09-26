@@ -13646,7 +13646,7 @@ spec:
           value: localhost
         - name: KUBERNETES_SERVICE_PORT
           value: "7445"
-        image: ghcr.io/fluxcd/helm-controller:v1.0.1
+        image: ghcr.io/fluxcd/helm-controller:v1.1.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
