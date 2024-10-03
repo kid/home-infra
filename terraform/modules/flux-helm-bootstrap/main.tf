@@ -122,7 +122,7 @@ resource "helm_release" "flux_system" {
   name       = "flux-system"
   repository = "https://fluxcd-community.github.io/helm-charts"
   chart      = "flux2"
-  version    = "2.13.0"
+  version    = "2.14.0"
   namespace  = kubernetes_namespace.flux_system.metadata[0].name
   values = [
     yamlencode(local.flux_values)
