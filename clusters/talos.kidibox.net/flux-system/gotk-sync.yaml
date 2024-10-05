@@ -31,6 +31,7 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
+  ignore: clusters/**/flux-system/
   interval: 1m
   ref:
     name: refs/heads/main
