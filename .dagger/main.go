@@ -36,10 +36,6 @@ func New(
 	// +defaultPath="/"
 	// +ignore=[".git", ".archived", ".devenv", ".direnv", "dagger/dagger.gen.go", "dagger/internal", "**/.terraform", "**/.terragrunt-cache"]
 	source *dagger.Directory,
-	// Git directory, used for commitlint.
-	// +optional
-	// +defaultPath="/.git"
-	gitDir *dagger.Directory,
 	// +optional
 	ci bool,
 	// GitHub event type (e.g., pull_request)
@@ -55,7 +51,6 @@ func New(
 ) (*HomeInfra, error) {
 	m := &HomeInfra{
 		Source:  source,
-		GitDir:  gitDir,
 		IsCi:    ci,
 		GhToken: ghToken,
 		SopsKey: sopsKey,

@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"path"
 
-	_ "embed"
 	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
 
@@ -54,7 +54,6 @@ func (m *Kube) Base() *dagger.Container {
 			Permissions: 0755,
 		}).
 		WithDirectory("/src/clusters", m.HomeInfra.Source.Directory("clusters")).
-		WithDirectory("/src/.git", m.HomeInfra.GitDir).
 		WithWorkdir("/src")
 }
 
