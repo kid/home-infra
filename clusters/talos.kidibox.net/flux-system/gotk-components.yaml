@@ -13576,7 +13576,7 @@ spec:
           value: localhost
         - name: KUBERNETES_SERVICE_PORT
           value: "7445"
-        image: ghcr.io/fluxcd/kustomize-controller:v1.3.0
+        image: ghcr.io/fluxcd/kustomize-controller:v1.4.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -13713,7 +13713,7 @@ spec:
           value: localhost
         - name: KUBERNETES_SERVICE_PORT
           value: "7445"
-        image: ghcr.io/fluxcd/notification-controller:v1.3.0
+        image: ghcr.io/fluxcd/notification-controller:v1.4.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
