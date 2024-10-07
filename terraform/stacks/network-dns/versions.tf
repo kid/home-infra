@@ -4,7 +4,7 @@ terraform {
   required_providers {
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.64.2"
+      version = "1.65.0"
     }
     powerdns = {
       source  = "pan-net/powerdns"
