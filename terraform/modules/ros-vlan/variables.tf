@@ -1,6 +1,5 @@
 variable "bridge_name" {
-  type    = string
-  default = "bridge1"
+  type = string
 }
 
 variable "vlan_id" {
@@ -23,4 +22,19 @@ variable "vlan_mtu" {
 variable "tagged_ifces" {
   type    = list(string)
   default = []
+}
+
+variable "dhcp_lease_time" {
+  type    = string
+  default = "1d"
+}
+
+variable "dhcp_dns_servers" {
+  type    = list(string)
+  default = []
+}
+
+variable "dhcp_domain" {
+  type    = string
+  default = null
 }
