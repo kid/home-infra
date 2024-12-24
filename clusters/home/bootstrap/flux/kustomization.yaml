@@ -1,0 +1,19 @@
+# IMPORTANT: This file is not tracked by flux and should never be. Its
+# purpose is to only install the Flux components and CRDs into your cluster.
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - github.com/fluxcd/flux2/manifests/install?ref=v2.4.0
+patches:
+  - path: ./patches/namespace.yaml
+    target:
+      kind: Namespace
+      name: flux-system
+  - target:
+      kind: Deployment
+      name: kustomize-controller
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --feature-gates=StrictPostBuildSubstitutions=true

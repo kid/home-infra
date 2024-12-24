@@ -1,7 +1,7 @@
 keys:
   - &kid-nixos age1dghfu7sxwlkf4626eywmgr63y2g7m4x8zs8a6xt2zay3x7dclpnsw776dd
-  - &kairos age1xsklnts8wctdv7jekwqx5cveggzch5s0v9p7p4yredmghtgqryzqg8fay6
   - &talos-kidibox-net age1d3fhnsrjptnrvelew39xux2mes4d9zt8eyem3q5mpccav5g4fg6su9mx29
+  - &clusters-home age1d3fhnsrjptnrvelew39xux2mes4d9zt8eyem3q5mpccav5g4fg6su9mx29
 
 defaults: &defaults
   key_groups:
@@ -9,6 +9,12 @@ defaults: &defaults
         - *kid-nixos
 
 creation_rules:
+  - path_regex: clusters/home/.+\.sops\.ya?ml
+    encrypted_regex: ^(data|stringData)$
+    key_groups:
+      - age:
+          - *kid-nixos
+          - *clusters-home
   - path_regex: clusters/talos.kidibox.net/.+\.sops\.ya?ml
     encrypted_regex: ^(data|stringData)$
     key_groups:
@@ -20,10 +26,8 @@ creation_rules:
       - age:
           - *kid-nixos
           - *talos-kidibox-net
-  - path_regex: clusters/kairos/.+\.sops\.ya?ml
-    encrypted_regex: ^(data|stringData)$
-    key_groups:
-      - age:
-          - *kid-nixos
-          - *kairos
   - <<: *defaults
+
+stores:
+  yaml:
+    indent: 2
