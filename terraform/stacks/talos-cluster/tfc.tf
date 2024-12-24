@@ -5,7 +5,7 @@ terraform {
 
     workspaces {
       project = "home-infra"
-      name    = "talos-cluster"
+      name    = "talos-cluster-${var.cluster_name}"
     }
   }
 }

@@ -23,6 +23,13 @@ data "talos_image_factory_urls" "this" {
   platform      = "nocloud"
 }
 
+resource "routeros_dns_record" "api_server" {
+  name = "api.${var.cluster_domain}"
+  type = "A"
+  # address = local.controlplane_node_ips[0]
+  address = local.controlplane_vip
+}
+
 resource "proxmox_virtual_environment_download_file" "iso" {
   url          = data.talos_image_factory_urls.this.urls.iso
   file_name    = "talos-${var.talos_version}-nocloud-amd64.iso"

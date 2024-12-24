@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"path"
 	"text/template"
+	"time"
 
 	"github.com/kid/home-infra/terraform/.dagger/internal/dagger"
 )
@@ -17,32 +18,31 @@ const (
 )
 
 type Terraform struct {
-	Source  *dagger.Directory
-	Ctr     *dagger.Container
-	Token   *dagger.Secret // +private
-	SopsKey *dagger.Secret // +private
-	IsCi    bool           // +private
+	Source      *dagger.Directory
+	Ctr         *dagger.Container
+	Token       *dagger.Secret // +private
+	SopsAgeKeys *dagger.Secret // +private
+	IsCi        bool           // +private
 }
 
 func New(
 	ctx context.Context,
 	// +optional
 	// +defaultPath="/"
-	// +ignore=[".git", "**/.terraform", "**/.terragrunt-cache"]
-	// +ignore=["**/*", "!terraform/", "terraform/.dagger", "terraform/dagger.json", "!clusters/", "clusters/.dagger", "clusters/dagger.json"]
+	// +ignore=["**/*", "!secrets/", "!terraform/", "terraform/.dagger", "terraform/dagger.json", "!clusters/", "clusters/.dagger", "clusters/dagger.json", "**/.terraform", "**/.terragrunt-cache"]
 	source *dagger.Directory,
 	// +optional
 	token *dagger.Secret,
 	// +optional
-	sopsKey *dagger.Secret,
+	sopsAgeKeys *dagger.Secret,
 	// +optional
 	isCi bool,
 ) *Terraform {
 	return &Terraform{
-		Source:  source,
-		Token:   token,
-		SopsKey: sopsKey,
-		IsCi:    isCi,
+		Source:      source,
+		Token:       token,
+		SopsAgeKeys: sopsAgeKeys,
+		IsCi:        isCi,
 	}
 }
 
@@ -79,8 +79,8 @@ func (m *Terraform) Base() *dagger.Container {
 		ctr = ctr.WithSecretVariable("TF_TOKEN_app_terraform_io", m.Token)
 	}
 
-	if m.SopsKey != nil {
-		ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.SopsKey)
+	if m.SopsAgeKeys != nil {
+		ctr = ctr.WithMountedSecret("/root/.config/sops/age/keys.txt", m.SopsAgeKeys)
 	}
 
 	return ctr
@@ -209,7 +209,9 @@ func (m *Terraform) Plan(
 	if m.IsCi {
 		args = append(args, "-json")
 	}
-	ctr, err = ctr.WithExec(args).Sync(ctx)
+	ctr, err = ctr.
+		WithEnvVariable("CACHE_BUSTER", fmt.Sprintf("%d", time.Now().Unix())).
+		WithExec(args).Sync(ctx)
 	if err != nil {
 		return
 	}
@@ -250,6 +252,41 @@ func (m *Terraform) LintReport(ctx context.Context, js string) (string, error) {
 
 	// t, err := template.New("").ParseFS(templates, "templates/tflint.md.gotpl")
 	t, err := template.ParseFS(templates, "templates/tflint.md.tpl")
+	if err != nil {
+		return "", err
+	}
+	var tpl bytes.Buffer
+	if err = t.Execute(&tpl, data); err != nil {
+		return "", err
+	}
+
+	return tpl.String(), nil
+}
+
+func (m *Terraform) tfcFile(chdir string) dagger.WithContainerFunc {
+	return func(ctr *dagger.Container) *dagger.Container {
+		_, chdir = path.Split(chdir)
+		tfc, err := renderTfcFile("kid", "home-infra", chdir)
+		if err != nil {
+			panic(err)
+		}
+
+		return ctr.WithNewFile(path.Join(chdir, "tfc.tf"), tfc)
+	}
+}
+
+func renderTfcFile(organization, project, name string) (string, error) {
+	data := struct {
+		Organization string
+		Project      string
+		Name         string
+	}{
+		Organization: organization,
+		Project:      project,
+		Name:         name,
+	}
+
+	t, err := template.ParseFS(templates, "templates/tfc.tf.tpl")
 	if err != nil {
 		return "", err
 	}

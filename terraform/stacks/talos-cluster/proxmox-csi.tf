@@ -1,6 +1,6 @@
 variable "proxmox_csi_enable" {
   type    = bool
-  default = true
+  default = false
 }
 
 resource "proxmox_virtual_environment_role" "csi" {
