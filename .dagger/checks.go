@@ -8,9 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kid/home-infra/.dagger/internal/dagger"
 	"go.opentelemetry.io/otel/codes"
 	"golang.org/x/sync/errgroup"
+
+	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
 
 func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
@@ -51,8 +52,9 @@ func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
 	}
 
 	tf := dag.Terraform(dagger.TerraformOpts{
-		SopsKey: m.SopsKey,
-		IsCi:    m.IsCi,
+		Token:       m.TfToken,
+		SopsAgeKeys: m.SopsAgeKeys,
+		IsCi:        m.IsCi,
 	})
 
 	router.Add(Check{Name: "terraform/fmt", Check: tf.Fmt})

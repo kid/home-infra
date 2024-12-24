@@ -1,7 +1,10 @@
-.devenv
-.direnv
-.terraform
-.terragrunt-cache
+.task
+
+# Terraform
+**/.terraform
+**/.terragrunt-cache
+**/*.tfstate
+
 kubeconfig
 
 go.work

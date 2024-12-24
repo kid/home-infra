@@ -1,12 +1,14 @@
 {
   "name": "terraform",
+  "engineVersion": "v0.13.7",
   "sdk": "go",
+  "exclude": ["**/.devenv", "**/.direnv", "**/.terraform"],
   "dependencies": [
     {
       "name": "wolfi",
-      "source": "github.com/dagger/dagger/modules/wolfi@583b8437d5f2004008562bb24de6b1aaa38d0b45"
+      "source": "github.com/dagger/dagger/modules/wolfi@583b8437d5f2004008562bb24de6b1aaa38d0b45",
+      "pin": "583b8437d5f2004008562bb24de6b1aaa38d0b45"
     }
   ],
-  "source": ".dagger",
-  "engineVersion": "v0.13.3"
+  "source": ".dagger"
 }

@@ -4,3 +4,5 @@ inputs:
     url: github:NixOS/nixpkgs/nixpkgs-unstable
   dagger:
     url: github:dagger/nix
+  talhelper:
+    url: github:budimanjojo/talhelper

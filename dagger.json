@@ -1,16 +1,8 @@
 {
   "name": "home-infra",
+  "engineVersion": "v0.15.1",
   "sdk": "go",
-  "exclude": [
-    "**/.git",
-    "**/*",
-    "!/.dagger/**/*",
-    "!/dagger.json",
-    "!/containers/.dagger/**/*",
-    "!/containers/dagger.json",
-    "!/terraform/.dagger/**/*",
-    "!/terraform/dagger.json"
-  ],
+  "exclude": ["**/.devenv", "**/.direnv", "**/.terraform"],
   "dependencies": [
     {
       "name": "containers",
@@ -22,9 +14,9 @@
     },
     {
       "name": "wolfi",
-      "source": "github.com/dagger/dagger/modules/wolfi@742841f49b208ece1a4f9a105939319e1eee7a16"
+      "source": "github.com/dagger/dagger/modules/wolfi@742841f49b208ece1a4f9a105939319e1eee7a16",
+      "pin": "742841f49b208ece1a4f9a105939319e1eee7a16"
     }
   ],
-  "source": ".dagger",
-  "engineVersion": "v0.13.3"
+  "source": ".dagger"
 }
