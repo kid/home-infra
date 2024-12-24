@@ -1,0 +1,46 @@
+---
+clusterName: home
+talosVersion: ${TALOS_VERSION}
+kubernetesVersion: ${KUBERNETES_VERSION}
+endpoint: https://api.${CLUSTER_DOMAIN}:6443
+# domain: ${CLUSTER_DOMAIN}
+allowSchedulingOnMasters: true
+# additionalMachineCertSans:
+#   - 192.168.200.10
+# additionalApiServerCertSans:
+#   - 10.0.40.11
+clusterPodNets:
+  - 10.244.0.0/16
+clusterSvcNets:
+  - 10.96.0.0/12
+cniConfig:
+  name: none
+patches:
+  - |-
+    cluster:
+      proxy:
+        disabled: true
+nodes:
+  - hostname: talos-cp-1
+    ipAddress: 10.0.40.11
+    installDisk: /dev/sda
+    controlPlane: true
+  - hostname: talos-cp-2
+    ipAddress: 10.0.40.12
+    installDisk: /dev/sda
+    controlPlane: true
+  - hostname: talos-cp-3
+    ipAddress: 10.0.40.13
+    installDisk: /dev/sda
+    controlPlane: true
+controlPlane:
+  networkInterfaces:
+    - interface: eth0
+      dhcp: true
+      vip:
+        ip: 10.0.40.10
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/qemu-guest-agent

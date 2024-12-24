@@ -1,0 +1,42 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: flux-manifests
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/fluxcd/flux2.git
+  ref:
+    tag: v2.4.0
+  ignore: |
+    /*
+    !/manifests
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: manifests/install
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-manifests
+  patches:
+    - patch: |
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: flux-system
+          labels:
+            pod-security.kubernetes.io/enforce: privileged
+    - target:
+        kind: Deployment
+        name: kustomize-controller
+      patch: |
+        - op: add
+          path: /spec/template/spec/containers/0/args/-
+          value: --feature-gates=StrictPostBuildSubstitutions=true
