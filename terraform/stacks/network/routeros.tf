@@ -18,6 +18,9 @@ locals {
       id                = 30
       dhcp_options_sets = "pxe-efi"
     }
+    k8s = {
+      id = 40
+    }
     lan = {
       id = 100
     }
@@ -35,32 +38,26 @@ locals {
       tagged = [
         local.vlans.srv.id,
         local.vlans.media.id,
+        local.vlans.k8s.id,
         local.vlans.lan.id,
         local.vlans.adm.id,
+        1099
       ]
-      frame_types = "admit-only-vlan-tagged"
     }
     ether1 = {
       comment = "pve1"
       tagged = [
         local.vlans.srv.id,
         local.vlans.media.id,
+        local.vlans.k8s.id,
         local.vlans.lan.id,
         local.vlans.adm.id,
+        1099
       ]
-      frame_types = "admit-only-vlan-tagged"
     }
     ether2 = {
       comment = "pve0-ipmi"
       pvid    = local.vlans.adm.id
-      tagged = [
-        # local.vlans.srv.id,
-        # local.vlans.media.id,
-        # local.vlans.lan.id,
-        # local.vlans.adm.id,
-      ]
-      # frame_types = "admit-only-vlan-tagged"
-      frame_types = "admit-all"
     }
     ether3 = {
       comment = "capxr0"
@@ -68,7 +65,6 @@ locals {
         local.vlans.adm.id,
         local.vlans.lan.id,
       ]
-      frame_types = "admit-only-vlan-tagged"
     }
     ether4 = {
       comment = "capxr1"
@@ -76,11 +72,14 @@ locals {
         local.vlans.adm.id,
         local.vlans.lan.id,
       ]
-      frame_types = "admit-only-vlan-tagged"
     }
     ether5 = {
       comment = "kid-pc"
       pvid    = local.vlans.lan.id
+      tagged = [
+        local.vlans.adm.id,
+        1099,
+      ]
     }
     ether6 = {
       comment = "sw-office"
@@ -89,7 +88,6 @@ locals {
         local.vlans.lan.id,
         local.vlans.iot.id,
       ]
-      frame_types = "admit-only-vlan-tagged"
     }
   }
   hosts = {
@@ -179,8 +177,10 @@ resource "routeros_interface_list_member" "wan" {
 # }
 
 resource "routeros_ip_dns" "upstream" {
-  servers = ["1.1.1.1"]
-  # use_doh_server        = "https://cloudflare-dns.com/dns-query"
+  servers        = ["9.9.9.9", "149.112.112.112"]
+  use_doh_server = "https://dns.quad9.net/dns-query"
+  # servers        = ["1.1.1.1"]
+  # use_doh_server = "https://cloudflare-dns.com/dns-query"
   # verify_doh_cert       = true
   allow_remote_requests = true
 }
