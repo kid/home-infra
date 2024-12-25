@@ -14,7 +14,8 @@ spec:
   ignore: |
     # exclude all
     /*
-    # include cluster directory
+    # include base and cluster directory
+    !/clusters/_base
     !/clusters/${CLUSTER_NAME}
     # exclude bootstrap folder
     /clusters/${CLUSTER_NAME}/bootstrap
