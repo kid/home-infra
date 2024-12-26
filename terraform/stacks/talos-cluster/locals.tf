@@ -13,13 +13,13 @@ locals {
   controlplane_node_ips = values({ for k, v in local.controlplane_node_infos : k => v.ip })
 }
 
-# locals {
-#   pod_cidr = "10.244.0.0/16" # Talos default, only needed for native routing
-#   lb_cidr  = "10.0.42.0/24"
-#
-#   ros_addr_list = "local_network"
-#   ros_allowed_cidrs = [
-#     local.pod_cidr,
-#     local.lb_cidr,
-#   ]
-# }
+locals {
+  pod_cidr = "10.244.0.0/16" # Talos default, only needed for native routing
+  lb_cidr  = "10.0.42.0/24"
+
+  ros_addr_list = "local_network"
+  ros_allowed_cidrs = [
+    local.pod_cidr,
+    local.lb_cidr,
+  ]
+}

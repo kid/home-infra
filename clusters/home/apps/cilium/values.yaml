@@ -1,5 +1,11 @@
 k8sServiceHost: localhost
 k8sServicePort: 7445
+operator:
+  replicas: 1
+  rollOutPods: true
+envoy:
+  enabled: false
+rollOutCiliumPods: true
 ipam:
   mode: kubernetes
 kubeProxyReplacement: true
@@ -25,8 +31,3 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
-# routingMode: native
-# ipv4NativeRoutingCIDR: 10.244.0.0/16
-# autoDirectNodeRoutes: true
-# bgpControlPlane:
-#   enabled: true
