@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
   - ./git/gateway-api.yaml
   - ./helm/cilium.yaml
+  - ./helm/external-dns.yaml
+  - ./helm/cloudnative-pg.yaml
+  - ./helm/grafana.yaml
+  - ./helm/jetstack.yaml

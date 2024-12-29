@@ -2,8 +2,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: cilium
+  name: external-dns
   namespace: flux-system
 spec:
-  interval: 1h
-  url: https://helm.cilium.io
+  interval: 24h
+  url: https://kubernetes-sigs.github.io/external-dns/

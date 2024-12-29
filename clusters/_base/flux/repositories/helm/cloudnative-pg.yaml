@@ -2,8 +2,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: cilium
+  name: cloudnative-pg
   namespace: flux-system
 spec:
-  interval: 1h
-  url: https://helm.cilium.io
+  type: oci
+  interval: 24h
+  url: oci://ghcr.io/cloudnative-pg/charts
