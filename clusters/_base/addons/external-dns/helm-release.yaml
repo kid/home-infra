@@ -1,0 +1,93 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: flux-system
+spec:
+  releaseName: external-dns
+  targetNamespace: external-dns
+  interval: 30m
+  chart:
+    spec:
+      chart: external-dns
+      version: 1.15.0
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+  values:
+    fullnameOverride: external-dns-mikrotik
+
+    logLevel: debug
+    logFormat: text
+    interval: 5m
+    sources:
+      - crd
+      - service
+      - gateway-httproute
+      - gateway-tlsroute
+      - gateway-tcproute
+      - gateway-udproute
+      - gateway-grpcroute
+    registry: txt
+    txtOwnerId: default
+    txtPrefix: k8s.
+    domainFilters: ["${APPS_DOMAIN}"]
+    excludeDomains: []
+    policy: sync
+    triggerLoopOnEvent: true
+
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/mirceanton/external-dns-provider-mikrotik
+          tag: v1.2.5@sha256:5ab80ff9d23f4c029387cf6d788b0859b186595c643df924b6653905a3593936
+          pullPolicy: IfNotPresent
+        env:
+          - name: LOG_FORMAT
+            value: text
+          - name: LOG_LEVEL
+            value: info
+          - name: MIKROTIK_BASEURL
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_BASEURL
+          - name: MIKROTIK_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_USERNAME
+          - name: MIKROTIK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_PASSWORD
+          - name: MIKROTIK_SKIP_TLS_VERIFY
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-credentials
+                key: MIKROTIK_SKIP_TLS_VERIFY
+
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+
+    extraArgs:
+      - --ignore-ingress-tls-spec
+      - --managed-record-types=A
+      - --managed-record-types=AAAA
+      - --managed-record-types=CNAME
+      - --managed-record-types=TXT
+      - --managed-record-types=MX
+      - --managed-record-types=SRV
+      - --managed-record-types=NS
