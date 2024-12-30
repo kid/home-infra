@@ -1,12 +1,13 @@
 {
   "name": "ci",
+  "engineVersion": "v0.15.1",
   "sdk": "go",
   "dependencies": [
     {
       "name": "gha",
-      "source": "github.com/shykes/gha@503d8e46e85ced36029a451b32e375a2076a49b2"
+      "source": "github.com/shykes/gha@f6c91e490043946d71100645be8253471ba626bd",
+      "pin": "f6c91e490043946d71100645be8253471ba626bd"
     }
   ],
-  "source": ".",
-  "engineVersion": "v0.13.3"
+  "source": "."
 }
