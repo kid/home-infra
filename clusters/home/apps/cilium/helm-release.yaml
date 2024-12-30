@@ -22,6 +22,9 @@ spec:
     routingMode: native
     autoDirectNodeRoutes: true
     ipv4NativeRoutingCIDR: 10.244.0.0/16
+    # bpf:
+    #   masquerade: true
+    #   hostLegacyRouting: false
     gatewayAPI:
       enabled: true
     bgpControlPlane:
