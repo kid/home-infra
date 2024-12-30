@@ -4,7 +4,7 @@ metadata:
   name: cnpg-operator
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/apps/cnpg-operator
+  path: ./clusters/${CLUSTER_NAME}/addons/cnpg-operator
   prune: true
   sourceRef:
     kind: GitRepository

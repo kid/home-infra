@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cilium
+  namespace: flux-system
+spec:
+  path: ./clusters/${CLUSTER_NAME}/addons/cilium
+  dependsOn:
+    - name: gateway-api
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: cluster
+  interval: 1m
