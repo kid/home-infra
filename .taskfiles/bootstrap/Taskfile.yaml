@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  GITHUB_DEPLOY_KEY_FILE: "{{.CLUSTER_DIR}}/bootstrap/flux/github-deploy-key.sops.yaml"
+  SOPS_AGE_KEY_FILE: "{{.CLUSTER_DIR}}/bootstrap/flux/sops-age.sops.yaml"
+  TALHELPER_CLUSTER_DIR: "{{.CLUSTER_DIR}}/bootstrap/talos/clusterconfig"
+  #   TALHELPER_SECRET_FILE: "{{.CLUSTER_DIR}}/bootstrap/talos/talsecret.sops.yaml"
+  #   TALHELPER_CONFIG_FILE: "{{.CLUSTER_DIR}}/bootstrap/talos/talconfig.yaml"
+  TALOSCONFIG: "{{.TALHELPER_CLUSTER_DIR}}/talosconfig"
+  KUBECONFIG: "{{.TALHELPER_CLUSTER_DIR}}/kubeconfig"
+
+env:
+  TALOSCONFIG: "{{.TALOSCONFIG}}"
+  KUBECONFIG: "{{.KUBECONFIG}}"
+
+tasks:
+  default:
+    cmds:
+      - task: infra-apply
+      - task: talos
+      - task: cilium
+      - task: flux
+
+  infra-apply:
+    desc: Deploy cluster infrastructure
+    dir: "{{.ROOT_DIR}}/terraform/stacks/talos-cluster"
+    env:
+      TF_VAR_cluster_name: "{{.CLUSTER}}"
+      TF_VAR_cluster_domain: "{{.CLUSTER_DOMAIN}}"
+      TF_VAR_talos_version: "{{.TALOS_VERSION}}"
+    cmds:
+      - tofu init
+      - tofu apply
+
+  talos:
+    desc: Bootstrap the talos cluster
+    dir: "{{.CLUSTER_DIR}}/bootstrap/talos"
+    cmds:
+      - talhelper genconfig
+      - talhelper gencommand apply --extra-flags="--insecure" | bash
+      - until talhelper gencommand bootstrap | bash; do sleep 10; done
+      - until talhelper gencommand kubeconfig --extra-flags="{{.ROOT_DIR}} --force --force-context-name {{.CLUSTER}}" | bash; do sleep 10; done
+
+  cilium:
+    desc: Bootstrap Cilium
+    dir: "{{.CLUSTER_DIR}}/bootstrap/cilium"
+    deps:
+      - task: kubeconfig
+    cmds:
+      - task: kubeconfig
+      - until kubectl wait --for=condition=ready=false nodes --all --timeout=600s; do sleep 10; done
+      - kustomize build --load-restrictor LoadRestrictionsNone --enable-helm . | kubectl apply --server-side -f -
+      - until kubectl wait --for=condition=Ready nodes --all --timeout=600s; do sleep 10; done
+
+  flux:
+    desc: Bootstrap Flux
+    deps:
+      - task: kubeconfig
+    cmds:
+      - kustomize build {{.CLUSTER_DIR}}/bootstrap/flux --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+      - kustomize build {{.CLUSTER_DIR}}/flux/cluster | flux envsubst --strict | kubectl apply --filename -
+      - for: { var: SECRET_FILES }
+        cmd: sops exec-file {{.ITEM}} "kubectl apply -f {}"
+      # - kubectl apply --filename {{.CLUSTER_DIR}}/flux/vars/cluster-settings.yaml
+      # - sops exec-file {{.CLUSTER_DIR}}/flux/vars/cluster-secrets.sops.yaml "kubectl apply --server-side --filename {}"
+    vars:
+      SECRET_FILES:
+        sh: find "{{.CLUSTER_DIR}}/bootstrap/flux" -type f -name "*.sops.yaml"
+
+  kubeconfig:
+    # internal: true
+    dir: "{{.CLUSTER_DIR}}/bootstrap/talos"
+    cmds:
+      - until talhelper gencommand kubeconfig --extra-flags="{{.TALHELPER_CLUSTER_DIR}} --force --force-context-name admin@{{.CLUSTER}}" | bash; do sleep 10; done
+    generates:
+      - "{{.KUBECONFIG}}"
+    sources:
+      - "{{.TALOSCONFIG}}"
+
+  infra-destroy:
+    desc: Destroy infrastructure
+    dir: "{{.ROOT_DIR}}/terraform/stacks/talos-cluster"
+    env:
+      TF_VAR_cluster_name: "{{.CLUSTER}}"
+      TF_VAR_cluster_domain: "{{.CLUSTER_DOMAIN}}"
+      TF_VAR_talos_version: "{{.TALOS_VERSION}}"
+    cmds:
+      - tofu apply -destroy
