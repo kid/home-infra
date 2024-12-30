@@ -42,11 +42,14 @@ func (m *Kube) Base() *dagger.Container {
 	kubeConform := dag.Container().From("ghcr.io/yannh/kubeconform:v0.6.7-alpine")
 	return m.HomeInfra.
 		Base(
+			"bash=5.2.37",
 			"kustomize=5.4.3",
 			"flux=2.3.0",
 			"helm=3.16.1",
 			"py3-pip",
 			"git=2.46.1",
+			"yq=4.44.6",
+			"jq=1.7.1",
 		).
 		WithExec([]string{"pip3", "install", "flux-local"}).
 		WithFile("/usr/bin/kubeconform", kubeConform.File("/kubeconform")).
