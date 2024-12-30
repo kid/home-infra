@@ -10,7 +10,7 @@ locals {
       node_name = "pve1"
     }
   }
-  controlplane_node_ips = values({ for k, v in local.controlplane_node_infos : k => v.ip })
+  # controlplane_node_ips = values({ for k, v in local.controlplane_node_infos : k => v.ip })
 }
 
 locals {
