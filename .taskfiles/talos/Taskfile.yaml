@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  TALHELPER_CLUSTER_DIR: "{{.CLUSTER_DIR}}/bootstrap/talos/clusterconfig"
+  TALOSCONFIG: "{{.TALHELPER_CLUSTER_DIR}}/talosconfig"
+  KUBECONFIG: "{{.TALHELPER_CLUSTER_DIR}}/kubeconfig"
+
+env:
+  TALOSCONFIG: "{{.TALOSCONFIG}}"
+  KUBECONFIG: "{{.KUBECONFIG}}"
+
+tasks:
+  kubeconfig:
+    desc: Download the admin kubeconfig from the cluster
+    dir: "{{.CLUSTER_DIR}}/bootstrap/talos"
+    cmds:
+      - unset KUBECONFIG; until talhelper gencommand kubeconfig --extra-flags="--merge" | bash; do sleep 10; done

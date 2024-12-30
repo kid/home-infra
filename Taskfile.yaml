@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+set: [pipefail]
+shopt: [globstar]
+
+vars:
+  CLUSTER: '{{.CLUSTER | default "home"}}'
+  CLUSTER_DIR: "{{.ROOT_DIR}}/clusters/{{.CLUSTER}}"
+
+env:
+  KUBECONFIG: "{{.ROOT_DIR}}/kubeconfig"
+dotenv:
+  - "{{.CLUSTER_DIR}}/cluster.env"
+
+includes:
+  talos: .taskfiles/talos
+  bootstrap: .taskfiles/bootstrap
+
+tasks:
+  default: task --list
+  env:
+    cmds:
+      - echo "$CLUSTER_NAME"
