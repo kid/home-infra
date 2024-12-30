@@ -1,0 +1,24 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager-issuers
+  namespace: flux-system
+spec:
+  path: ./clusters/${CLUSTER_NAME}/apps/cert-manager-issuers
+  dependsOn:
+    - name: cert-manager
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: cluster
+  interval: 1m
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: cluster-secrets
