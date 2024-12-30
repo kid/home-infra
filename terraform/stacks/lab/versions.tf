@@ -4,11 +4,11 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.65.0"
+      version = "0.69.0"
     }
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.63.1"
+      version = "1.72.0"
     }
     macaddress = {
       source  = "ivoronin/macaddress"
