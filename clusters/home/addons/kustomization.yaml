@@ -8,3 +8,4 @@ resources:
   - ./cnpg-operator/ks.yaml
   - ./external-dns/ks.yaml
   - ./gateway-api/ks.yaml
+  - ./tofu-controller/ks.yaml
