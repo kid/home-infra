@@ -19,6 +19,9 @@ spec:
     !/clusters/${CLUSTER_NAME}
     # exclude bootstrap folder
     /clusters/${CLUSTER_NAME}/bootstrap
+    # required for terraform stacks
+    !/secrets
+    !/terraform
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
