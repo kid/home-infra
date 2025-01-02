@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"path"
-	"strings"
+	"slices"
+
+	"golang.org/x/sync/errgroup"
+	yaml "gopkg.in/yaml.v3"
 
 	"github.com/kid/home-infra/containers/.dagger/internal/dagger"
 )
@@ -15,6 +18,17 @@ type Containers struct {
 	ImageSource string // +private
 	Registry    string // +private
 	Namespace   string // +private
+}
+
+type ContainerMetadata struct {
+	App      string             `yaml:"app"`
+	Channels []ContainerChannel `yaml:"channels"`
+}
+
+type ContainerChannel struct {
+	Name      string            `yaml:"name,omitempty"`
+	Platforms []dagger.Platform `yaml:"platforms"`
+	BuildArgs []dagger.BuildArg `yaml:"buildArgs"`
 }
 
 func New(
@@ -66,7 +80,7 @@ func (m *Containers) Lint(ctx context.Context, target string) error {
 
 	_, err = dag.
 		Container().
-		From("ghcr.io/hadolint/hadolint:v2.12.0").
+		From("hadolint/hadolint:v2.12.0").
 		WithExec([]string{}, dagger.ContainerWithExecOpts{
 			UseEntrypoint: true,
 			Stdin:         contents,
@@ -76,38 +90,87 @@ func (m *Containers) Lint(ctx context.Context, target string) error {
 	return err
 }
 
-func (m *Containers) Build(target string, platform dagger.Platform) *dagger.Container {
-	return dag.Container(dagger.ContainerOpts{Platform: platform}).Build(m.Source.Directory(target))
+func (m *Containers) buildChannel(target string, channel ContainerChannel, platform dagger.Platform) *dagger.Container {
+	return dag.
+		Container(dagger.ContainerOpts{
+			Platform: platform,
+		}).
+		Build(m.Source.Directory(target), dagger.ContainerBuildOpts{
+			BuildArgs: channel.BuildArgs,
+		})
 }
 
-func (m *Containers) Publish(ctx context.Context, target, username string, password *dagger.Secret) (string, error) {
-	if err := m.Lint(ctx, target); err != nil {
-		return "", err
-	}
-
-	platformVariants := make([]*dagger.Container, 0, len(m.Platforms))
-	for _, platform := range m.Platforms {
-		platformVariants = append(platformVariants, m.Build(target, platform))
-	}
-
-	version, err := platformVariants[0].Label(ctx, "org.opencontainers.image.version")
+func (m *Containers) Build(ctx context.Context, target string, platform dagger.Platform) error {
+	meta, err := m.readMeta(ctx, target)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	imageRepo := fmt.Sprintf("%s/%s/%s:%s", m.Registry, m.Namespace, strings.TrimPrefix(target, "containers/"), version)
+	fmt.Printf("Meta: %v\n", meta)
 
-	imageDigest, err := dag.
-		Container().
-		WithLabel("org.opencontainers.image.source", m.ImageSource).
-		WithRegistryAuth(m.Registry, username, password).
-		Publish(ctx, imageRepo, dagger.ContainerPublishOpts{
-			PlatformVariants: platformVariants,
+	g, ctx := errgroup.WithContext(ctx)
+	for _, channel := range meta.Channels {
+		g.Go(func() error {
+			_, err := m.buildChannel(target, channel, platform).Sync(ctx)
+			return err
 		})
-
-	if err != nil {
-		return "", err
 	}
 
-	return imageDigest, err
+	return g.Wait()
+}
+
+func (m *Containers) Publish(ctx context.Context, target, username string, password *dagger.Secret) ([]string, error) {
+	imageDigests := make([]string, 0)
+
+	if err := m.Lint(ctx, target); err != nil {
+		return imageDigests, err
+	}
+
+	meta, err := m.readMeta(ctx, target)
+	for _, channel := range meta.Channels {
+		platformVariants := make([]*dagger.Container, 0, len(m.Platforms))
+
+		for _, platform := range m.Platforms {
+			if !slices.Contains(channel.Platforms, platform) {
+				continue
+			}
+
+			platformVariants = append(platformVariants, m.buildChannel(target, channel, platform))
+		}
+
+		version, err := platformVariants[0].Label(ctx, "org.opencontainers.image.version")
+		if err != nil {
+			return imageDigests, err
+		}
+
+		imageRepo := fmt.Sprintf("%s/%s/%s:%s", m.Registry, m.Namespace, meta.App, version)
+		imageDigest, err := dag.
+			Container().
+			WithLabel("org.opencontainers.image.source", m.ImageSource).
+			WithRegistryAuth(m.Registry, username, password).
+			Publish(ctx, imageRepo, dagger.ContainerPublishOpts{
+				PlatformVariants: platformVariants,
+			})
+
+		if err != nil {
+			return imageDigests, err
+		}
+
+		imageDigests = append(imageDigests, imageDigest)
+	}
+
+	return imageDigests, err
+}
+
+func (m *Containers) readMeta(ctx context.Context, target string) (ContainerMetadata, error) {
+	contents, err := m.Source.File(path.Join(target, "metadata.yaml")).Contents(ctx)
+	if err != nil {
+		return ContainerMetadata{}, err
+	}
+	meta := ContainerMetadata{}
+	if err = yaml.Unmarshal([]byte(contents), &meta); err != nil {
+		return ContainerMetadata{}, err
+	}
+
+	return meta, nil
 }

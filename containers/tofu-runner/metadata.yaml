@@ -1,0 +1,10 @@
+app: tofu-runner
+channels:
+  - platforms: ["linux/amd64", "linux/arm64"]
+    buildArgs:
+      - name: TF_CONTROLLER_VERSION
+        # renovate: datasource=github-releases depName=flux-iac/tofu-controller
+        value: v0.16.0-rc.4
+      - name: TF_VERSION
+        # renovate: datasource=github-releases depName=opentofu/opentofu
+        value: 1.8.8

@@ -44,8 +44,7 @@ func buildRoutes(ctx context.Context, m *HomeInfra) (*checkRouter, error) {
 			router.Add(Check{
 				Name: path.Join(target, "build", string(platform)),
 				Check: func(ctx context.Context) error {
-					_, err := ctrs.Build(target, platform).Sync(ctx)
-					return err
+					return ctrs.Build(ctx, target, platform)
 				},
 			})
 		}
@@ -91,7 +90,7 @@ func (m *HomeInfra) Check(
 		return err
 	}
 
-	eg := errgroup.Group{}
+	eg, ctx := errgroup.WithContext(ctx)
 	for _, check := range routes.Get(targets...) {
 		ctx, span := Tracer().Start(ctx, check.Name)
 		eg.Go(func() (rerr error) {
