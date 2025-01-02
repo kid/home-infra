@@ -2,7 +2,11 @@
   "name": "home-infra",
   "engineVersion": "v0.15.1",
   "sdk": "go",
-  "exclude": ["**/.devenv", "**/.direnv", "**/.terraform"],
+  "exclude": [
+    "**/.devenv",
+    "**/.direnv",
+    "**/.terraform"
+  ],
   "dependencies": [
     {
       "name": "containers",
