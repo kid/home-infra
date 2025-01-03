@@ -1,0 +1,45 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: proxmox-csi
+  namespace: flux-system
+spec:
+  releaseName: proxmox-csi
+  targetNamespace: proxmox-csi
+  interval: 30m
+  chart:
+    spec:
+      chart: proxmox-csi-plugin
+      version: 0.3.1
+      sourceRef:
+        kind: HelmRepository
+        name: sergelogvinov
+  values:
+    config:
+      clusters:
+        - insecure: false
+          url: "${proxmox_url}/api2/json"
+          token_id: "${proxmox_token_id}"
+          token_secret: "${proxmox_token_secret}"
+          region: "${proxmox_region}"
+
+    node:
+      tolerations:
+        - operator: Exists
+
+    # Deploy CSI controller only on control-plane nodes
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+
+    # Define storage classes
+    # See https://pve.proxmox.com/wiki/Storage
+    storageClass:
+      - name: proxmox-local-zfs-ext4
+        storage: local-zfs
+        reclaimPolicy: Delete
+        fstype: ext4
+        ssd: true

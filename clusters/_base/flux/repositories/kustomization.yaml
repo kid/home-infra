@@ -8,4 +8,5 @@ resources:
   - ./helm/cloudnative-pg.yaml
   - ./helm/grafana.yaml
   - ./helm/jetstack.yaml
+  - ./helm/sergelogvinov.yaml
   - ./helm/tofu-controller.yaml
