@@ -16,8 +16,8 @@ spec:
         kind: HelmRepository
         name: democratic-csi
   valuesFrom:
-  - kind: Secret
-    name: democratic-csi-values
+    - kind: Secret
+      name: democratic-csi-values
   driftDetection:
     mode: enabled
   postRenderers:
@@ -45,3 +45,34 @@ spec:
                 path: /spec/template/spec/containers/3/args/2
               - op: remove
                 path: /spec/template/spec/containers/3/args/1
+  values:
+    csiDriver:
+      name: org.democratic-csi.freenas-nfs
+    fsGroupPolicy: File
+    storageClasses:
+      - name: truenas-nfs
+        defaultClass: false
+        parameters:
+          fsType: nfs
+        mountOptions:
+          - noatime
+          - nfsvers=4
+    driver:
+      config:
+        driver: freenas-api-nfs
+        instance_id: org.democratic-csi.truenas-nfs
+        httpConnection:
+          protocol: https
+          host: ${truenas_host}
+          port: ${truenas_port}
+          allowInsecure: true
+          apiKey: ${truenas_api_key}
+        zfs:
+          datasetParentName: tank/k8s/${cluster_name}/volumes
+          detachedSnapshotsDatasetParentName: tank/k8s/${cluster_name}/snapshots
+        nfs:
+          shareHost: 10.0.30.126
+          shareAllDirs: false
+          shareAllowHosts: []
+          shareAllowNetworks:
+            - 10.0.30.0/24
