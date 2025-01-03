@@ -8,5 +8,6 @@ resources:
   - ./cnpg-operator/ks.yaml
   - ./external-dns/ks.yaml
   - ./gateway-api/ks.yaml
+  - ./proxmox-csi/ks.yaml
   - ./proxmox-csi-stack/ks.yaml
   - ./tofu-controller/ks.yaml
