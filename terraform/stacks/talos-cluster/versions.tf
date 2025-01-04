@@ -14,10 +14,6 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.6.0"
     }
-    truenas = {
-      source  = "dariusbakunas/truenas"
-      version = "0.11.1"
-    }
     sops = {
       source  = "carlpett/sops"
       version = "1.1.1"
