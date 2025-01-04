@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: prowlarr-pg
+spec:
+  instances: 2
+  storage:
+    size: 10Gi
+    storageClass: proxmox-local-zfs-ext4
+  bootstrap:
+    initdb:
+      database: prowlarr
+      owner: prowlarr
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    matchLabels:
+      app: prowlarr
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: prowlarr
+      labels:
+        app: prowlarr
+    spec:
+      volumes:
+        - name: config
+          emptyDir: {}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: prowlarr
+          image: ghcr.io/onedr0p/prowlarr:1.24.3@sha256:60792494427fcb4bec8337fb76052bec084ede7fc91d40c304641b4c3b1f0781
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9696
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          env:
+            - name: TZ
+              value: Europe/Brussels
+            - name: PROWLARR__APP__THEME
+              value: dark
+            - name: PROWLARR__AUTH__METHOD
+              value: External
+            - name: PROWLARR__AUTH__REQUIRED
+              value: DisabledForLocalAddresses
+            - name: PROWLARR__AUTH__APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
+                  key: PROWLARR_API_KEY
+            - name: PROWLARR__LOG__ANALYTICSENABLED
+              value: "False"
+            - name: PROWLARR__LOG__CONSOLEFORMAT
+              value: "Clef"
+            - name: PROWLARR__LOG__LEVEL
+              value: info
+            - name: PROWLARR__LOG__DBENABLED
+              value: "False"
+            - name: PROWLARR__POSTGRES__MAINDB
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: dbname
+            - name: PROWLARR__POSTGRES__HOST
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: host
+            - name: PROWLARR__POSTGRES__PORT
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: port
+            - name: PROWLARR__POSTGRES__USER
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: user
+            - name: PROWLARR__POSTGRES__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prowlarr-pg-app
+                  key: password
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+spec:
+  selector:
+    app: prowlarr
+  ports:
+    - name: prowlarr
+      protocol: TCP
+      port: 80
+      targetPort: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prowlarr-http
+spec:
+  parentRefs:
+    - name: default
+  hostnames:
+    - prowlarr.${APPS_DOMAIN}
+  rules:
+    - backendRefs:
+        - name: prowlarr
+          port: 80
