@@ -32,6 +32,7 @@ spec:
   interval: 1m
   path: ./clusters/${CLUSTER_NAME}/flux/settings
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster
@@ -51,6 +52,7 @@ spec:
   interval: 1m
   path: ./clusters/${CLUSTER_NAME}
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster
