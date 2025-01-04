@@ -6,6 +6,7 @@ resources:
   - ./cilium/ks.yaml
   - ./cilium-configs/ks.yaml
   - ./cnpg-operator/ks.yaml
+  # - ./democratic-csi-stack/ks.yaml
   - ./external-dns/ks.yaml
   - ./gateway-api/ks.yaml
   - ./proxmox-csi/ks.yaml

@@ -1,0 +1,38 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: democratic-csi
+  namespace: flux-system
+spec:
+  interval: 1h
+  approvePlan: auto
+  path: ./terraform/stacks/democratic-csi/
+  backendConfig:
+    disable: true
+  cliConfigSecretRef:
+    name: tfe-cli-config
+  sourceRef:
+    kind: GitRepository
+    name: cluster
+    namespace: flux-system
+  vars:
+    - name: cluster_name
+      value: "${CLUSTER_NAME}"
+    - name: parent_dataset_id
+      value: tank/clusters
+  writeOutputsToSecret:
+    name: democratic-csi
+  runnerPodTemplate:
+    spec:
+      volumes:
+        - name: sops-age
+          secret:
+            secretName: sops-age
+      volumeMounts:
+        - name: sops-age
+          mountPath: /home/runner/.config/sops/age/keys.txt
+          subPath: age.agekey
+          readOnly: true
+      env:
+        - name: SOPS_AGE_KEY_FILE
+          value: /home/runner/.config/sops/age/keys.txt
