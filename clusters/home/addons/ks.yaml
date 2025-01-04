@@ -8,6 +8,7 @@ spec:
     - name: cluster-settings
   path: ./clusters/${CLUSTER_NAME}/addons
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster
