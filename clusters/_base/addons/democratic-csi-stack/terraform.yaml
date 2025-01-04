@@ -10,7 +10,7 @@ spec:
   backendConfig:
     disable: true
   cliConfigSecretRef:
-    name: tfe-cli-config
+    name: tfc-credentials
   sourceRef:
     kind: GitRepository
     name: cluster
@@ -20,8 +20,6 @@ spec:
       value: "${CLUSTER_NAME}"
     - name: parent_dataset_id
       value: tank/clusters
-  writeOutputsToSecret:
-    name: democratic-csi
   runnerPodTemplate:
     spec:
       volumes:

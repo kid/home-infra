@@ -10,7 +10,7 @@ spec:
   backendConfig:
     disable: true
   cliConfigSecretRef:
-    name: tfe-cli-config
+    name: tfc-credentials
   sourceRef:
     kind: GitRepository
     name: cluster
