@@ -1,0 +1,139 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sonarr-pg
+spec:
+  instances: 2
+  storage:
+    size: 10Gi
+    storageClass: proxmox-local-zfs-ext4
+  bootstrap:
+    initdb:
+      database: sonarr
+      owner: sonarr
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  labels:
+    app: sonarr
+spec:
+  selector:
+    matchLabels:
+      app: sonarr
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: sonarr
+      labels:
+        app: sonarr
+    spec:
+      volumes:
+        - name: config
+          emptyDir: {}
+        - name: library-series
+          persistentVolumeClaim:
+            claimName: library-series
+      securityContext:
+        runAsUser: 3002
+        runAsGroup: 1215
+      containers:
+        - name: sonarr
+          image: ghcr.io/onedr0p/sonarr:4.0.9.2244@sha256:2740c331757564877a344cdad41a9a092b36f0680f5f0133bcc971b0b2bd1f84
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8989
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: library-series
+              mountPath: /data/library/series
+          env:
+            - name: TZ
+              value: Europe/Brussels
+            - name: SONARR__APP__THEME
+              value: dark
+            - name: SONARR__AUTH__METHOD
+              value: External
+            - name: SONARR__AUTH__REQUIRED
+              value: DisabledForLocalAddresses
+            - name: SONARR__AUTH__APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
+                  key: SONARR_API_KEY
+            - name: SONARR__LOG__ANALYTICSENABLED
+              value: "False"
+            - name: SONARR__LOG__CONSOLEFORMAT
+              value: "Clef"
+            - name: SONARR__LOG__LEVEL
+              value: info
+            - name: SONARR__LOG__DBENABLED
+              value: "False"
+            - name: SONARR__POSTGRES__MAINDB
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-pg-app
+                  key: dbname
+            - name: SONARR__POSTGRES__HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-pg-app
+                  key: host
+            - name: SONARR__POSTGRES__PORT
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-pg-app
+                  key: port
+            - name: SONARR__POSTGRES__USER
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-pg-app
+                  key: user
+            - name: SONARR__POSTGRES__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-pg-app
+                  key: password
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr
+spec:
+  selector:
+    app: sonarr
+  ports:
+    - name: sonarr
+      protocol: TCP
+      port: 80
+      targetPort: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr-http
+spec:
+  parentRefs:
+    - name: default
+  hostnames:
+    - sonarr.${APPS_DOMAIN}
+  rules:
+    - backendRefs:
+        - name: sonarr
+          port: 80

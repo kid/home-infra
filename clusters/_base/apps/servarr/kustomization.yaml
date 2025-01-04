@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: servarr
+resources:
+  - ./namespace.yaml
+  - ./pv-series.yaml
+  - ./pv-recyclarr.yaml
+  - ./gateway.yaml
+  - ./prowlarr.yaml
+  - ./sonarr.yaml
+  - ./recyclarr.yaml
+configMapGenerator:
+  - name: recyclarr-config
+    files:
+      - recyclarr.yml=./resources/recyclarr.yaml

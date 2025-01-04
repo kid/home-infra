@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: recyclarr
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4
+    - noatime
+  nfs:
+    server: 10.0.30.126
+    path: /mnt/tank/apps-dev/recyclarr
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: recyclarr
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Mi
+  volumeName: recyclarr

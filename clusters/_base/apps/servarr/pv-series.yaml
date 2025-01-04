@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: library-series
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - nfsvers=4
+    - noatime
+  nfs:
+    server: 10.0.30.126
+    path: /mnt/tank/library-dev/series
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: library-series
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Mi
+  volumeName: library-series
