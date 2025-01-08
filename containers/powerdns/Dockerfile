@@ -1,4 +1,4 @@
-FROM alpine:3.20.3
+FROM alpine:3.21.2
 
 ARG PDNS_VERSION=4.9.2-r0
 

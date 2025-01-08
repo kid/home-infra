@@ -1,4 +1,4 @@
-FROM alpine:3.20.0
+FROM alpine:3.21.2
 
 RUN mkdir -p /etc/bind  && \
     apk add --no-cache bind=9.18.27-r0

@@ -1,4 +1,4 @@
-FROM alpine:3.20.0
+FROM alpine:3.21.2
 
 RUN addgroup -S -g 10001 dnsdist && \
     adduser -S -D -u 10001 -G dnsdist dnsdist && \
