@@ -19,7 +19,7 @@ spec:
     config:
       clusters:
         - insecure: false
-          url: "${proxmox_url}/api2/json"
+          url: "${proxmox_url}"
           token_id: "${proxmox_token_id}"
           token_secret: "${proxmox_token_secret}"
           region: "${proxmox_region}"
