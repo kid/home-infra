@@ -1,5 +1,5 @@
 output "proxmox_url" {
-  value     = "${data.sops_file.proxmox.data.proxmox_endpointS}/api2/json"
+  value     = "${data.sops_file.proxmox.data.proxmox_endpoint}/api2/json"
   sensitive = true
 }
 
