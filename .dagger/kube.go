@@ -42,6 +42,7 @@ func (m *Kube) Base() *dagger.Container {
 	kubeConform := dag.Container().From("ghcr.io/yannh/kubeconform:v0.6.7-alpine")
 	return m.HomeInfra.
 		Base(
+			"gettext=0.22.5", // contains envsubst
 			"bash=5.2.37",
 			"kustomize=5.4.3",
 			"flux=2.3.0",
