@@ -68,9 +68,15 @@ func (m *Terraform) Base() *dagger.Container {
 				"opentofu=1.8.2",
 				"tflint=0.53.0",
 			},
-		}).
-		WithMountedCache("/.terraform.d/plugin-cache", dag.CacheVolume(fmt.Sprintf("%s-plugin-cache", TF_BINARY))).
-		WithEnvVariable("TF_PLUGIN_CACHE_DIR", "/.terraform.d/plugin-cache").
+		})
+
+	if !m.IsCi {
+		ctr = ctr.
+			WithMountedCache("/.terraform.d/plugin-cache", dag.CacheVolume(fmt.Sprintf("%s-plugin-cache", TF_BINARY))).
+			WithEnvVariable("TF_PLUGIN_CACHE_DIR", "/.terraform.d/plugin-cache")
+	}
+
+	ctr = ctr.
 		WithEnvVariable("TF_IN_AUTOMATION", "true").
 		WithDirectory("/src", m.Source).
 		WithWorkdir("/src")
