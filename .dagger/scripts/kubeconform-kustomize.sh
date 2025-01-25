@@ -18,4 +18,11 @@ kubeconformArgs=(
 	-schema-location 'https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json'
 )
 
-kustomize build "${kustomizeArgs[@]}" "$@" | yq "del(.sops)" | kubeconform "${kubeconformArgs[@]}"
+# shellcheck disable=SC2046
+export $(grep -v '^#' clusters/home/cluster.env | xargs)
+export EMAIL_ADDRESS=foo@bar.baz
+
+kustomize build "${kustomizeArgs[@]}" "$@" \
+	| envsubst \
+	| yq "del(.sops)" \
+	| kubeconform "${kubeconformArgs[@]}"
