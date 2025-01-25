@@ -41,7 +41,7 @@ spec:
       webhook:
         image:
           repository: ghcr.io/mirceanton/external-dns-provider-mikrotik
-          tag: v1.2.5@sha256:5ab80ff9d23f4c029387cf6d788b0859b186595c643df924b6653905a3593936
+          tag: v1.4.1@sha256:a0c9d5d0a80221a75993d1745e8aafdc247c038ccaadc83306df1c4d909d4a4b
           pullPolicy: IfNotPresent
         env:
           - name: LOG_FORMAT
