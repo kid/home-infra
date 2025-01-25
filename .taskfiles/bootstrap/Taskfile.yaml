@@ -30,8 +30,8 @@ tasks:
       TF_VAR_cluster_domain: "{{.CLUSTER_DOMAIN}}"
       TF_VAR_talos_version: "{{.TALOS_VERSION}}"
     cmds:
-      - tofu init
-      - tofu apply
+      - tofu init -input=false
+      - tofu apply -input=false
 
   talos:
     desc: Bootstrap the talos cluster
