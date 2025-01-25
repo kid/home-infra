@@ -6,6 +6,7 @@ metadata:
 spec:
   path: ./clusters/${CLUSTER_NAME}/addons/proxmox-csi
   prune: true
+  wait: true
   dependsOn:
     - name: proxmox-csi-stack
   sourceRef:

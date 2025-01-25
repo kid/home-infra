@@ -6,6 +6,7 @@ metadata:
 spec:
   path: ./clusters/${CLUSTER_NAME}/addons/cert-manager
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster
