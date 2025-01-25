@@ -50,7 +50,7 @@ spec:
               envFrom:
                 - secretRef:
                     name: api-keys
-              image: ghcr.io/recyclarr/recyclarr:7.2.4@sha256:1bf2436ed4749a4309765dd21643aac858dd436a536e37c25bb463513601e962
+              image: ghcr.io/recyclarr/recyclarr:7.4.0@sha256:619c3b8920a179f2c578acd0f54e9a068f57c049aff840469eed66e93a4be2cf
               name: app
               resources:
                 limits:
