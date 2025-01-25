@@ -6,6 +6,7 @@ metadata:
 spec:
   path: ./clusters/${CLUSTER_NAME}/addons/proxmox-csi-stack
   prune: true
+  wait: true
   dependsOn:
     - name: tofu-controller
   sourceRef:

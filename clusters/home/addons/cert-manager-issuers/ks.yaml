@@ -8,6 +8,7 @@ spec:
   dependsOn:
     - name: cert-manager
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster

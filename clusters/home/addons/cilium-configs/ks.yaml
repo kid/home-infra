@@ -8,6 +8,7 @@ spec:
   dependsOn:
     - name: cilium
   prune: false
+  wait: true
   sourceRef:
     kind: GitRepository
     name: cluster
