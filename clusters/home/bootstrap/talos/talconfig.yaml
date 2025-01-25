@@ -25,14 +25,23 @@ nodes:
     ipAddress: 10.0.40.11
     installDisk: /dev/sda
     controlPlane: true
+    nodeLabels:
+      topology.kubernetes.io/region: pve
+      topology.kubernetes.io/zone: pve1
   - hostname: talos-cp-2
     ipAddress: 10.0.40.12
     installDisk: /dev/sda
     controlPlane: true
+    nodeLabels:
+      topology.kubernetes.io/region: pve
+      topology.kubernetes.io/zone: pve1
   - hostname: talos-cp-3
     ipAddress: 10.0.40.13
     installDisk: /dev/sda
     controlPlane: true
+    nodeLabels:
+      topology.kubernetes.io/region: pve
+      topology.kubernetes.io/zone: pve1
 controlPlane:
   networkInterfaces:
     - interface: eth0
