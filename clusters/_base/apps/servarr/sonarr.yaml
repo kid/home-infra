@@ -44,7 +44,7 @@ spec:
         runAsGroup: 1215
       containers:
         - name: sonarr
-          image: ghcr.io/onedr0p/sonarr:4.0.9.2244@sha256:2740c331757564877a344cdad41a9a092b36f0680f5f0133bcc971b0b2bd1f84
+          image: ghcr.io/onedr0p/sonarr:4.0.12.2823@sha256:f453b589cd553e09244b2fb48d74ae4047e6fab1fa837e008755be1200a62407
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8989
