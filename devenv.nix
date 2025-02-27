@@ -35,6 +35,13 @@
       enable = true;
       package = pkgs.opentofu;
     };
+    python = {
+      enable = true;
+      venv = {
+        enable = true;
+        requirements = "flux-local";
+      };
+    };
   };
 
   pre-commit.hooks = {

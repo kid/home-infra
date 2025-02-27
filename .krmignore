@@ -1,0 +1,6 @@
+.task
+
+.devenv*
+.direnv
+
+clusters/_base/apps/servarr/resources/recyclarr.yaml
