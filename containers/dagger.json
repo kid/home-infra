@@ -1,11 +1,9 @@
 {
   "name": "containers",
-  "engineVersion": "v0.15.1",
-  "sdk": "go",
-  "exclude": [
-    "**/.devenv",
-    "**/.direnv",
-    "**/.terraform"
-  ],
+  "engineVersion": "v0.16.1",
+  "sdk": {
+    "source": "go"
+  },
+  "include": ["!**/.devenv", "!**/.direnv", "!**/.terraform"],
   "source": ".dagger"
 }
