@@ -1,12 +1,9 @@
 {
   "name": "home-infra",
-  "engineVersion": "v0.15.1",
-  "sdk": "go",
-  "exclude": [
-    "**/.devenv",
-    "**/.direnv",
-    "**/.terraform"
-  ],
+  "engineVersion": "v0.16.1",
+  "sdk": {
+    "source": "go"
+  },
   "dependencies": [
     {
       "name": "containers",
@@ -18,9 +15,10 @@
     },
     {
       "name": "wolfi",
-      "source": "github.com/dagger/dagger/modules/wolfi@742841f49b208ece1a4f9a105939319e1eee7a16",
-      "pin": "742841f49b208ece1a4f9a105939319e1eee7a16"
+      "source": "github.com/dagger/dagger/modules/wolfi",
+      "pin": "789200f43579a799b237c660e2faa79a83404104"
     }
   ],
+  "include": ["!**/.devenv", "!**/.direnv", "!**/.terraform"],
   "source": ".dagger"
 }
