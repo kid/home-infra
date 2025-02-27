@@ -4,7 +4,7 @@ metadata:
   name: external-dns
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/addons/external-dns
+  path: ./clusters/home/addons/external-dns
   prune: true
   wait: true
   sourceRef:

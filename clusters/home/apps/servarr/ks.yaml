@@ -4,7 +4,7 @@ metadata:
   name: servarr
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/apps/servarr
+  path: ./clusters/home/apps/servarr
   prune: true
   wait: true
   sourceRef:

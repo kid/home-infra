@@ -16,9 +16,9 @@ spec:
     /*
     # include base and cluster directory
     !/clusters/_base
-    !/clusters/${CLUSTER_NAME}
+    !/clusters/home
     # exclude bootstrap folder
-    /clusters/${CLUSTER_NAME}/bootstrap
+    /clusters/home/bootstrap
     # required for terraform stacks
     !/secrets
     !/terraform
@@ -30,7 +30,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  path: ./clusters/${CLUSTER_NAME}/flux/settings
+  path: ./clusters/home/flux/settings
   prune: true
   wait: true
   sourceRef:
@@ -50,7 +50,7 @@ spec:
   dependsOn:
     - name: cluster-settings
   interval: 1m
-  path: ./clusters/${CLUSTER_NAME}
+  path: ./clusters/home
   prune: true
   wait: true
   sourceRef:

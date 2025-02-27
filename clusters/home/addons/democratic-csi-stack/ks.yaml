@@ -4,7 +4,7 @@ metadata:
   name: democratic-csi-stack
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/addons/democratic-csi-stack
+  path: ./clusters/home/addons/democratic-csi-stack
   prune: true
   dependsOn:
     - name: tofu-controller

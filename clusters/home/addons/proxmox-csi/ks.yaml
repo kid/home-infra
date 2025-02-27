@@ -4,7 +4,7 @@ metadata:
   name: proxmox-csi
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/addons/proxmox-csi
+  path: ./clusters/home/addons/proxmox-csi
   prune: true
   wait: true
   dependsOn:

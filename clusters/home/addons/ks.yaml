@@ -6,7 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: cluster-settings
-  path: ./clusters/${CLUSTER_NAME}/addons
+  path: ./clusters/home/addons
   prune: true
   wait: true
   sourceRef:

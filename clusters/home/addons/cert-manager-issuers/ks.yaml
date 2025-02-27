@@ -4,7 +4,7 @@ metadata:
   name: cert-manager-issuers
   namespace: flux-system
 spec:
-  path: ./clusters/${CLUSTER_NAME}/addons/cert-manager-issuers
+  path: ./clusters/home/addons/cert-manager-issuers
   dependsOn:
     - name: cert-manager
   prune: true
