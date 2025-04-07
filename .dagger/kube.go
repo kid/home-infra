@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"path"
+	"strings"
 
 	"github.com/kid/home-infra/.dagger/internal/dagger"
 )
@@ -26,6 +27,12 @@ func (m *Kube) buildChecks(ctx context.Context) (checks []Check, err error) {
 	dirs, err := Containing(ctx, m.HomeInfra.Source, "kustomization.yaml")
 
 	for _, dir := range dirs {
+		if strings.HasSuffix(dir, "bootstrap/flux/") {
+			// FIXME: this fails to fetch the remote resources
+			// TODO: need a common way of ignoring checks
+			continue
+		}
+
 		checks = append(checks, Check{
 			Name: path.Join(dir, "kubeconform"),
 			Check: func(ctx context.Context) error {
@@ -42,6 +49,7 @@ func (m *Kube) Base() *dagger.Container {
 	kubeConform := dag.Container().From("ghcr.io/yannh/kubeconform:v0.6.7-alpine")
 	return m.HomeInfra.
 		Base(
+			// TODO: make renovate work here
 			"gettext=0.22.5", // contains envsubst
 			"bash=5.2.37",
 			"kustomize=5.4.3",
