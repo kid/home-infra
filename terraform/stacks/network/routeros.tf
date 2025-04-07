@@ -34,14 +34,16 @@ locals {
   wan_port = "ether8"
   ports = {
     sfp-sfpplus1 = {
-      comment = "pve0"
+      comment = "crs320-trunk"
+      # pvid    = local.vlans.adm.id
       tagged = [
         local.vlans.srv.id,
         local.vlans.media.id,
         local.vlans.k8s.id,
         local.vlans.lan.id,
         local.vlans.adm.id,
-        1099
+        local.vlans.iot.id,
+        # 1099
       ]
     }
     ether1 = {
@@ -55,39 +57,9 @@ locals {
         1099
       ]
     }
-    ether2 = {
-      comment = "pve0-ipmi"
-      pvid    = local.vlans.adm.id
-    }
-    ether3 = {
-      comment = "capxr0"
-      tagged = [
-        local.vlans.adm.id,
-        local.vlans.lan.id,
-      ]
-    }
-    ether4 = {
-      comment = "capxr1"
-      tagged = [
-        local.vlans.adm.id,
-        local.vlans.lan.id,
-      ]
-    }
-    ether5 = {
-      comment = "kid-pc"
-      pvid    = local.vlans.lan.id
-      tagged = [
-        local.vlans.adm.id,
-        1099,
-      ]
-    }
     ether6 = {
-      comment = "sw-office"
-      tagged = [
-        local.vlans.adm.id,
-        local.vlans.lan.id,
-        local.vlans.iot.id,
-      ]
+      comment = "crs320-admin"
+      # pvid    = local.vlans.adm.id
     }
   }
   hosts = {
@@ -111,17 +83,18 @@ locals {
       ip          = cidrhost(local.vlan_cidrs.adm, 21)
       dhcp_server = "adm"
     }
-    pve = {
-      mac         = "d0:50:99:fe:51:b5"
+    pve0 = {
+      # mac         = "d0:50:99:fe:51:b4"
+      mac         = "4e:81:80:a2:bb:d2"
       ip          = cidrhost(local.vlan_cidrs.srv, 10)
       dhcp_server = "srv"
     }
-    pve-ipmi = {
+    pve0-ipmi = {
       mac         = "d0:50:99:f7:ee:15"
       ip          = cidrhost(local.vlan_cidrs.adm, (local.vlans.srv.id * 256) + 10)
       dhcp_server = "adm"
     }
-    hypernix = {
+    pve1 = {
       # mac = "74:56:3c:69:1e:30",
       mac         = "be:4f:11:f4:ba:61",
       ip          = cidrhost(local.vlan_cidrs.srv, 20)
@@ -177,10 +150,26 @@ resource "routeros_interface_list_member" "wan" {
 # }
 
 resource "routeros_ip_dns" "upstream" {
-  servers        = ["9.9.9.9", "149.112.112.112"]
-  use_doh_server = "https://dns.quad9.net/dns-query"
-  # servers        = ["1.1.1.1"]
-  # use_doh_server = "https://cloudflare-dns.com/dns-query"
+  servers        = ["1.1.1.1", "1.0.0.1"]
+  use_doh_server = "https://1.1.1.1/dns-query"
   # verify_doh_cert       = true
   allow_remote_requests = true
+
+  doh_max_concurrent_queries  = 200
+  doh_max_server_connections  = 40
+  max_concurrent_queries      = 200
+  max_concurrent_tcp_sessions = 40
+}
+
+moved {
+  from = routeros_dhcp_server_lease.static_hosts["pve"]
+  to   = routeros_dhcp_server_lease.static_hosts["pve0"]
+}
+moved {
+  from = routeros_dhcp_server_lease.static_hosts["pve-ipmi"]
+  to   = routeros_dhcp_server_lease.static_hosts["pve0-ipmi"]
+}
+moved {
+  from = routeros_dhcp_server_lease.static_hosts["hypernix"]
+  to   = routeros_dhcp_server_lease.static_hosts["pve1"]
 }

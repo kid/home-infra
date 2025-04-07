@@ -23,6 +23,7 @@
       talosctl
       timoni
       go-task
+      iptables
     ]);
 
   languages = {
