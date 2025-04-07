@@ -65,7 +65,7 @@ func (m *Terraform) Base() *dagger.Container {
 		Wolfi().
 		Container(dagger.WolfiContainerOpts{
 			Packages: []string{
-				"opentofu=1.8.2",
+				"opentofu=1.9.0",
 				"tflint=0.53.0",
 			},
 		})
