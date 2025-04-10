@@ -63,10 +63,9 @@ module "crs320_management_config" {
 
   source = "../../modules/ros-management-config"
 
-  bridge_name      = module.crs320_bridge.bridge_name
-  mgmt_vlan_id     = 99
-  oob_mgmt_address = "192.168.88.1/24"
-  oob_mgmt_port    = "ether17"
+  bridge_name        = module.crs320_bridge.bridge_name
+  mgmt_vlan_id       = 99
+  oob_mgmt_interface = "ether17"
 }
 
 output "debug" {
