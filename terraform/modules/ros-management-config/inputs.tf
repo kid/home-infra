@@ -1,8 +1,28 @@
+variable "hostname" {
+  type = string
+}
+
 variable "bridge_name" {
   type = string
 }
 
-variable "oob_mgmt_interface" {
+variable "mgmt_cidr_prefix" {
+  type = string
+}
+
+variable "mgmt_cidr_bits" {
+  type = number
+}
+
+variable "mgmt_hostnum" {
+  type = number
+}
+
+variable "mgmt_vlan_id" {
+  type = number
+}
+
+variable "oob_mgmt_port" {
   type = string
 }
 
@@ -14,8 +34,4 @@ variable "oob_mgmt_cidr_prefix" {
 variable "oob_mgmt_cidr_bits" {
   type    = number
   default = 24
-}
-
-variable "mgmt_vlan_id" {
-  type = number
 }

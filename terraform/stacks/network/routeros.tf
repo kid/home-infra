@@ -27,15 +27,11 @@ locals {
     iot = {
       id = 101
     }
-    # ioc = {
-    #   id = 102
-    # }
   }
   wan_port = "ether8"
   ports = {
     sfp-sfpplus1 = {
       comment = "crs320-trunk"
-      # pvid    = local.vlans.adm.id
       tagged = [
         local.vlans.srv.id,
         local.vlans.media.id,
@@ -43,7 +39,6 @@ locals {
         local.vlans.lan.id,
         local.vlans.adm.id,
         local.vlans.iot.id,
-        # 1099
       ]
     }
     ether1 = {
@@ -54,12 +49,19 @@ locals {
         local.vlans.k8s.id,
         local.vlans.lan.id,
         local.vlans.adm.id,
-        1099
       ]
+    }
+    ether2 = {
+      comment = "crs320-admin"
+    }
+    ether3 = {
+      comment = "capxr0"
+    }
+    ether4 = {
+      comment = "capxr1"
     }
     ether6 = {
       comment = "crs320-admin"
-      # pvid    = local.vlans.adm.id
     }
   }
   hosts = {
@@ -84,8 +86,7 @@ locals {
       dhcp_server = "adm"
     }
     pve0 = {
-      # mac         = "d0:50:99:fe:51:b4"
-      mac         = "4e:81:80:a2:bb:d2"
+      mac         = "a6:34:58:9f:98:09"
       ip          = cidrhost(local.vlan_cidrs.srv, 10)
       dhcp_server = "srv"
     }
@@ -95,7 +96,6 @@ locals {
       dhcp_server = "adm"
     }
     pve1 = {
-      # mac = "74:56:3c:69:1e:30",
       mac         = "be:4f:11:f4:ba:61",
       ip          = cidrhost(local.vlan_cidrs.srv, 20)
       dhcp_server = "srv"
@@ -128,7 +128,6 @@ locals {
   vlan_cidrs = { for k, v in local.vlans : k => lookup(v, "cidr", cidrsubnet(local.cidr, 15, v.id)) }
 }
 
-
 resource "routeros_interface_list" "wan" {
   name = "WAN"
 }
@@ -159,17 +158,4 @@ resource "routeros_ip_dns" "upstream" {
   doh_max_server_connections  = 40
   max_concurrent_queries      = 200
   max_concurrent_tcp_sessions = 40
-}
-
-moved {
-  from = routeros_dhcp_server_lease.static_hosts["pve"]
-  to   = routeros_dhcp_server_lease.static_hosts["pve0"]
-}
-moved {
-  from = routeros_dhcp_server_lease.static_hosts["pve-ipmi"]
-  to   = routeros_dhcp_server_lease.static_hosts["pve0-ipmi"]
-}
-moved {
-  from = routeros_dhcp_server_lease.static_hosts["hypernix"]
-  to   = routeros_dhcp_server_lease.static_hosts["pve1"]
 }
