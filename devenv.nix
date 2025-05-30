@@ -24,6 +24,8 @@
       timoni
       go-task
       iptables
+      qemu-utils
+      kubectl
     ]);
 
   languages = {
