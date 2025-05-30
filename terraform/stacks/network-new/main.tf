@@ -10,10 +10,24 @@ module "crs320_bridge" {
     sfp-sfpplus1 = {
       vlan_ids = [99, 10, 30, 100, 101]
     }
+    sfp-sfpplus3 = {
+      comment  = "pve0"
+      vlan_ids = [30, 100, 101]
+    }
+    sfp-sfpplus4 = {
+      comment = "pve1"
+      pvid    = 10
+      # FIXME: tag 10 is only there for home-assistant
+      vlan_ids = [30, 100, 101]
+    }
     ether1 = {
       comment  = "office-east"
       pvid     = 100
       vlan_ids = [99]
+    }
+    ether2 = {
+      commment = "rb5009"
+      pvid     = 99
     }
     ether3 = {
       comment = "office-west"
@@ -44,12 +58,15 @@ module "crs320_bridge" {
       pvid    = 99
     }
     ether15 = {
-      comment = "pve1-ipmi"
+      comment = "pve1"
       pvid    = 99
+      # pvid = 10
+      # # FIXME: tag 10 is only there for home-assistant
+      # vlan_ids = [30, 100, 101]
     }
     ether16 = {
-      commment = "mgmt"
-      pvid     = 99
+      comment = "pve1-ipmi"
+      pvid    = 99
     }
   }
 
@@ -63,11 +80,20 @@ module "crs320_management_config" {
 
   source = "../../modules/ros-management-config"
 
-  bridge_name        = module.crs320_bridge.bridge_name
-  mgmt_vlan_id       = 99
-  oob_mgmt_interface = "ether17"
+  hostname    = "crs320"
+  bridge_name = module.crs320_bridge.bridge_name
+
+  mgmt_cidr_prefix = "10.99.0.0"
+  mgmt_cidr_bits   = 16
+  mgmt_hostnum     = 2
+  mgmt_vlan_id     = 99
+
+  oob_mgmt_port = "ether17"
 }
 
 output "debug" {
-  value = var.debug ? module.crs320_bridge.debug : null
+  value = var.debug ? {
+    bridge = module.crs320_bridge.debug
+    mgmt = module.crs320_management_config.debug
+  }: null
 }
