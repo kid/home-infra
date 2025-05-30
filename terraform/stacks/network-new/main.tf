@@ -94,6 +94,6 @@ module "crs320_management_config" {
 output "debug" {
   value = var.debug ? {
     bridge = module.crs320_bridge.debug
-    mgmt = module.crs320_management_config.debug
-  }: null
+    mgmt   = module.crs320_management_config.debug
+  } : null
 }
