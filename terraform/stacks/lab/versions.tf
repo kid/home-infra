@@ -8,7 +8,7 @@ terraform {
     }
     routeros = {
       source  = "terraform-routeros/routeros"
-      version = "1.84.0"
+      version = "1.85.3"
     }
     macaddress = {
       source  = "ivoronin/macaddress"
