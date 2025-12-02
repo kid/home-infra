@@ -1,5 +1,5 @@
 keys:
-  - &kid-nixos age1dghfu7sxwlkf4626eywmgr63y2g7m4x8zs8a6xt2zay3x7dclpnsw776dd
+  - &kid-nixos age1al0ky9grzp5uf4k5cc2wn7gyfdd4g2twjyvpqa35vd4cprnujpssdvzf7r
   - &talos-kidibox-net age1d3fhnsrjptnrvelew39xux2mes4d9zt8eyem3q5mpccav5g4fg6su9mx29
   - &clusters-home age1d3fhnsrjptnrvelew39xux2mes4d9zt8eyem3q5mpccav5g4fg6su9mx29
 

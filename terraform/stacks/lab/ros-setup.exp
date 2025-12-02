@@ -1,5 +1,5 @@
 # Start SSH session
-spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" admin@10.0.10.110
+spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" admin@${ip}
 
 set timeout 10
 set password_changed 0
@@ -34,37 +34,38 @@ expect {
   }
 }
 
-send "/certificate/add name=local-root-cert common-name=router key-usage=key-cert-sign,crl-sign\r"
+# send "/certificate/add name=local-root-cert common-name=local-ca key-usage=key-cert-sign,crl-sign\r"
+# sleep 1
+# expect "] > "
+#
+# send "/certificate/add name=webfig common-name=${ip}\r"
+# sleep 1
+# expect "] > "
+#
+# send "/certificate/sign local-root-cert\r"
+# expect {
+#   "progress: done" {
+#     expect "] > "
+#   }
+#   timeout {
+#     exp_continue
+#   }
+# }
+#
+# # Sign the webfig certificate
+# send "/certificate/sign webfig\r"
+# expect {
+#   "progress: done" {
+#     expect "] > "
+#   }
+#   timeout {
+#     exp_continue
+#   }
+# }
+
 sleep 1
-expect "] > "
-
-send "/certificate/add name=webfig common-name=10.0.10.110\r"
-sleep 1
-expect "] > "
-
-send "/certificate/sign local-root-cert\r"
-expect {
-  "progress: done" {
-    expect "] > "
-  }
-  timeout {
-    exp_continue
-  }
-}
-
-# Sign the webfig certificate
-send "/certificate/sign webfig\r"
-expect {
-  "progress: done" {
-    expect "] > "
-  }
-  timeout {
-    exp_continue
-  }
-}
-
-sleep 1
-send "/ip/service/set www-ssl certificate=webfig disabled=no\r"
+# send "/ip/service/set www-ssl certificate=webfig disabled=no\r"
+send "/ip/sercice/set www disabled=no\r"
 expect {
   "] > " { }
   -re ".+" { exp_continue }

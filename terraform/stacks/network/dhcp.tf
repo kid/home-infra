@@ -64,6 +64,11 @@ resource "routeros_ip_dhcp_client" "wan" {
   use_peer_ntp      = false
 }
 
+import {
+  to = routeros_ip_dhcp_client.wan
+  id = "*1"
+}
+
 resource "routeros_ip_address" "vlans" {
   for_each  = local.vlan_cidrs
   interface = routeros_interface_vlan.vlan[each.key].name

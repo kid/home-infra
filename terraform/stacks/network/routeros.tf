@@ -27,6 +27,10 @@ locals {
     iot = {
       id = 101
     }
+    lab_oob = {
+      id   = 1991
+      cidr = "192.168.89.0/24"
+    }
   }
   wan_port = "ether8"
   ports = {
@@ -39,6 +43,7 @@ locals {
         local.vlans.lan.id,
         local.vlans.adm.id,
         local.vlans.iot.id,
+        local.vlans.lab_oob.id,
       ]
     }
     ether1 = {
@@ -49,19 +54,22 @@ locals {
         local.vlans.k8s.id,
         local.vlans.lan.id,
         local.vlans.adm.id,
+        local.vlans.lab_oob.id,
       ]
     }
     ether2 = {
       comment = "crs320-admin"
     }
-    ether3 = {
-      comment = "capxr0"
-    }
-    ether4 = {
-      comment = "capxr1"
-    }
+    # ether3 = {
+    #   comment = "capxr0"
+    # }
+    # ether4 = {
+    #   comment = "capxr1"
+    # }
     ether6 = {
       comment = "crs320-admin"
+      # TODO: should this be here?
+      pvid = 99
     }
   }
   hosts = {
@@ -149,8 +157,8 @@ resource "routeros_interface_list_member" "wan" {
 # }
 
 resource "routeros_ip_dns" "upstream" {
-  servers        = ["1.1.1.1", "1.0.0.1"]
-  use_doh_server = "https://1.1.1.1/dns-query"
+  servers = ["1.1.1.1", "1.0.0.1"]
+  # use_doh_server = "https://1.1.1.1/dns-query"
   # verify_doh_cert       = true
   allow_remote_requests = true
 

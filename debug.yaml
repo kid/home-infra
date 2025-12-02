@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debugpod
+  namespace: kube-system
+spec:
+  hostPID: true
+  containers:
+    - name: debugcontainer
+      image: alpine:3.20
+      stdin: true
+      tty: true
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: sys-mount
+          mountPath: /sys
+  volumes:
+    - name: sys-mount
+      hostPath:
+        path: /sys
+  nodeSelector:
+    kubernetes.io/hostname: pve0

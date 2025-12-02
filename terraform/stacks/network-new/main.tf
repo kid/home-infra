@@ -8,7 +8,7 @@ module "crs320_bridge" {
   bridge_name = "bridge1"
   bridge_ports = {
     sfp-sfpplus1 = {
-      vlan_ids = [99, 10, 30, 100, 101]
+      vlan_ids = [99, 10, 30, 100, 101, 1991]
     }
     sfp-sfpplus3 = {
       comment  = "pve0"
@@ -23,7 +23,7 @@ module "crs320_bridge" {
     ether1 = {
       comment  = "office-east"
       pvid     = 100
-      vlan_ids = [99]
+      vlan_ids = [99, 1991]
     }
     ether2 = {
       commment = "rb5009"
@@ -63,6 +63,7 @@ module "crs320_bridge" {
       # pvid = 10
       # # FIXME: tag 10 is only there for home-assistant
       # vlan_ids = [30, 100, 101]
+      vlan_ids = [1991]
     }
     ether16 = {
       comment = "pve1-ipmi"

@@ -87,3 +87,10 @@ tasks:
       TF_VAR_talos_version: "{{.TALOS_VERSION}}"
     cmds:
       - tofu apply -destroy
+
+  talos-apply:
+    desc: Apply talos changes
+    dir: "{{.CLUSTER_DIR}}/bootstrap/talos"
+    cmds:
+      - talhelper genconfig
+      - talhelper gencommand apply --extra-flags="-m reboot" | bash
